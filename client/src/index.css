@@ -1,0 +1,55 @@
+.header {
+  grid-template-columns: 50px 1fr 50px;
+  grid-row: 50px;
+  /* background: red; */
+}
+.product-card {
+  grid-template-columns: 50px 1fr 50px;
+  grid-row: 50px;
+}
+
+.crousel {
+  display: flex;
+  /* width: 90%; */
+  gap: 0.9rem;
+  overflow-x: auto;
+  /* margin: 0.1em auto; */
+  /* padding: 1px; */
+  scroll-behavior: smooth;
+  anchor-name: --crousel;
+  scroll-snap-type: x mandatory;
+  /* justify-content: center; */
+}
+
+.crousel::-webkit-scrollbar {
+  display: none;
+}
+
+.crousel::scroll-button(right),
+.crousel::scroll-button(left) {
+  /* content: "+"; */
+  border: none;
+  font-size: 2rem;
+  color: #064127;
+  background-color: #c8e2d7;
+  border-radius: 50%;
+  padding-bottom: 0.1em;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  position: fixed;
+  position-anchor: --crousel;
+  position-area: right center;
+  translate: -50%;
+}
+
+.crousel::scroll-button(left) {
+  /* content: "-"; */
+  position-area: left center;
+  translate: 50%;
+}
+
+.crousel::scroll-button(right):disabled,
+.crousel::scroll-button(left):disabled {
+  opacity: 0.5;
+}
