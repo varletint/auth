@@ -6,9 +6,8 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   server: {
     proxy: {
-      port: 5173,
       "/api": {
-        target: "http://localhost:51",
+        target: "http://localhost:3000",
         secure: false,
       },
     },

@@ -14,15 +14,15 @@ export default function Home() {
   return (
     <>
       <Header />
-      <div className=' min-h-screen px-3 scroll-smooth mt-10'>
-        <div className=''>
-          <h1 className=' font-semibold flex items-center gap-1.5'>
+      <div className=' min-h-screen  scroll-smooth mt-10'>
+        <div className=' '>
+          <h1 className=' px-3 font-semibold flex items-center gap-1.5'>
             Trending Lookups <FireIcon size={20} className='' />
           </h1>
           <div className='w-full bg-amber-500 lg:h-[500px] md:h-[350px] h-60 mt-3'></div>
           <div
             className='flex justify-between font-semibold 
-            mt-10'>
+            mt-10 px-3'>
             <h1
               className=' font-semibold flex items-center gap-1.5 py-1.5 
             bg-red-600 text-white  px-2.5'>
@@ -58,7 +58,7 @@ export default function Home() {
           </div>
           <div
             className='flex justify-between font-semibold 
-            mt-10'>
+            mt-10 px-3'>
             <h1
               className=' font-semibold flex items-center gap-1.5 py-1.5 
             bg-red-600 text-white  px-2.5'>
@@ -92,14 +92,14 @@ export default function Home() {
             '></div>
           </div>
           <h1
-            className=' font-semibold flex items-center gap-1.5 mt-10 
+            className=' font-semibold flex items-center gap-1.5 px-3 mt-10 
           '>
             Marketing <AdvertisimentIcon size={20} className='' />
           </h1>
           <div className='w-full bg-amber-500 lg:h-[500px] md:h-[350px] h-60 mt-3'></div>
           <div
             className='flex justify-between font-semibold 
-            mt-10 '>
+            mt-10 px-3'>
             <h1 className=' font-semibold flex items-center gap-1.5 bg-red-600 text-white  px-2.5 py-1.5'>
               Phone & Accessories <SmartPhone01Icon size={20} className='' />
             </h1>
