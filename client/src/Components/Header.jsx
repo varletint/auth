@@ -6,11 +6,12 @@ export default function Header() {
   return (
     <div
       className=' header w-[1500px] max-w-[95%]  m-auto
-      grid justify-around items-center relative z-[100] '>
+      flex justify-between items-center relative z-[100] px-[10px] py-[15px]
+       bg-green-500 '>
       <Link
         to='/'
         className=' font-bold text-[25px] text-nowrap
-      px-[10px] py-[15px]'>
+      '>
         Lookups
       </Link>
       <ul className=' hidden sm:flex  gap-[10px] justify-end font-medium'>
@@ -21,7 +22,7 @@ export default function Header() {
         <li>sign up</li>
       </ul>
 
-      <button className='flex sm:hidden justify-end font-semibold'>
+      <button className='flex sm:hidden justify-end font-semibold '>
         <Link to={"/profile"}>
           <Menu01Icon />
         </Link>
