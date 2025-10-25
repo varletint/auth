@@ -29,32 +29,13 @@ export default function Home() {
               Latest Lookups <HotPriceIcon size={20} className='' />
             </h1>
           </div>
-          <div className='crousel justify-center mt-3'>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-            '></div>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-            '></div>
-
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-              '></div>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-              '></div>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-              '></div>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-              '></div>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-              '></div>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-              '></div>
+          <div className='carousel'>
+            <div className='card'></div>
+            <div className='card'></div>
+            <div className='card'></div>
+            <div className='card'></div>
+            <div className='card'></div>
+            <div className='card'></div>
           </div>
           <div
             className='flex justify-between font-semibold 
@@ -65,32 +46,7 @@ export default function Home() {
               Food to Order <OrganicFoodIcon size={20} className='' />
             </h1>
           </div>
-          <div className='crousel justify-center mt-3'>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-            '></div>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-            '></div>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-            '></div>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-            '></div>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-            '></div>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-            '></div>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-            '></div>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-            '></div>
-          </div>
+
           <h1
             className=' font-semibold flex items-center gap-1.5 px-3 mt-10 
           '>
@@ -104,32 +60,6 @@ export default function Home() {
               Phone & Accessories <SmartPhone01Icon size={20} className='' />
             </h1>
             {/* <h1 className=' justify-end'>View All</h1> */}
-          </div>
-          <div className='crousel justify-center mt-3'>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-            '></div>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-            '></div>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-            '></div>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-            '></div>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-            '></div>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-            '></div>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-            '></div>
-            <div
-              className=' w-48 h-52 bg-red-600  flex-shrink-0
-            '></div>
           </div>
         </div>
       </div>

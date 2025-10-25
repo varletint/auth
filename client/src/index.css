@@ -7,26 +7,33 @@
   grid-template-columns: 50px 1fr 50px;
   grid-row: 50px;
 }
+.card {
+  flex: 0 0 12em;
+  padding: 1em;
+  align-content: center;
+  height: 12em;
+  background: #ff0000;
+}
 
-.crousel {
+.carousel {
   display: flex;
   /* width: 90%; */
   gap: 0.9rem;
   overflow-x: auto;
-  /* margin: 0.1em auto; */
+  margin: 1em auto;
   /* padding: 1px; */
   scroll-behavior: smooth;
-  anchor-name: --crousel;
+  anchor-name: --carousel;
   scroll-snap-type: x mandatory;
   /* justify-content: center; */
 }
 
-.crousel::-webkit-scrollbar {
+.carousel::-webkit-scrollbar {
   display: none;
 }
 
-.crousel::scroll-button(right),
-.crousel::scroll-button(left) {
+.carousel::scroll-button(right),
+.carousel::scroll-button(left) {
   /* content: "+"; */
   border: none;
   font-size: 2rem;
@@ -38,18 +45,18 @@
   height: 40px;
   cursor: pointer;
   position: fixed;
-  position-anchor: --crousel;
+  position-anchor: --carousel;
   position-area: right center;
   translate: -50%;
 }
 
-.crousel::scroll-button(left) {
+.carousel::scroll-button(left) {
   /* content: "-"; */
   position-area: left center;
   translate: 50%;
 }
 
-.crousel::scroll-button(right):disabled,
-.crousel::scroll-button(left):disabled {
+.carousel::scroll-button(right):disabled,
+.carousel::scroll-button(left):disabled {
   opacity: 0.5;
 }

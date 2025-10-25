@@ -8,7 +8,7 @@ export default function Footer() {
         to='/'
         className=' font-bold text-[15px] text-nowrap
       px-[10px] py-[15px]'>
-        KNT Lookups
+        Lookups
       </Link>
     </div>
   );
