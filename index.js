@@ -1,13 +1,15 @@
 import e from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import cors from "cors";
 
 const app = e();
+app.use(cors());
 app.use(e.json());
 dotenv.config();
-app.listen(3000, () => console.log("server connected"));
+// app.listen(3000, () => console.log("server connected"));
 
-app.use("/api/testing", async (req, res) => {
+app.get("/testing", async (req, res) => {
   res.status(200).json({
     message: "hell",
   });
@@ -27,3 +29,5 @@ app.use((err, req, res, next) => {
     statusCode,
   });
 });
+
+module.exports = app;
