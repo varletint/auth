@@ -1,10 +1,9 @@
-import express from "express";
+import e from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import cors from "cors";
 
 const app = e();
-app.use(cors());
+
 app.use(e.json());
 dotenv.config();
 
