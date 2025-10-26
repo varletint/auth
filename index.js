@@ -1,6 +1,7 @@
 import e from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import hellRoute from "./Routes/hello.route.js";
 
 const app = e();
 
@@ -10,11 +11,12 @@ dotenv.config();
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server running on port ${port}`));
 
-app.get("/", (req, res) => {
+app.get("/hell", (req, res) => {
   res.status(200).json({
     message: "hell",
   });
 });
+
 // mongoose
 //   .connect(process.env.MONGO_KEYS)
 //   .then(() => console.log("db connected"))
