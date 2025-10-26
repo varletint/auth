@@ -9,7 +9,7 @@ app.use(e.json());
 dotenv.config();
 // app.listen(3000, () => console.log("server connected"));
 
-app.get("/testing", async (req, res) => {
+app.get("/", async (req, res) => {
   res.status(200).json({
     message: "hell",
   });
