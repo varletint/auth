@@ -29,15 +29,7 @@ const userSchema = new mongoose.Schema(
     },
     postResetAt: {
       type: Date,
-      default: () => {
-        const now = new Date();
-        // const day = now.getDay();
-        // const diff = 7 - day;
-        const resetDate = new Date(now);
-        resetDate.setDate(now.getDate() + 7);
-        resetDate.setHours(0, 0, 0, 0);
-        return resetDate;
-      },
+      default: () => dayjs().add(7, "days").startOf("day").toDate(),
     },
   },
   { timestamps: true }

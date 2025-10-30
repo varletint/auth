@@ -1,9 +1,19 @@
 import e from "express";
+import bodyParser from "body-parser";
+
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import hellRoute from "./Routes/hello.route.js";
 
 const app = e();
+
+app.use(
+  bodyParser.json({
+    verify: (req, res, buf) => {
+      req.rawBody = buf.toString();
+    },
+  })
+);
 
 app.use(e.json());
 dotenv.config();
