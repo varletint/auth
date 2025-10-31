@@ -47,11 +47,15 @@ import e from "express";
 
 // module.exports = app;
 
+import testing from "./Routes/whatsapp.webhook.route.js";
+
 const app = e();
 
 app.get("/", (req, res) => {
   res.send("Hello from Vercel backend!");
 });
+
+app.use("/api", testing);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server running on port ${port}`));
