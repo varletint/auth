@@ -47,15 +47,11 @@
 
 // module.exports = app;
 
-import express from "express";
-// import testingRoute from "./Routes/whatsapp.webhook.route.js";
-
 const app = express();
-// app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("wwwwww");
+  res.send("Hello from Vercel backend!");
 });
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server running on port ${port}`));
-// app.use("/api", testingRoute);
