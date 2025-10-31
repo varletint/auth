@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import hellRoute from "./Routes/hello.route.js";
+import testingRoute from "./controller/webhook.controller.js";
 
 const app = e();
 
@@ -21,12 +22,12 @@ dotenv.config();
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server running on port ${port}`));
 
-app.use("/api", hellRoute);
-app.get("/hell", (req, res) => {
-  res.status(200).json({
-    message: "hell",
-  });
-});
+app.use("/api", testingRoute);
+// app.get("/hell", (req, res) => {
+//   res.status(200).json({
+//     message: "hell",
+//   });
+// });
 
 // mongoose
 //   .connect(process.env.MONGO_KEYS)
