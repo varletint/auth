@@ -51,7 +51,7 @@ import express from "express";
 // import testingRoute from "./Routes/whatsapp.webhook.route.js";
 
 const app = express();
-app.use(express.json());
+// app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("wwwwww");
