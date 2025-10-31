@@ -58,4 +58,4 @@ app.listen(port, () => console.log(`Server running on port ${port}`));
 app.get("/", (req, res) => {
   res.send("wwwwww");
 });
-app.use("/api", testingRoute);
+// app.use("/api", testingRoute);
