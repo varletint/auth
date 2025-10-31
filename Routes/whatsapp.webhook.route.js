@@ -11,6 +11,6 @@ const router = e.Router();
 //   createProduct
 // );
 
-router.get("/webhook", testing);
+router.get("/webhook", (req, res) => res.send("hek no"));
 
 export default router;
