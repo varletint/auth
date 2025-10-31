@@ -8,13 +8,13 @@ import testingRoute from "./controller/webhook.controller.js";
 
 const app = e();
 
-app.use(
-  bodyParser.json({
-    verify: (req, res, buf) => {
-      req.rawBody = buf.toString();
-    },
-  })
-);
+// app.use(
+//   bodyParser.json({
+//     verify: (req, res, buf) => {
+//       req.rawBody = buf.toString();
+//     },
+//   })
+// );
 
 app.use(e.json());
 dotenv.config();
