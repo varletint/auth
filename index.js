@@ -1,10 +1,10 @@
 import e from "express";
-import bodyParser from "body-parser";
+// import bodyParser from "body-parser";
 
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import hellRoute from "./Routes/hello.route.js";
 import testingRoute from "./Routes/whatsapp.webhook.route.js";
+import hellRoute from "./Routes/hello.route.js";
 
 const app = e();
 
@@ -23,11 +23,11 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server running on port ${port}`));
 
 app.use("/api", testingRoute);
-// app.get("/hell", (req, res) => {
-//   res.status(200).json({
-//     message: "hell",
-//   });
-// });
+app.get("/hell", (req, res) => {
+  res.status(200).json({
+    message: "hell",
+  });
+});
 
 // mongoose
 //   .connect(process.env.MONGO_KEYS)
