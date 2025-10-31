@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import hellRoute from "./Routes/hello.route.js";
-import testingRoute from "./controller/webhook.controller.js";
+import testingRoute from "./Routes/whatsapp.webhook.route.js";
 
 const app = e();
 
