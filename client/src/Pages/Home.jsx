@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../Components/Header";
 import {
   AdvertisimentIcon,
@@ -11,6 +11,21 @@ import {
 } from "hugeicons-react";
 
 export default function Home() {
+  const [apiData, setApiData] = useState([]);
+  console.log(apiData);
+
+  const fetchApiData = async () => {
+    const res = await fetch(`https://dummyjson.com/product?limit=10`);
+
+    const data = await res.json();
+
+    setApiData(data.products);
+  };
+
+  useEffect(() => {
+    fetchApiData();
+  }, []);
+
   return (
     <>
       <Header />
@@ -29,14 +44,25 @@ export default function Home() {
               Latest Lookups <HotPriceIcon size={20} className='' />
             </h1>
           </div>
-          <div className='carousel'>
+          {apiData && apiData.length > 0 && (
+            <div className='carousel'>
+              {apiData.map((product) => (
+                <div className='card' id={product.id}>
+                  <img
+                    src={product.images[0]}
+                    className=' w-full h-full object-cover'
+                    alt={product.title}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+          {/* <div className='card'></div>
             <div className='card'></div>
             <div className='card'></div>
             <div className='card'></div>
             <div className='card'></div>
-            <div className='card'></div>
-            <div className='card'></div>
-          </div>
+            <div className='card'></div> */}
           <div
             className='flex justify-between font-semibold 
             mt-10 px-3'>
