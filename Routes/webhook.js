@@ -11,6 +11,6 @@ router.get("/webhook", verifyWebhookFromWhatsapp);
 //   createProduct
 // );
 
-router.get("/webhook", testingWebhook);
+router.post("/webhook", testingWebhook);
 
 export default router;
