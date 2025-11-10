@@ -21,10 +21,10 @@ dotenv.config();
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server running on port ${port}`));
 
-// mongoose
-//   .connect(process.env.MONGO_KEYS)
-//   .then(() => console.log("db connected"))
-//   .catch((err) => console.log(err));
+mongoose
+  .connect(process.env.MONGO_KEYS)
+  .then(() => console.log("db connected"))
+  .catch((err) => console.log(err));
 
 app.use("/", testing);
 
