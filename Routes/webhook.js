@@ -4,7 +4,7 @@ import { verifyWebhookFromWhatsapp } from "../controller/verifyWhatsappWebhook.j
 import { testingWebhook } from "../controller/webhookController.js";
 
 const router = e.Router();
-router.get("/webhook", verifyWebhookFromWhatsapp);
+// router.get("/webhook", verifyWebhookFromWhatsapp);
 // router.post(
 //   "/webhook",
 //   express.raw({ type: "application/json" }),
