@@ -3,7 +3,7 @@ import Test from "../Models/testingModel.js";
 export const testingWebhook = async (req, res, next) => {
   const name = `testin ${Math.floor(Math.random() * 100)}`;
 
-  const newTest = new Test({ name });
+  const newTest = new Test({ name: "1ss" });
   try {
     await newTest.save();
 
