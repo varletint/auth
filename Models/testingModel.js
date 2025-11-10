@@ -9,6 +9,6 @@ const testingSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const test = mongoose.model("test", testingSchema);
+const Test = mongoose.model("test", testingSchema);
 
-export default test;
+export default Test;
