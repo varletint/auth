@@ -55,8 +55,6 @@ app.get("/", (req, res) => {
   res.send("Hello from Vercel backend!");
 });
 
-app.use("/api", testidummng);
-
 app.use("/api", testing);
 
 const port = process.env.PORT || 3000;
