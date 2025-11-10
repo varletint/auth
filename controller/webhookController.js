@@ -5,6 +5,7 @@ export const testingWebhook = async (req, res, next) => {
 
   try {
     await test.create({ name });
+    test.save();
 
     res.status(200).json({ message: "Data created successfully", name });
   } catch (error) {
