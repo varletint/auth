@@ -22,6 +22,7 @@ export default function Edit() {
 
       alert("Form submitted successfully!");
     } catch (error) {
+      alert(error);
       console.error("Error submitting form:", error);
     }
   };
