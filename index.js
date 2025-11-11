@@ -22,8 +22,8 @@ app.use(
   cors({
     origin: [
       "https://lookupsclient.vercel.app",
-      // "http://localhost:5173",
-      // "https://auth-fawn-eight.vercel.app",
+      "http://localhost:5173",
+      "https://auth-fawn-eight.vercel.app",
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
