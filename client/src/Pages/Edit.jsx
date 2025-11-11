@@ -19,6 +19,8 @@ export default function Edit() {
       });
       const data = await response.json();
       // console.log(data);
+
+      alert("Form submitted successfully!");
     } catch (error) {
       console.error("Error submitting form:", error);
     }

@@ -8,7 +8,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   server: {
     proxy: {
-      "/api": "https://lookupsbackend.vercel.app",
+      // "/api": "https://lookupsbackend.vercel.app",
     },
   },
   plugins: [react(), tailwindcss()],
