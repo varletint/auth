@@ -26,16 +26,13 @@ app.get("/testing", (req, res) => {
 
 app.post("/webhook", async (req, res) => {
   const { name } = req.body;
-
   try {
-    await Test.create({ name });
-    Test.save();
-    res.status(200).json({ message: "Data saved successfully", name: name });
+    const newTest = new Test({ name });
+    await newTest.save();
+    res.status(201).json({ success: true, message: "Data saved successfully" });
   } catch (error) {
-    console.error("Error saving to database:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ success: false, message: "Error saving data" });
   }
-  res;
 });
 
 app.use((err, req, res, next) => {
