@@ -5,6 +5,7 @@ import Register from "./Pages/Register";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import Profile from "./Pages/Profile";
+import Edit from "./Pages/Edit";
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/register' element={<Register />} />
-          <Route path='/profile' element={<Profile />} />
+          <Route path='/profile' element={<Edit />} />
         </Routes>
         {/* <Footer /> */}
       </BrowserRouter>

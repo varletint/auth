@@ -11,6 +11,6 @@ const router = e.Router();
 //   createProduct
 // );
 
-router.post("/webhook", e.json(), testingWebhook);
+router.post("/webhook", testingWebhook);
 
 export default router;

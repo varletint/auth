@@ -1,0 +1,42 @@
+import React, { useState } from "react";
+
+export default function Edit() {
+  const [name, setName] = useState("");
+  console.log(name);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(
+        "https://lookupsbackend.vercel.app/webhook",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name }),
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
+  return (
+    <div>
+      Edit
+      <form onSubmit={handleSubmit}>
+        <input
+          type='text'
+          placeholder='Name'
+          id='name'
+          className='bg-red-600'
+          onChange={(e) => setName(e.target.value)}
+        />
+        <button>Submit</button>
+      </form>
+    </div>
+  );
+}
