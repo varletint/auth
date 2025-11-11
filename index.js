@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
+import Test from "./Models/testingModel.js";
 
 dotenv.config();
 
@@ -23,8 +24,16 @@ app.get("/testing", (req, res) => {
   res.send("Testing endpoint is working!");
 });
 
-app.post("/webhook", (req, res) => {
+app.post("/webhook", async (req, res) => {
   const { name } = req.body;
+
+  try {
+    await Test.create({ name });
+    Test.save();
+  } catch (error) {
+    console.error("Error saving to database:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
   console.log("Received name:", name);
   res.json({ message: "Webhook received", name });
 });
