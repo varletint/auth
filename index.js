@@ -29,7 +29,7 @@ mongoose
   .then(() => console.log("db connected"))
   .catch((err) => console.log(err));
 
-app.use("/", testing);
+app.use("/", e.json(), testing);
 
 // app.use("/api", testing);
 
