@@ -12,6 +12,7 @@ export default function Edit() {
         {
           method: "POST",
           headers: {
+            "Access-Control-Allow-Origin": "https://lookupsbackend.vercel.app/",
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ name }),
