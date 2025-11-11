@@ -30,12 +30,12 @@ app.post("/webhook", async (req, res) => {
   try {
     await Test.create({ name });
     Test.save();
+    res.status(200).json({ message: "Data saved successfully", name: name });
   } catch (error) {
     console.error("Error saving to database:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
-  console.log("Received name:", name);
-  res.json({ message: "Webhook received", name });
+  res;
 });
 
 app.use((err, req, res, next) => {
