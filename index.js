@@ -19,7 +19,24 @@ const app = e();
 
 app.use(e.json());
 dotenv.config();
-app.use(cors());
+
+const allowedOrigins = [
+  "https://lookupsclient.vercel.app",
+  "http://localhost:3000",
+];
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true, // if you need cookies
+  })
+);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server running on port ${port}`));
