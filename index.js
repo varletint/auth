@@ -37,3 +37,14 @@ app.post("/webhook", async (req, res) => {
   console.log("Received name:", name);
   res.json({ message: "Webhook received", name });
 });
+
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal server error";
+
+  res.status(statusCode).json({
+    success: false,
+    message,
+    statusCode,
+  });
+});
