@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import Test from "./Models/testingModel.js";
+import testRoute from "./Routes/webhook.js";
 
 dotenv.config();
 
@@ -25,15 +26,25 @@ app.get("/testing", (req, res) => {
 });
 
 app.post("/webhook", async (req, res) => {
-  const { name } = req.body;
+  const name = `testin ${Math.floor(Math.random() * 100)}`;
+  const newTest = new Test({ name: name });
   try {
-    const newTest = new Test({ name });
     await newTest.save();
-    res.status(201).json({ success: true, message: "Data saved successfully" });
+    res.status(200).json({ message: "Data created successfully", name });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Error saving data" });
+    console.log(error);
   }
 });
+// app.post("/webhook", async (req, res) => {
+//   const { name } = req.body;
+//   try {
+//     const newTest = new Test({ name });
+//     await newTest.save();
+//     res.status(201).json({ success: true, message: "Data saved successfully" });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: "Error saving data" });
+//   }
+// });
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
