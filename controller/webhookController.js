@@ -10,7 +10,11 @@ export const creatPost = async (req, res, next) => {
       console.log("💬 Incoming message:", textBody);
 
       // const name = `testing ${Math.floor(Math.random() * 100)}`;
-      const newTest = new Product({ textBody });
+      const newTest = new Product({
+        name: textBody,
+        price: parseFloat(5000),
+        category: "uncategorized",
+      });
 
       await newTest.save();
       console.log(`💾 Saved: ${textBody}`);
