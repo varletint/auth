@@ -1,30 +1,27 @@
 import Product from "../Models/testingModel.js";
 
 export const creatPost = async (req, res, next) => {
+  const message = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
+  const textBody = message?.text?.body;
+
+  // Only run if a message text exists
+
+  console.log("💬 Incoming message:", textBody);
+
+  // const name = `testing ${Math.floor(Math.random() * 100)}`;
+  const newTest = new Product({
+    name: textBody,
+    price: parseFloat(5000),
+    category: "uncategorized",
+  });
+
   try {
-    const message = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
-    const textBody = message?.text?.body;
+    const savedProd = await newTest.save();
+    console.log(`Saved: ${savedProd}`);
 
-    // Only run if a message text exists
-    if (textBody) {
-      console.log("💬 Incoming message:", textBody);
-
-      // const name = `testing ${Math.floor(Math.random() * 100)}`;
-      const newTest = new Product({
-        name: textBody,
-        price: parseFloat(5000),
-        category: "uncategorized",
-      });
-
-      await newTest.save();
-      console.log(`💾 Saved: ${textBody}`);
-
-      res.status(200).json({ success: true, textBody });
-    } else {
-      res.sendStatus(200); // no text message, still must respond
-    }
+    res.status(200).json({ success: true, savedProd });
   } catch (error) {
-    console.error("❌ Error:", error);
+    console.error(" Error:", error);
     res.sendStatus(500);
   }
 };
