@@ -4,12 +4,13 @@ import dotenv from "dotenv";
 import cors from "cors";
 import Test from "./Models/testingModel.js";
 import testRoute from "./Routes/webhookRoute.js";
+import bodyParser from "body-parser";
 
 dotenv.config();
 
 const app = express();
 
-app.use(express.json());
+app.use(bodyParser.json());
 
 mongoose
   .connect(process.env.MONGO_KEYS)
