@@ -1,6 +1,6 @@
 import Product from "../Models/testingModel.js";
 
-export const creatPost = async (req, res, next) => {
+export const createPost = async (req, res, next) => {
   const message = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
   const textBody = message?.text?.body;
 
