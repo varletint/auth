@@ -2,13 +2,19 @@ import mongoose from "mongoose";
 
 const testingSchema = new mongoose.Schema(
   {
-    name: {
+    category: {
       type: String,
+    },
+    product: {
+      type: String,
+    },
+    price: {
+      type: Number,
     },
   },
   { timestamps: true }
 );
 
-const Test = mongoose.model("test", testingSchema);
+const Product = mongoose.model("Product", testingSchema);
 
-export default Test;
+export default Product;

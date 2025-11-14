@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import Test from "./Models/testingModel.js";
-import testRoute from "./Routes/webhook.js";
+import testRoute from "./Routes/webhookRoute.js";
 
 dotenv.config();
 
@@ -25,16 +25,21 @@ app.get("/testing", (req, res) => {
   res.send("Testing endpoint is working!");
 });
 
-app.post("/webhook", async (req, res) => {
-  const name = `testin ${Math.floor(Math.random() * 100)}`;
-  const newTest = new Test({ name: name });
-  try {
-    await newTest.save();
-    res.status(200).json({ message: "Data created successfully", name });
-  } catch (error) {
-    console.log(error);
-  }
-});
+app.get("/webhook", async (req, res) => {});
+// post whatsapp data
+
+app.post("/webhook", testRoute);
+
+// app.post("/webhook", async (req, res) => {
+//   const name = `testin ${Math.floor(Math.random() * 100)}`;
+//   const newTest = new Test({ name: name });
+//   try {
+//     await newTest.save();
+//     res.status(200).json({ message: "Data created successfully", name });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
 // app.post("/webhook", async (req, res) => {
 //   const { name } = req.body;
 //   try {
