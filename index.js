@@ -2,15 +2,15 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
+
 import Test from "./Models/testingModel.js";
 import testRoute from "./Routes/webhookRoute.js";
-import bodyParser from "body-parser";
 
 dotenv.config();
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(express.json());
 
 mongoose
   .connect(process.env.MONGO_KEYS)
