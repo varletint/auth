@@ -1,29 +1,45 @@
 import Product from "../Models/testingModel.js";
 
 export const createPost = async (req, res, next) => {
-  const message = req.body.entry?.changes?.value?.messages;
-  const textBody = message?.text?.body;
+  const bodyParams = req.body;
+  const toJson = JSON.stringify(bodyParams, null, 2);
 
-  // Only run if a message text exists
-
-  console.log("💬 Incoming message:", textBody);
-
-  // const name = `testing ${Math.floor(Math.random() * 100)}`;
-  const newTest = new Product({
-    name: textBody,
-    price: parseFloat(5000),
-    category: "uncategorized",
+  const newProd = new Product({
+    name: toJson,
+    category: JSON.stringify(bodyParams),
+    price: parseFloat(2000),
   });
 
   try {
-    const savedProd = await newTest.save();
-    console.log(`Saved: ${savedProd}`);
-
-    res.status(200).json({ success: true, savedProd });
+    const savedProd = newProd.save();
+    res.status(200).json(`name: ${savedProd}`);
   } catch (error) {
-    console.error(" Error:", error);
-    res.sendStatus(500);
+    return res.status(403);
   }
+
+  // const message = req.body.entry?.changes?.value?.messages;
+  // const textBody = message?.text?.body;
+
+  // // Only run if a message text exists
+
+  // console.log("💬 Incoming message:", textBody);
+
+  // // const name = `testing ${Math.floor(Math.random() * 100)}`;
+  // const newTest = new Product({
+  //   name: textBody,
+  //   price: parseFloat(5000),
+  //   category: "uncategorized",
+  // });
+
+  // try {
+  //   const savedProd = await newTest.save();
+  //   console.log(`Saved: ${savedProd}`);
+
+  //   res.status(200).json({ success: true, savedProd });
+  // } catch (error) {
+  //   console.error(" Error:", error);
+  //   res.sendStatus(500);
+  // }
 };
 
 // export const createPost = async (req, res, next) => {
