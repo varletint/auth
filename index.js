@@ -26,7 +26,20 @@ app.get("/testing", (req, res) => {
   res.send("Testing endpoint is working!");
 });
 
-app.get("/webhook", async (req, res) => {});
+app.get("/webhook", async (req, res) => {
+  const mode = req.query["hub.mode"];
+  const token = req.query["hub.verify_token"];
+  const challenge = req.query["hub.challenge"];
+  const myToken = "verify";
+  if (mode === "subscribe" && token === myToken) {
+    console.log("Webhook verified!");
+    return res.status(200).send(challenge);
+  } else {
+    return res.sendStatus(403);
+  }
+
+  res.status(200).json({ message: "Webhook verified successfully" });
+});
 // post whatsapp data
 
 app.post("/webhook", testRoute);
