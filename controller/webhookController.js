@@ -17,9 +17,7 @@ export const createPost = async (req, res, next) => {
 
     // Save to database
     const savedMessage = await Product.create({
-      from,
-      body,
-      timestamp,
+      product: body,
     });
 
     return res.status(200).json({
