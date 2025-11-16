@@ -17,7 +17,7 @@ export const createPost = async (req, res, next) => {
 
     // Save to database
     const savedMessage = await Product.create({
-      product: body,
+      product: JSON.stringify(entry, null, 2),
     });
 
     return res.status(200).json({
