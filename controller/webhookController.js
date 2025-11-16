@@ -3,7 +3,7 @@ import Product from "../Models/testingModel.js";
 export const createPost = async (req, res, next) => {
   try {
     // Extract WhatsApp message from webhook
-    const entry = req.body.entry;
+    const entry = req.body.entry?.[0];
     const changes = entry?.changes?.[0];
     const message = changes?.value?.messages?.[0];
 
@@ -12,12 +12,12 @@ export const createPost = async (req, res, next) => {
     }
 
     const from = message.from;
-    const body = message.text?.body;
+    const body = message.image?.caption;
     const timestamp = message.timestamp;
 
     // Save to database
     const savedMessage = await Product.create({
-      product: JSON.stringify(entry),
+      product: body,
     });
 
     return res.status(200).json({
