@@ -1,5 +1,37 @@
 import Product from "../Models/testingModel.js";
 
+export const createPost = async (req, res, next) => {
+  try {
+    // Extract WhatsApp message from webhook
+    const entry = req.body.entry?.[0];
+    const changes = entry?.changes?.[0];
+    const message = changes?.value?.messages?.[0];
+
+    if (!message) {
+      return res.status(400).json({ error: "No message found in webhook" });
+    }
+
+    const from = message.from;
+    const body = message.text?.body;
+    const timestamp = message.timestamp;
+
+    // Save to database
+    const savedMessage = await Product.create({
+      from,
+      body,
+      timestamp,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Message saved",
+      data: savedMessage,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // export const createPost = async (req, res, next) => {
 //   const bodyParams = req.body;
 //   const toJson = JSON.stringify(bodyParams, null, 2);
@@ -42,43 +74,43 @@ import Product from "../Models/testingModel.js";
 // }
 // };
 
-export const createPost = async (req, res, next) => {
-  const data = req.body;
-  const entries = data.entry || [];
+// export const createPost = async (req, res, next) => {
+//   const data = req.body;
+//   const entries = data.entry || [];
 
-  for (const entry of entries) {
-    const changes = entry.change || [];
+//   for (const entry of entries) {
+//     const changes = entry.change || [];
 
-    for (const change of changes) {
-      const value = change.value || {};
-      const messages = value.messages || [];
+//     for (const change of changes) {
+//       const value = change.value || {};
+//       const messages = value.messages || [];
 
-      for (const msg of messages) {
-        const caption = msg.text?.body || "";
+//       for (const msg of messages) {
+//         const caption = msg.text?.body || "";
 
-        if (!caption?.trim()) {
-          return "can't post empty message";
-        }
-        const parts = caption.split(",").map((p) => p.trim());
-        const [category = "Uncategorized", name = "Unnamed", priceStr = "0"] =
-          parts;
+//         if (!caption?.trim()) {
+//           return "can't post empty message";
+//         }
+//         const parts = caption.split(",").map((p) => p.trim());
+//         const [category = "Uncategorized", name = "Unnamed", priceStr = "0"] =
+//           parts;
 
-        const price = parseFloat(priceStr) || 0;
-        const newProduct = new Product({
-          category: category || "Uncategorized",
-          name: name || "Unnamed",
-          price,
-        });
+//         const price = parseFloat(priceStr) || 0;
+//         const newProduct = new Product({
+//           category: category || "Uncategorized",
+//           name: name || "Unnamed",
+//           price,
+//         });
 
-        try {
-          const savedProduct = await Product.save();
-          return res
-            .status(200)
-            .json({ success: false, message: savedProduct });
-        } catch (error) {
-          return res.status(401).json({ success: false, message: error });
-        }
-      }
-    }
-  }
-};
+//         try {
+//           const savedProduct = await Product.save();
+//           return res
+//             .status(200)
+//             .json({ success: false, message: savedProduct });
+//         } catch (error) {
+//           return res.status(401).json({ success: false, message: error });
+//         }
+//       }
+//     }
+//   }
+// };
