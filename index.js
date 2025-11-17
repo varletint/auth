@@ -57,7 +57,7 @@ app.post("/webhook", async (req, res) => {
           }),
         }
       );
-      response();
+      sendMe();
       return res.sendStatus(200);
     } catch (error) {
       console.log(error);
