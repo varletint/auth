@@ -40,23 +40,22 @@ export const createPost = async (req, res, next) => {
         user,
         state: "waiting_for_item",
       });
-      availableDataPlans(user);
+      await availableDataPlans(user);
       return res.sendStatus(200);
     }
     let state = (await UserState.findOne({ user }))?.state || null;
 
     if (state === "waiting_for_item") {
       await updateState(user, "WAITING_FOR_NUMBER", { selectedItem: text });
-      askForPhoneNumber(user);
-      return res.sendStatus(200);
+      await askForPhoneNumber(user);
     }
 
     if (state === "WAITING_FOR_NUMBER") {
       await updateState(user, "DONE", { phone: user });
-      purchaseSuccessful(user);
       const savedMessage = await Product.create({
         product: `${user} ${text}`,
       });
+      await purchaseSuccessful(user);
       return res.sendStatus(200);
     }
 
@@ -65,6 +64,7 @@ export const createPost = async (req, res, next) => {
     //   message: "Message saved",
     //   data: savedMessage,
     // });
+    return res.sendStatus(200);
   } catch (err) {
     next(err);
   }
