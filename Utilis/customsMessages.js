@@ -69,7 +69,7 @@ export const askForPhoneNumber = async (to) => {
         to: `${to}`,
         type: "text",
         text: {
-          body: "Hello! This is a custom message instead of a template.d",
+          body: "Provide your phone number to proceed with the purchase.",
         },
       }),
     }
@@ -77,4 +77,20 @@ export const askForPhoneNumber = async (to) => {
 
   //   return res;
 };
-export const confirmPurchase = () => {};
+export const purchaseSuccessful = (to) => {
+  fetch(`https://graph.facebook.com/v22.0/886326117894676/messages`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.WAB_API_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      messaging_product: "whatsapp",
+      to: `${to}`,
+      type: "text",
+      text: {
+        body: "Purchase successful! Your data plan will be activated shortly.",
+      },
+    }),
+  });
+};

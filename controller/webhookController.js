@@ -3,6 +3,7 @@ import UserState from "../Models/userSateModel.js";
 import {
   askForPhoneNumber,
   availableDataPlans,
+  purchaseSuccessful,
 } from "../Utilis/customsMessages.js";
 
 async function updateState(user, state, extra = {}) {
@@ -46,14 +47,15 @@ export const createPost = async (req, res, next) => {
 
     if (state === "waiting_for_item") {
       await updateState(user, "WAITING_FOR_NUMBER", { selectedItem: text });
+      askForPhoneNumber(user);
       return res.sendStatus(200);
     }
 
     if (state === "WAITING_FOR_NUMBER") {
-      askForPhoneNumber(user);
-      await updateState(user, "DONE", { phone: text });
+      await updateState(user, "DONE", { phone: user });
+      purchaseSuccessful(user);
       const savedMessage = await Product.create({
-        product: text,
+        product: `${user} ${text}`,
       });
       return res.sendStatus(200);
     }
