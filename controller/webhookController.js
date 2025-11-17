@@ -14,9 +14,8 @@ async function updateState(user, state, extra = {}) {
   );
 }
 
-export const createPost = async (req, res, next) => {
+export const dataPurchaseProcess = async (req, res, next) => {
   try {
-    // Extract WhatsApp message from webhook
     const entry = req.body.entry?.[0];
     const changes = entry?.changes?.[0];
     const message = changes?.value?.messages?.[0];
@@ -27,48 +26,72 @@ export const createPost = async (req, res, next) => {
 
     const user = message.from;
     const text = message.text?.body;
-    const timestamp = message.timestamp;
-
-    // await UserState.create({
-    //   user: user,
-    //   state: " ",
-    // });
 
     if (text.toLowerCase().trim() === "buy data".trim()) {
-      // await updateState(user, "waiting_for_item");
-      await UserState.create({
-        user,
-        state: "waiting_for_item",
-      });
       await availableDataPlans(user);
       return res.sendStatus(200);
     }
-    let state = (await UserState.findOne({ user }))?.state || null;
-
-    if (state === "waiting_for_item") {
-      await updateState(user, "WAITING_FOR_NUMBER", { selectedItem: text });
-      await askForPhoneNumber(user);
-    }
-
-    if (state === "WAITING_FOR_NUMBER") {
-      await updateState(user, "DONE", { phone: user });
-      const savedMessage = await Product.create({
-        product: `${user} ${text}`,
-      });
-      await purchaseSuccessful(user);
-      return res.sendStatus(200);
-    }
-
-    // return res.status(200).json({
-    //   success: true,
-    //   message: "Message saved",
-    //   data: savedMessage,
-    // });
     return res.sendStatus(200);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    console.log(error);
   }
 };
+
+// export const createPost = async (req, res, next) => {
+//   try {
+//     // Extract WhatsApp message from webhook
+//     const entry = req.body.entry?.[0];
+//     const changes = entry?.changes?.[0];
+//     const message = changes?.value?.messages?.[0];
+
+//     if (!message) {
+//       return res.status(400).json({ error: "No message found in webhook" });
+//     }
+
+//     const user = message.from;
+//     const text = message.text?.body;
+//     const timestamp = message.timestamp;
+
+//     // await UserState.create({
+//     //   user: user,
+//     //   state: " ",
+//     // });
+
+//     if (text.toLowerCase().trim() === "buy data".trim()) {
+//       // await updateState(user, "waiting_for_item");
+//       // await UserState.create({
+//       //   user,
+//       //   state: "waiting_for_item",
+//       // });
+//       await availableDataPlans(user);
+//       return res.sendStatus(200);
+//     }
+//     // let state = (await UserState.findOne({ user }))?.state || null;
+
+//     // if (state === "waiting_for_item") {
+//     //   await updateState(user, "WAITING_FOR_NUMBER", { selectedItem: text });
+//     //   await askForPhoneNumber(user);
+//     // }
+
+//     // if (state === "WAITING_FOR_NUMBER") {
+//     //   await updateState(user, "DONE", { phone: user });
+//     //   const savedMessage = await Product.create({
+//     //     product: `${user} ${text}`,
+//     //   });
+//     //   await purchaseSuccessful(user);
+//     //   return res.sendStatus(200);
+//     // }
+
+//     // return res.status(200).json({
+//     //   success: true,
+//     //   message: "Message saved",
+//     //   data: savedMessage,
+//     // });
+//     return res.sendStatus(200);
+//   } catch (err) {
+//     next(err);
+//   }
+// };
 
 // export const createPost = async (req, res, next) => {
 //   const bodyParams = req.body;
