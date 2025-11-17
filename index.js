@@ -57,13 +57,14 @@ app.post("/webhook", async (req, res) => {
           }),
         }
       );
-      sendMe();
       return res.sendStatus(200);
     } catch (error) {
       console.log(error);
       return res.sendStatus(500);
     }
   };
+  sendMe();
+  return res.sendStatus(200);
 });
 
 // app.post("/webhook", async (req, res) => {
