@@ -37,7 +37,7 @@ app.post("/webhook", async (req, res) => {
   if (text.trim() === "hi") {
     try {
       const sendMessage = async () => {
-        const res = await fetch(
+        const resp = await fetch(
           `https://graph.facebook.com/v22.0/886326117894676/messages`,
           {
             method: "POST",
@@ -94,9 +94,10 @@ app.post("/webhook", async (req, res) => {
           }
         );
 
-        console.log(res.body);
+        console.log(resp.body);
       };
       sendMessage();
+      return res.sendStatus(200);
     } catch (error) {
       alert(error);
     }
