@@ -28,7 +28,6 @@ export const createPost = async (req, res, next) => {
     //   user: user,
     //   state: " ",
     // });
-    let state = (await UserState.findOne({ user }))?.state || null;
 
     if (text.toLowercase() === "buy data") {
       // await updateState(user, "waiting_for_item");
@@ -38,6 +37,7 @@ export const createPost = async (req, res, next) => {
       });
       return res.sendStatus(200);
     }
+    let state = (await UserState.findOne({ user }))?.state || null;
 
     if (state === "waiting_for_item") {
       await updateState(user, "WAITING_FOR_NUMBER", { selectedItem: text });
