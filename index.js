@@ -35,11 +35,11 @@ app.post("/webhook", async (req, res) => {
   const user = message.from;
   const text = message.text?.body?.toLowerCase();
   if (!text.trim() === "hi") {
-    return res.sendStatus(403);
+    return res.sendStatus(401);
   }
-  const sendMe = async () => {
-    try {
-      const response = await fetch(
+  try {
+    const sendMe = async () => {
+      const resp = await fetch(
         `https://graph.facebook.com/v22.0/886326117894676/messages`,
         {
           method: "POST",
@@ -48,23 +48,59 @@ app.post("/webhook", async (req, res) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            //   messaging_product: "whatsapp",
+            //   to: "2347063255405",
+            //   type: "text",
+            //   text: {
+            //     body: "Hello! This is a custom message instead of a template.d",
+            //   },
+
             messaging_product: "whatsapp",
-            to: "2347063255405",
-            type: "text",
-            text: {
-              body: "Hello! This is a custom message instead of a template.",
+            to: `${user}`,
+            type: "interactive",
+            interactive: {
+              type: "button",
+              body: {
+                text: "Available Plans",
+              },
+              action: {
+                buttons: [
+                  {
+                    type: "reply",
+                    reply: {
+                      id: "500mb_299",
+                      title: ` 500MB ${new Intl.NumberFormat("en-NG", {
+                        style: "currency",
+                        currency: "NGN",
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      }).format(299)}`,
+                    },
+                  },
+                  {
+                    type: "reply",
+                    reply: {
+                      id: "1gb_379",
+                      title: ` 1GB ${new Intl.NumberFormat("en-NG", {
+                        style: "currency",
+                        currency: "NGN",
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      }).format(379)}`,
+                    },
+                  },
+                ],
+              },
             },
           }),
         }
       );
-      return res.sendStatus(200);
-    } catch (error) {
-      console.log(error);
-      return res.sendStatus(500);
-    }
-  };
-  sendMe();
-  return res.sendStatus(200);
+    };
+    sendMe();
+    res.sendStatus(200);
+  } catch (error) {
+    return error;
+  }
 });
 
 // app.post("/webhook", async (req, res) => {
