@@ -42,7 +42,7 @@ app.get("/webhook", async (req, res) => {
 });
 // post whatsapp data
 
-app.get("/webhook", (req, res) => {
+app.get("/webhook", async (req, res) => {
   rea.status(200).json({ message: "hello world" });
 });
 
