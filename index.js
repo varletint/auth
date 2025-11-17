@@ -56,7 +56,7 @@ app.post("/webhook", async (req, res) => {
             //   },
 
             messaging_product: "whatsapp",
-            to: `${user}`,
+            to: "2347063255405",
             type: "interactive",
             interactive: {
               type: "button",
