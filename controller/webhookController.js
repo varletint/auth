@@ -1,5 +1,9 @@
 import Product from "../Models/testingModel.js";
 import UserState from "../Models/userSateModel.js";
+import dotenv from "dotenv";
+
+dotenv.config();
+
 import {
   askForPhoneNumber,
   availableDataPlans,
@@ -28,8 +32,54 @@ export const dataPurchaseProcess = async (req, res, next) => {
     const text = message.text?.body;
 
     if (text.toLowerCase().trim() === "buy data".trim()) {
-      await availableDataPlans(user);
-      return res.sendStatus(200);
+      return await fetch(
+        `https://graph.facebook.com/v22.0/886326117894676/messages`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${process.env.WAB_API_TOKEN}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            messaging_product: "whatsapp",
+            to: `${to}`,
+            type: "interactive",
+            interactive: {
+              type: "button",
+              body: { text: "Available Plans" },
+              action: {
+                buttons: [
+                  {
+                    type: "reply",
+                    reply: {
+                      id: "500mb_299",
+                      title: `500MB ${new Intl.NumberFormat("en-NG", {
+                        style: "currency",
+                        currency: "NGN",
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      }).format(299)}`,
+                    },
+                  },
+                  {
+                    type: "reply",
+                    reply: {
+                      id: "1gb_379",
+                      title: `1GB ${new Intl.NumberFormat("en-NG", {
+                        style: "currency",
+                        currency: "NGN",
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      }).format(379)}`,
+                    },
+                  },
+                ],
+              },
+            },
+          }),
+        }
+      );
+      // return res.sendStatus(200);
     }
     return res.sendStatus(200);
   } catch (error) {
