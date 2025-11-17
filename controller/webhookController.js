@@ -1,5 +1,9 @@
 import Product from "../Models/testingModel.js";
 import UserState from "../Models/userSateModel.js";
+import {
+  askForPhoneNumber,
+  availableDataPlans,
+} from "../Utilis/customsMessages.js";
 
 async function updateState(user, state, extra = {}) {
   await UserState.findOneAndUpdate(
@@ -29,12 +33,13 @@ export const createPost = async (req, res, next) => {
     //   state: " ",
     // });
 
-    if (text.toLowerCase() === "buy data") {
+    if (text.toLowerCase().trim() === "buy data".trim()) {
       // await updateState(user, "waiting_for_item");
       await UserState.create({
         user,
         state: "waiting_for_item",
       });
+      availableDataPlans(user);
       return res.sendStatus(200);
     }
     let state = (await UserState.findOne({ user }))?.state || null;
@@ -45,6 +50,7 @@ export const createPost = async (req, res, next) => {
     }
 
     if (state === "WAITING_FOR_NUMBER") {
+      askForPhoneNumber(user);
       await updateState(user, "DONE", { phone: text });
       const savedMessage = await Product.create({
         product: text,
