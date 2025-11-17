@@ -14,7 +14,7 @@ export const availableDataPlans = async (to) => {
       body: JSON.stringify({
         messaging_product: "whatsapp",
         to: `${to}`,
-        //   type: "interactive",
+        type: "interactive",
         interactive: {
           type: "button",
           body: {
@@ -56,26 +56,24 @@ export const availableDataPlans = async (to) => {
 };
 
 export const askForPhoneNumber = async (to) => {
-  const sendHello = async () => {
-    const res = await fetch(
-      `https://graph.facebook.com/v22.0/886326117894676/messages`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.WAB_API_TOKEN}`,
-          "Content-Type": "application/json",
+  const res = await fetch(
+    `https://graph.facebook.com/v22.0/886326117894676/messages`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.WAB_API_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messaging_product: "whatsapp",
+        to: `${to}`,
+        type: "text",
+        text: {
+          body: "Hello! This is a custom message instead of a template.d",
         },
-        body: JSON.stringify({
-          messaging_product: "whatsapp",
-          to: `${to}`,
-          type: "text",
-          text: {
-            body: "Hello! This is a custom message instead of a template.d",
-          },
-        }),
-      }
-    );
-  };
+      }),
+    }
+  );
 
   //   return res;
 };
