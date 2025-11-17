@@ -1,6 +1,6 @@
 // // import { response } from "express";
-// import dotenv from "dotenv";
-// dotenv.config();
+import dotenv from "dotenv";
+dotenv.config();
 
 // export const availableDataPlans = async (to) => {
 //   const res = await fetch(
@@ -96,16 +96,13 @@
 //   return res.sendStatus(200);
 // };
 
-import dotenv from "dotenv";
-dotenv.config();
-
-export const availableDataPlans = async (to) => {
+export const availableDataPlans = async (to, env) => {
   return await fetch(
     `https://graph.facebook.com/v22.0/886326117894676/messages`,
     {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${process.env.WAB_API_TOKEN}`,
+        Authorization: `Bearer ${env}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -150,6 +147,8 @@ export const availableDataPlans = async (to) => {
     }
   );
 };
+
+console.log(await availableDataPlans("2347063255405"));
 
 export const askForPhoneNumber = async (to) => {
   return await fetch(
