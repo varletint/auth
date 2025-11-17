@@ -114,7 +114,9 @@ export const availableDataPlans = async (to) => {
         type: "interactive",
         interactive: {
           type: "button",
-          body: { text: "Available Plans" },
+          body: {
+            text: "Available Plans",
+          },
           action: {
             buttons: [
               {

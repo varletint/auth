@@ -37,12 +37,12 @@ export const dataPurchaseProcess = async (req, res, next) => {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${process.env.WAB_API_TOKEN}`,
+            Authorization: `Bearer EAALamZBywGWUBPxt5cnGOZBGRJkLvLUcO4ZC2BpAMZCJngqIphCD01i9u14ONSlKwDhsbZAWguqGE2vJr6mUOQCR8bkzP19ZAZCJJ4ayX4YNDmD23b1n68eAwYRsllyqWibcqKBRQcZBJwl0mc3avncVnXOPhs7zSNrICbpYLpswAzvsFJ5g6Xm23rs5LjYwMRhv9BRFiWqH8o4YpRoMDMtBkJjm9WzsPhFwWUWZA9EIglmmBCYUZD`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
             messaging_product: "whatsapp",
-            to: `${user}`,
+            to: `2347063255405`,
             type: "interactive",
             interactive: {
               type: "button",
