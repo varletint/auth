@@ -1,5 +1,13 @@
 import Product from "../Models/testingModel.js";
 
+async function updateState(user, state, extra = {}) {
+  await UserState.findOneAndUpdate(
+    { user },
+    { user, state, ...extra },
+    { upsert: true }
+  );
+}
+
 export const createPost = async (req, res, next) => {
   try {
     // Extract WhatsApp message from webhook
@@ -11,20 +19,33 @@ export const createPost = async (req, res, next) => {
       return res.status(400).json({ error: "No message found in webhook" });
     }
 
-    const from = message.from;
-    const body = message.image?.caption;
+    const user = message.from;
+    const text = message.text?.body;
     const timestamp = message.timestamp;
 
-    // Save to database
-    const savedMessage = await Product.create({
-      product: body,
-    });
+    if (text.toLowercase() === "buy data") {
+      await updateState(user, "waiting_for_item");
+      return res.sendStatus(200);
+    }
 
-    return res.status(200).json({
-      success: true,
-      message: "Message saved",
-      data: savedMessage,
-    });
+    if (state === "waiting_for_item") {
+      await updateState(user, "WAITING_FOR_NUMBER", { selectedItem: text });
+      return res.sendStatus(200);
+    }
+
+    if (state === "WAITING_FOR_NUMBER") {
+      await updateState(user, "DONE", { phone: text });
+      const savedMessage = await Product.create({
+        product: text,
+      });
+      return res.sendStatus(200);
+    }
+
+    // return res.status(200).json({
+    //   success: true,
+    //   message: "Message saved",
+    //   data: savedMessage,
+    // });
   } catch (err) {
     next(err);
   }
