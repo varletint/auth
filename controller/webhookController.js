@@ -16,9 +16,9 @@ export const createPost = async (req, res, next) => {
     const changes = entry?.changes?.[0];
     const message = changes?.value?.messages?.[0];
 
-    // if (!message) {
-    //   return res.status(400).json({ error: "No message found in webhook" });
-    // }
+    if (!message) {
+      return res.status(400).json({ error: "No message found in webhook" });
+    }
 
     const user = message.from;
     const text = message.text?.body;
