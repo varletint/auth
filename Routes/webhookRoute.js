@@ -16,6 +16,8 @@ const router = e.Router();
 //   createProduct
 // );
 
-router.post("/webhook", responseMessage);
+router.post("/webhook", async (req, res) => {
+  console.log("goo");
+});
 
 export default router;
