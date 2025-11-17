@@ -34,69 +34,72 @@ app.post("/webhook", async (req, res) => {
 
   const user = message.from;
   const text = message.text?.body?.toLowerCase();
-  try {
-    const sendMessage = async () => {
-      const res = await fetch(
-        `https://graph.facebook.com/v22.0/886326117894676/messages`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer EAALamZBywGWUBPzHoziI9yZAJdkpyfLZBvnNtFJA6fipWDpq9tCpK2iAEnC4BGyZAZAiCckSnakPiWyK6Gi0ZBzrRe2m6GYZCvUsgVFXS7ZAEyzjUAMyqFQ64Qz5xcXHAPZCIZAFHnJHDcAmfJtddD0U0ZB1XNNGZBBM97lzpCx6Ux0DawlGn2ZA9bXelUEawyNXdjgxHYoekav7P2L81SkSFZBZA3Dx8P73wcmqMGwNGdc2SFx8MP9cAZDZD`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            //   messaging_product: "whatsapp",
-            //   to: "2347063255405",
-            //   type: "text",
-            //   text: {
-            //     body: "Hello! This is a custom message instead of a template.d",
-            //   },
-
-            messaging_product: "whatsapp",
-            to: "2347063255405",
-            type: "interactive",
-            interactive: {
-              type: "button",
-              body: {
-                text: "Available Plans",
-              },
-              action: {
-                buttons: [
-                  {
-                    type: "reply",
-                    reply: {
-                      id: "500mb_299",
-                      title: ` 500MB ${new Intl.NumberFormat("en-NG", {
-                        style: "currency",
-                        currency: "NGN",
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0,
-                      }).format(299)}`,
-                    },
-                  },
-                  {
-                    type: "reply",
-                    reply: {
-                      id: "1gb_379",
-                      title: ` 1GB ${new Intl.NumberFormat("en-NG", {
-                        style: "currency",
-                        currency: "NGN",
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0,
-                      }).format(379)}`,
-                    },
-                  },
-                ],
-              },
+  if (text.trim() === "hi") {
+    try {
+      const sendMessage = async () => {
+        const res = await fetch(
+          `https://graph.facebook.com/v22.0/886326117894676/messages`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer EAALamZBywGWUBPzHoziI9yZAJdkpyfLZBvnNtFJA6fipWDpq9tCpK2iAEnC4BGyZAZAiCckSnakPiWyK6Gi0ZBzrRe2m6GYZCvUsgVFXS7ZAEyzjUAMyqFQ64Qz5xcXHAPZCIZAFHnJHDcAmfJtddD0U0ZB1XNNGZBBM97lzpCx6Ux0DawlGn2ZA9bXelUEawyNXdjgxHYoekav7P2L81SkSFZBZA3Dx8P73wcmqMGwNGdc2SFx8MP9cAZDZD`,
+              "Content-Type": "application/json",
             },
-          }),
-        }
-      );
+            body: JSON.stringify({
+              //   messaging_product: "whatsapp",
+              //   to: "2347063255405",
+              //   type: "text",
+              //   text: {
+              //     body: "Hello! This is a custom message instead of a template.d",
+              //   },
 
-      console.log(res.body);
-    };
-    sendMessage();
-  } catch (error) {
-    alert(error);
+              messaging_product: "whatsapp",
+              to: "2347063255405",
+              type: "interactive",
+              interactive: {
+                type: "button",
+                body: {
+                  text: "Available Plans",
+                },
+                action: {
+                  buttons: [
+                    {
+                      type: "reply",
+                      reply: {
+                        id: "500mb_299",
+                        title: ` 500MB ${new Intl.NumberFormat("en-NG", {
+                          style: "currency",
+                          currency: "NGN",
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        }).format(299)}`,
+                      },
+                    },
+                    {
+                      type: "reply",
+                      reply: {
+                        id: "1gb_379",
+                        title: ` 1GB ${new Intl.NumberFormat("en-NG", {
+                          style: "currency",
+                          currency: "NGN",
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        }).format(379)}`,
+                      },
+                    },
+                  ],
+                },
+              },
+            }),
+          }
+        );
+
+        console.log(res.body);
+      };
+      sendMessage();
+    } catch (error) {
+      alert(error);
+    }
   }
+  res.statusCode(403);
 });
