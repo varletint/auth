@@ -29,7 +29,7 @@ export const createPost = async (req, res, next) => {
     //   state: " ",
     // });
 
-    if (text.toLowercase() === "buy data") {
+    if (text.toLowerCase() === "buy data") {
       // await updateState(user, "waiting_for_item");
       await UserState.create({
         user,
