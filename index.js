@@ -49,7 +49,7 @@ app.post("/webhook", async (req, res) => {
           },
           body: JSON.stringify({
             messaging_product: "whatsapp",
-            to: `${user}`,
+            to: `2347063255405`,
             type: "text",
             text: {
               body: "Hello! This is a custom message instead of a template.d",
