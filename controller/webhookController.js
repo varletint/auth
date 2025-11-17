@@ -32,11 +32,11 @@ export const dataPurchaseProcess = async (req, res, next) => {
     const text = message.text?.body;
 
     if (text.toLowerCase().trim() === "buy data") {
-      await availableDataPlans(
-        user,
-        "EAALamZBywGWUBPxt5cnGOZBGRJkLvLUcO4ZC2BpAMZCJngqIphCD01i9u14ONSlKwDhsbZAWguqGE2vJr6mUOQCR8bkzP19ZAZCJJ4ayX4YNDmD23b1n68eAwYRsllyqWibcqKBRQcZBJwl0mc3avncVnXOPhs7zSNrICbpYLpswAzvsFJ5g6Xm23rs5LjYwMRhv9BRFiWqH8o4YpRoMDMtBkJjm9WzsPhFwWUWZA9EIglmmBCYUZD"
-      );
-      /* return await fetch(
+      // await availableDataPlans(
+      //   user,
+      //   "EAALamZBywGWUBPxt5cnGOZBGRJkLvLUcO4ZC2BpAMZCJngqIphCD01i9u14ONSlKwDhsbZAWguqGE2vJr6mUOQCR8bkzP19ZAZCJJ4ayX4YNDmD23b1n68eAwYRsllyqWibcqKBRQcZBJwl0mc3avncVnXOPhs7zSNrICbpYLpswAzvsFJ5g6Xm23rs5LjYwMRhv9BRFiWqH8o4YpRoMDMtBkJjm9WzsPhFwWUWZA9EIglmmBCYUZD"
+      // );
+      return await fetch(
         `https://graph.facebook.com/v22.0/886326117894676/messages`,
         {
           method: "POST",
@@ -82,7 +82,7 @@ export const dataPurchaseProcess = async (req, res, next) => {
             },
           }),
         }
-      );*/
+      );
       // return res.sendStatus(200);
     }
     return res.sendStatus(200);

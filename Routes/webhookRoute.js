@@ -6,6 +6,8 @@ import {
   dataPurchaseProcess,
 } from "../controller/webhookController.js";
 
+import { responseMessage } from "../controller/respose.js";
+
 const router = e.Router();
 // router.get("/webhook", verifyWebhookFromWhatsapp);
 // router.post(
@@ -14,6 +16,6 @@ const router = e.Router();
 //   createProduct
 // );
 
-router.post("/webhook", dataPurchaseProcess);
+router.post("/webhook", responseMessage);
 
 export default router;
