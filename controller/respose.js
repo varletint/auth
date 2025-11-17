@@ -11,7 +11,7 @@ export const responseMessage = async (req, res) => {
     const user = message.from;
     const text = message.text?.body?.toLowerCase();
 
-    if (text.toLowerCase().trim() === "hi") {
+    if (text.trim() === "hi") {
       const waRes = await fetch(
         "https://graph.facebook.com/v22.0/886326117894676/messages",
         {
