@@ -23,14 +23,19 @@ export const createPost = async (req, res, next) => {
     const user = message.from;
     const text = message.text?.body;
     const timestamp = message.timestamp;
+
+    await UserState.create({
+      user: user,
+      state: "waiting_for_item",
+    });
     let state = (await UserState.findOne({ user }))?.state || null;
 
     if (text.toLowercase() === "buy data") {
       // await updateState( user, "waiting_for_item" );
-      await UserState.create({
-        user,
-        state: "waiting_for_item",
-      });
+      // await UserState.create({
+      //   user,
+      //   state: "waiting_for_item",
+      // });
       return res.sendStatus(200);
     }
 
