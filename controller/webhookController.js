@@ -42,7 +42,7 @@ export const dataPurchaseProcess = async (req, res, next) => {
           },
           body: JSON.stringify({
             messaging_product: "whatsapp",
-            to: `${to}`,
+            to: `${user}`,
             type: "interactive",
             interactive: {
               type: "button",
