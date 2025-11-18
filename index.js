@@ -34,7 +34,7 @@ app.post("/webhook", async (req, res) => {
 
   const user = message.from;
   const text = message.text?.body?.toLowerCase();
-  if (!text.trim() === "hi") {
+  if (text.trim() !== "hi") {
     return res.sendStatus(401);
   }
   try {
