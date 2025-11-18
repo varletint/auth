@@ -1,4 +1,7 @@
 import express from "express";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 
@@ -44,7 +47,7 @@ app.post("/webhook", async (req, res) => {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer EAALamZBywGWUBPZBVp17tO9aUzcaCRInG3m1IZAB6LFEEJinWxT94o3jtJ3EddVNyRZA4oSksYEnOrx990kwnMIi02ZAEGT0DdbvFjyJ8f0sk9nPnJGZAXoKpTho6OYQq3vZC90OCBsIB8IqCrZAQ7bQ3yFiS3qvOSrfQdV1Ew1nvLg7AIbMzhHgoRsA8mfLD7UAewZDZD`,
+            Authorization: `Bearer ${process.env.WAB_API_TOKEN}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
