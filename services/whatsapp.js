@@ -7,7 +7,7 @@ const base = `https://graph.facebook.com/v22.0/886326117894676/messages`;
 //   console.warn("WA_TOKEN or PHONE_NUMBER_ID not set in env");
 // }
 
-export const sendMessage = async (to, payload) => {
+export const sendMessage = async (payload) => {
   // return await axios.post(base, payload, {
   //   headers: { Authorization: `Bearer ${token}` },
   // });
@@ -25,7 +25,7 @@ export const sendMessage = async (to, payload) => {
 };
 
 export const sendText = (to, text) =>
-  sendMessage(to, {
+  sendMessage({
     messaging_product: "whatsapp",
     to,
     type: "text",
@@ -33,7 +33,7 @@ export const sendText = (to, text) =>
   });
 
 export const sendButtons = (to, bodyText, buttons) =>
-  sendMessage(to, {
+  sendMessage({
     messaging_product: "whatsapp",
     to,
     type: "interactive",
@@ -45,7 +45,7 @@ export const sendButtons = (to, bodyText, buttons) =>
   });
 
 export const sendList = (to, headerText, bodyText, sections) =>
-  sendMessage(to, {
+  sendMessage({
     messaging_product: "whatsapp",
     to,
     type: "interactive",
@@ -53,6 +53,9 @@ export const sendList = (to, headerText, bodyText, sections) =>
       type: "list",
       header: { type: "text", text: headerText },
       body: { text: bodyText },
-      action: { button: "Choose", sections },
+      action: {
+        button: "Choose",
+        sections,
+      },
     },
   });
