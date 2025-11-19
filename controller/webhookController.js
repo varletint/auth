@@ -28,7 +28,11 @@ export const responseMessage = async (req, res) => {
     const textHI = msg.text.body.trim();
 
     if (textHI.toLowerCase() === "hi") {
-      await sendButtons;
+      await sendButtons(from, `${from}, your are Welcome`, MAIN_MENU_BUTTONS);
+
+      user.state = STATES.MAIN_MENU;
+      await touch();
+      return res.sendStatus(200);
     }
 
     // ------------------------------
