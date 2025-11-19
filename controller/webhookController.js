@@ -190,10 +190,60 @@ export const responseMessage = async (req, res) => {
     //  DEFAULT — Show Main Menu
     // ------------------------------
     await sendButtons(from, "Welcome — choose an option:", MAIN_MENU_BUTTONS);
+    const sendBTN = async () => {
+      return await fetch(
+        `https://graph.facebook.com/v22.0/886326117894676/messages`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${process.env.WAB_API_TOKEN}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            messaging_product: "whatsapp",
+            to: `${from}`,
+            type: "interactive",
+            interactive: {
+              type: "button",
+              body: {
+                text: "Welcome — choose an option:",
+              },
+              action: {
+                buttons: [
+                  {
+                    type: "reply",
+                    reply: {
+                      id: "buy_data",
+                      title: "Buy Data",
+                    },
+                  },
+                  {
+                    type: "reply",
+                    reply: {
+                      id: "buy_airtime",
+                      title: "Buy Airtime",
+                    },
+                  },
+                  {
+                    type: "reply",
+                    reply: {
+                      id: "support",
+                      title: "Support",
+                    },
+                  },
+                ],
+              },
+            },
+          }),
+        }
+      );
+    };
+    await sendBTN();
     user.state = STATES.MAIN_MENU;
     await touch();
     return res.sendStatus(200);
   } catch (err) {
+    await sendText(from, `error${error}`);
     console.error("WebhookController error", err);
     res.sendStatus(500);
   }
