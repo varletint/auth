@@ -74,7 +74,7 @@ export const availableDataPlans = async (user) => {
   }
 };
 
-// export const askForPhoneNumber = async (to) => {
+// export const askForPhoneNumber = async (user) => {
 //   return await fetch(
 //     `https://graph.facebook.com/v22.0/886326117894676/messages`,
 //     {
@@ -85,33 +85,54 @@ export const availableDataPlans = async (user) => {
 //       },
 //       body: JSON.stringify({
 //         messaging_product: "whatsapp",
-//         to: `${to}`,
+//         to: `${user}`,
 //         type: "text",
 //         text: {
-//           body: "Provide your phone number to proceed with the purchase.",
+//           body: "Provide with a phone number to proceed with the purchase.",
 //         },
 //       }),
 //     }
 //   );
 // };
 
-// export const purchaseSuccessful = async (to) => {
-//   return await fetch(
-//     `https://graph.facebook.com/v22.0/886326117894676/messages`,
-//     {
-//       method: "POST",
-//       headers: {
-//         Authorization: `Bearer ${process.env.WAB_API_TOKEN}`,
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         messaging_product: "whatsapp",
-//         to: `${to}`,
-//         type: "text",
-//         text: {
-//           body: "Purchase successful! Your data plan will be activated shortly.",
+// export const purchaseSuccessful = async (user) => {
+//   try {
+//     return await fetch(
+//       `https://graph.facebook.com/v22.0/886326117894676/messages`,
+//       {
+//         method: "POST",
+//         headers: {
+//           Authorization: `Bearer ${process.env.WAB_API_TOKEN}`,
+//           "Content-Type": "application/json",
 //         },
-//       }),
-//     }
-//   );
+//         body: JSON.stringify({
+//           messaging_product: "whatsapp",
+//           to: `${to}`,
+//           type: "text",
+//           text: {
+//             body: "Purchase successful! Your data plan will be activated shortly.",
+//           },
+//         }),
+//       }
+//     );
+//   } catch (error) {
+//     return await fetch(
+//       `https://graph.facebook.com/v22.0/886326117894676/messages`,
+//       {
+//         method: "POST",
+//         headers: {
+//           Authorization: `Bearer ${process.env.WAB_API_TOKEN}`,
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({
+//           messaging_product: "whatsapp",
+//           to: `${user}`,
+//           type: "text",
+//           text: {
+//             body: `Error while Processing. : ${error}`,
+//           },
+//         }),
+//       }
+//     );
+//   }
 // };
