@@ -28,7 +28,7 @@ app.get("/webhook", async (req, res) => {
   res.status(200).json({ message: "Webhook verified successfully" });
 });
 
-app.use("/webhook", webhookRoute);
+app.use("/", webhookRoute);
 
 // app.post("/webhook", async (req, res) => {
 //   const entry = req.body.entry?.[0];
