@@ -2,6 +2,7 @@ import e from "express";
 // import { createProduct } from "../controller/whatsapp.webhook.controller.js";
 import { verifyWebhookFromWhatsapp } from "../controller/verifyWhatsappWebhook.js";
 import {
+  checkwebhook,
   createPost,
   dataPurchaseProcess,
 } from "../controller/webhookController.js";
@@ -14,6 +15,7 @@ const router = e.Router();
 //   createProduct
 // );
 
-router.post("/webhook", dataPurchaseProcess);
+// router.get("/webhook", dataPurchaseProcess);
+router.get("/webhook", checkwebhook);
 
 export default router;

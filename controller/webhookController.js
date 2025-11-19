@@ -18,6 +18,10 @@ async function updateState(user, state, extra = {}) {
   );
 }
 
+export const checkwebhook = async (req, res, next) => {
+  res.status(200).json({ message: "Webhook verified successfully" });
+};
+
 export const dataPurchaseProcess = async (req, res, next) => {
   const entry = req.body.entry?.[0];
   const changes = entry?.changes?.[0];
