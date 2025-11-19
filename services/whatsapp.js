@@ -24,10 +24,10 @@ export const sendMessage = async (payload) => {
   );
 };
 
-export const sendText = (to, text) =>
+export const sendText = (from, text) =>
   sendMessage({
     messaging_product: "whatsapp",
-    to,
+    to: `${from}`,
     type: "text",
     text: { body: text },
   });
