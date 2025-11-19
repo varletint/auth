@@ -25,6 +25,12 @@ export const responseMessage = async (req, res) => {
 
     const now = Date.now();
 
+    const textHI = msg.text.body.trim();
+
+    if (textHI.toLowerCase() === "hi") {
+      await sendButtons;
+    }
+
     // ------------------------------
     //  SESSION TIMEOUT HANDLING
     // ------------------------------
@@ -189,13 +195,13 @@ export const responseMessage = async (req, res) => {
     // ------------------------------
     //  DEFAULT — Show Main Menu
     // ------------------------------
-    await sendButtons(from, `${from}, your are Welcome`, MAIN_MENU_BUTTONS);
+    // await sendButtons(from, `${from}, your are Welcome`, MAIN_MENU_BUTTONS);
 
-    user.state = STATES.MAIN_MENU;
-    await touch();
-    return res.sendStatus(200);
+    // user.state = STATES.MAIN_MENU;
+    // await touch();
+    // return res.sendStatus(200);
   } catch (err) {
-    await sendText(from, `error${error}`);
+    await sendText(from, `error${err}`);
     console.error("WebhookController error", err);
     res.sendStatus(500);
   }
