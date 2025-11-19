@@ -8,7 +8,7 @@ const base = `https://graph.facebook.com/v22.0/886326117894676/messages`;
 // }
 
 export const sendMessage = async (to, payload) => {
-  return axios.post(base, payload, {
+  return await axios.post(base, payload, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
