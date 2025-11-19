@@ -4,11 +4,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-import {
-  askForPhoneNumber,
-  availableDataPlans,
-  purchaseSuccessful,
-} from "../Utilis/customsMessages.js";
+import { availableDataPlans } from "../Utilis/customsMessages.js";
 
 async function updateState(user, state, extra = {}) {
   await UserState.findOneAndUpdate(
