@@ -8,9 +8,20 @@ const base = `https://graph.facebook.com/v22.0/886326117894676/messages`;
 // }
 
 export const sendMessage = async (to, payload) => {
-  return await axios.post(base, payload, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  // return await axios.post(base, payload, {
+  //   headers: { Authorization: `Bearer ${token}` },
+  // });
+  return await fetch(
+    `https://graph.facebook.com/v22.0/886326117894676/messages`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.WAB_API_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ payload }),
+    }
+  );
 };
 
 export const sendText = (to, text) =>
