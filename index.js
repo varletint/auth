@@ -34,58 +34,7 @@ app.get("/webhook", async (req, res) => {
   res.status(200).json({ message: "Webhook verified successfully" });
 });
 
-app.post("/webhook", async (req, res) => {
-  const sendBTN = async () => {
-    return await fetch(
-      `https://graph.facebook.com/v22.0/886326117894676/messages`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.WAB_API_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          messaging_product: "whatsapp",
-          to: `2347063255405`,
-          type: "interactive",
-          interactive: {
-            type: "button",
-            body: {
-              text: "Welcome — choose an option:",
-            },
-            action: {
-              buttons: [
-                {
-                  type: "reply",
-                  reply: {
-                    id: "buy_data",
-                    title: "Buy Data",
-                  },
-                },
-                {
-                  type: "reply",
-                  reply: {
-                    id: "buy_airtime",
-                    title: "Buy Airtime",
-                  },
-                },
-                {
-                  type: "reply",
-                  reply: {
-                    id: "support",
-                    title: "Support",
-                  },
-                },
-              ],
-            },
-          },
-        }),
-      }
-    );
-  };
-  await sendBTN();
-  res.sendStatus(200);
-});
+app.post("/", webhookRoute);
 
 // app.post("/webhook", async (req, res) => {
 //   const entry = req.body.entry?.[0];
