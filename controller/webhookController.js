@@ -22,18 +22,19 @@ export const responseMessage = async (req, res) => {
     let user =
       (await UserState.findOne({ phone: from })) ||
       (await UserState.create({ phone: from }));
+    await user.save();
 
     const now = Date.now();
 
-    const textHI = msg.text.body.trim();
+    // const textHI = msg.text.body.trim();
 
-    if (textHI.toLowerCase() === "hi") {
-      await sendButtons(from, `${from}, your are Welcome`, MAIN_MENU_BUTTONS);
+    // if (textHI.toLowerCase() === "hi") {
+    //   await sendButtons(from, `${from}, your are Welcome`, MAIN_MENU_BUTTONS);
 
-      user.state = STATES.MAIN_MENU;
-      await touch();
-      return res.sendStatus(200);
-    }
+    //   user.state = STATES.MAIN_MENU;
+    //   // await touch();
+    //   return res.sendStatus(200);
+    // }
 
     // ------------------------------
     //  SESSION TIMEOUT HANDLING
