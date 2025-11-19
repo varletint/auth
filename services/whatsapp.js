@@ -32,10 +32,10 @@ export const sendText = (from, text) =>
     text: { body: text },
   });
 
-export const sendButtons = (to, bodyText, buttons) =>
+export const sendButtons = (from, bodyText, buttons) =>
   sendMessage({
     messaging_product: "whatsapp",
-    to,
+    to: `${from}`,
     type: "interactive",
     interactive: {
       type: "button",
@@ -44,10 +44,10 @@ export const sendButtons = (to, bodyText, buttons) =>
     },
   });
 
-export const sendList = (to, headerText, bodyText, sections) =>
+export const sendList = (from, headerText, bodyText, sections) =>
   sendMessage({
     messaging_product: "whatsapp",
-    to,
+    to: `${from}`,
     type: "interactive",
     interactive: {
       type: "list",

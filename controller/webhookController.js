@@ -20,7 +20,7 @@ export const responseMessage = async (req, res) => {
     const textHI = msg.text.body.trim();
 
     if (textHI.toLowerCase() === "hi") {
-      await sendText(from, "welcome", MAIN_MENU_BUTTONS);
+      await sendButtons(from, "welcome", MAIN_MENU_BUTTONS);
       return res.sendStatus(200);
     }
 
