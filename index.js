@@ -84,6 +84,7 @@ app.post("/webhook", async (req, res) => {
     );
   };
   await sendBTN();
+  res.sendStatus(200);
 });
 
 // app.post("/webhook", async (req, res) => {
