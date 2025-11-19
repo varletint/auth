@@ -19,7 +19,7 @@ export const sendMessage = async (to, payload) => {
         Authorization: `Bearer ${process.env.WAB_API_TOKEN}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ payload }),
+      body: JSON.stringify(payload),
     }
   );
 };
