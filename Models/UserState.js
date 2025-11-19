@@ -25,4 +25,6 @@ userStateSchema.pre("save", function (next) {
   next();
 });
 
-export default mongoose.model("UserState", userStateSchema);
+const UserState = mongoose.model("UserState", userStateSchema);
+
+export default UserState;

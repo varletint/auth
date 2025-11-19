@@ -10,14 +10,20 @@ const app = express();
 
 app.use(express.json());
 
-mongoose
-  .connect(process.env.MONGO_KEYS)
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+const startServer = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_KEYS); // <-- wait for DB
+    console.log("Connected to MongoDB");
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
-});
+    app.listen(3000, () => {
+      console.log("Server is running on port 3000");
+    });
+  } catch (err) {
+    console.error("MongoDB connection error:", err);
+  }
+};
+
+startServer();
 
 app.get("/webhook", async (req, res) => {
   const mode = req.query["hub.mode"];
