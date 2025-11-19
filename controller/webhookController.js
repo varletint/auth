@@ -200,11 +200,11 @@ export const responseMessage = async (req, res) => {
     // ------------------------------
     //  DEFAULT — Show Main Menu
     // ------------------------------
-    // await sendButtons(from, `${from}, your are Welcome`, MAIN_MENU_BUTTONS);
+    await sendButtons(from, `${from}, your are Welcome`, MAIN_MENU_BUTTONS);
 
-    // user.state = STATES.MAIN_MENU;
-    // await touch();
-    // return res.sendStatus(200);
+    user.state = STATES.MAIN_MENU;
+    await touch();
+    return res.sendStatus(200);
   } catch (err) {
     const entry = req.body.entry?.[0];
     const msg = entry?.changes?.[0]?.value?.messages?.[0];
