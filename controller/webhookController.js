@@ -205,7 +205,11 @@ export const responseMessage = async (req, res) => {
     // await touch();
     // return res.sendStatus(200);
   } catch (err) {
-    await sendText(from, `error${err}`);
+    const entry = req.body.entry?.[0];
+    const msg = entry?.changes?.[0]?.value?.messages?.[0];
+    const from = msg.from;
+
+    await sendText(from, `error: ${err}`);
     console.error("WebhookController error", err);
     res.sendStatus(500);
   }
