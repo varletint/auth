@@ -31,11 +31,7 @@ router.post("/webhook", async (req, res) => {
       const chat = text.toLowerCase().trim();
 
       if (chat === "hi" || chat === "hello") {
-        await sendButtons(
-          from,
-          `${from} What can i do for you?`,
-          MAIN_MENU_BUTTONS
-        );
+        await sendButtons(from, `What can i do for you?`, MAIN_MENU_BUTTONS);
         return res.sendStatus(200);
       }
     }
