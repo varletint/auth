@@ -128,6 +128,8 @@ router.post("/webhook", async (req, res) => {
         ]);
 
         user.state = STATES.SELECTING_PLAN;
+        user.markModified("tempData");
+        await user.save();
         await touch();
         return res.sendStatus(200);
       }
@@ -143,6 +145,8 @@ router.post("/webhook", async (req, res) => {
         );
 
         user.state = STATES.ENTER_PHONE;
+        user.markModified("tempData");
+        await user.save();
         await touch();
         return res.sendStatus(200);
       }
