@@ -115,22 +115,17 @@ router.post("/webhook", async (req, res) => {
       if (user.state === STATES.SELECTING_NETWORK) {
         user.tempData.network = id.includes("mtn") ? "MTN" : "Airtel";
 
-        const rows = Object.entries(PLAN_MAP).map(([key, v]) => ({
+        const rowss = Object.entries(PLAN_MAP).map(([key, v]) => ({
           id: key,
           title: v.desc,
         }));
 
-        await sendList(
-          from,
-          `${user.tempData.network} Plans`,
-          "Choose a plan",
-          [
-            {
-              title: "Plans",
-              rows: rows,
-            },
-          ]
-        );
+        await sendList(from, `MTN Plans`, "Choose a plan", [
+          {
+            title: "Plans",
+            rows: rowss,
+          },
+        ]);
 
         user.state = STATES.SELECTING_PLAN;
         await touch();
