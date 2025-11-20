@@ -14,7 +14,7 @@ export const responseMessage = async (req, res) => {
     // Safely extract message
     const entry = req.body.entry?.[0];
     const msg = entry?.changes?.[0]?.value?.messages?.[0];
-    if (!msg) return res.sendStatus(200);
+    // if (!msg) return res.sendStatus(200);
 
     const from = msg.from;
     // const textHI = msg.text.body.trim();
