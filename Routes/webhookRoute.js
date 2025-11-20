@@ -19,8 +19,8 @@ router.post("/webhook", async (req, res) => {
     const text = message.text?.body;
 
     // if (text.toLowerCase().trim() === "hi".trim()) {
-    await sendButtons(from, `, your are Welcome`, MAIN_MENU_BUTTONS);
-    return res.sendStatus(200);
+    // await sendButtons(from, `, your are Welcome`, MAIN_MENU_BUTTONS);
+    // return res.sendStatus(200);
     // }
 
     const button = message?.interactive?.button_reply;
