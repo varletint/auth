@@ -9,11 +9,21 @@ import { MAIN_MENU_BUTTONS } from "../utils/templates.js";
 export const responseMessage = async (req, res) => {
   try {
     const entry = req.body.entry?.[0];
-    const msg = entry?.changes?.[0]?.value?.messages?.[0];
-    const from = msg.from;
+    const changes = entry?.changes?.[0];
+    const message = changes?.value?.messages?.[0];
 
-    await sendText(from, "working");
-    return res.sendStatus(200);
+    if (!message) {
+      return res.status(400).json({ error: "No message found in webhook" });
+    }
+
+    const from = message.from;
+    const text = message.text?.body;
+
+    if (text.toLowerCase().trim() === "hi".trim()) {
+      await sendText(from, "working");
+      return res.sendStatus(200);
+    }
+    res.sendStatus(200);
   } catch (err) {
     const entry = req.body.entry?.[0];
     const msg = entry?.changes?.[0]?.value?.messages?.[0];

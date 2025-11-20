@@ -37,6 +37,8 @@ export const sendText = (from, text) =>
     text: { body: text },
   });
 
+// console.log(await sendText(2347063255405, "hello"));
+
 export const sendButtons = (from, bodyText, buttons) =>
   sendMessage({
     messaging_product: "whatsapp",
