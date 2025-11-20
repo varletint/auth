@@ -82,9 +82,9 @@ router.post("/webhook", async (req, res) => {
     }
 
     // ---------------- DEFAULT MESSAGE ----------------
-    await sendButtons(from, "Hello, you are Welcome", MAIN_MENU_BUTTONS);
+    // await sendButtons(from, "Hello, you are Welcome", MAIN_MENU_BUTTONS);
 
-    return res.sendStatus(200);
+    // return res.sendStatus(200);
   } catch (err) {
     const entry = req.body.entry?.[0];
     const msg = entry?.changes?.[0]?.value?.messages?.[0];
