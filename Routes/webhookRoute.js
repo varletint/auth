@@ -43,6 +43,7 @@ router.post("/webhook", async (req, res) => {
     let user =
       (await UserState.findOne({ phone: from })) ||
       (await UserState.create({ phone: from }));
+    user.tempData = {};
     await user.save();
 
     const now = Date.now();
