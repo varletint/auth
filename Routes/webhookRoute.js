@@ -116,22 +116,23 @@ router.post("/webhook", async (req, res) => {
 
       // Selecting Network
       if (user.state === STATES.SELECTING_NETWORK) {
-        user.tempData.network = id.includes("mtn") ? "MTN" : "Airtel";
+        // user.tempData.network = id.includes("mtn") ? "MTN" : "Airtel";
 
-        const rowss = Object.entries(PLAN_MAP).map(([key, v]) => ({
-          id: key,
-          title: v.desc,
-        }));
+        // const rowss = Object.entries(PLAN_MAP).map(([key, v]) => ({
+        //   id: key,
+        //   title: v.desc,
+        // }));
 
-        await sendList(from, `MTN Plans`, "Choose a plan", [
-          {
-            title: "Plans",
-            rows: rowss,
-          },
-        ]);
+        // await sendList(from, `MTN Plans`, "Choose a plan", [
+        //   {
+        //     title: "Plans",
+        //     rows: rowss,
+        //   },
+        // ]);
+        await sendText(from, "at selecting state");
 
         user.state = STATES.SELECTING_PLAN;
-        user.markModified("tempData");
+        // user.markModified("tempData");
         await user.save();
         await touch();
         return res.sendStatus(200);
