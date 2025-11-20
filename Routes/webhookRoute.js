@@ -24,7 +24,10 @@ router.post("/webhook", async (req, res) => {
       return res.sendStatus(200);
     }
 
-    const text = message?.text?.body;
+    const text =
+      message?.text?.body ||
+      message?.interactive?.button_reply?.id ||
+      message?.interactive?.list_reply?.id;
 
     const button = message?.interactive?.button_reply;
     const list = message?.interactive?.list_reply;
@@ -49,15 +52,15 @@ router.post("/webhook", async (req, res) => {
     const now = Date.now();
     const MENU_TIMEOUT_SECONDS = 300;
     const timeoutSeconds = Number(MENU_TIMEOUT_SECONDS || 300);
-    if (now - new Date(user.lastUpdated).getTime() > timeoutSeconds * 1000) {
-      user.state = STATES.MAIN_MENU;
-      user.tempData = {};
-      user.lastUpdated = new Date();
-      await user.save();
+    // if (now - new Date(user.lastUpdated).getTime() > timeoutSeconds * 1000) {
+    //   user.state = STATES.MAIN_MENU;
+    //   user.tempData = {};
+    //   user.lastUpdated = new Date();
+    //   await user.save();
 
-      await sendText(from, "Session expired, starting over.");
-      return res.sendStatus(200);
-    }
+    //   await sendText(from, "Session expired, starting over.");
+    //   return res.sendStatus(200);
+    // }
 
     const touch = async () => {
       user.lastUpdated = new Date();
@@ -145,14 +148,16 @@ router.post("/webhook", async (req, res) => {
         );
 
         user.state = STATES.ENTER_PHONE;
+
         user.markModified("tempData");
         await user.save();
         await touch();
         return res.sendStatus(200);
       }
-      if (text && user.state === STATES.ENTER_PHONE) {
+      let phone_number = text.trim();
+      if (phone_number && user.state === STATES.ENTER_PHONE) {
         // Validate phone number
-        if (!/^0\d{10}$/.test(text)) {
+        if (!/^0\d{10}$/.test(phone_number)) {
           await sendText(
             from,
             "Invalid phone number.\nEnter an 11-digit number like 08012345678."

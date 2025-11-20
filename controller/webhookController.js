@@ -147,12 +147,9 @@ export const responseMessage = async (req, res) => {
 //           title: v.desc,
 //         }));
 
-//         await sendList(
-//           from,
-//           `${user.tempData.network} Plans`,
-//           "Choose a plan",
-//           [{ title: "Plans", rows }]
-//         );
+await sendList(from, `${user.tempData.network} Plans`, "Choose a plan", [
+  { title: "Plans", rows },
+]);
 
 //         user.state = STATES.SELECTING_PLAN;
 //         await touch();
