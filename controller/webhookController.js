@@ -9,7 +9,7 @@ import { MAIN_MENU_BUTTONS } from "../utils/templates.js";
 export const responseMessage = async (req, res) => {
   try {
     // Save webhook for debugging (non-blocking)
-    AuditLog.create({ type: "webhook", payload: req.body }).catch(() => {});
+    // AuditLog.create({ type: "webhook", payload: req.body }).catch(() => {});
 
     // Safely extract message
     const entry = req.body.entry?.[0];
@@ -17,43 +17,43 @@ export const responseMessage = async (req, res) => {
     if (!msg) return res.sendStatus(200);
 
     const from = msg.from;
-    const textHI = msg.text.body.trim();
+    // const textHI = msg.text.body.trim();
 
-    if (textHI.toLowerCase() === "hi") {
-      await sendButtons(from, `${from}, your are Welcome`, MAIN_MENU_BUTTONS);
+    // if (textHI.toLowerCase() === "hi") {
+    // await sendButtons('2347063255405', `, your are Welcome`, MAIN_MENU_BUTTONS);
 
-      user.state = STATES.MAIN_MENU;
-      // await touch();
-      return res.sendStatus(200);
-    }
+    // user.state = STATES.MAIN_MENU;
+    // await touch();
+    // return res.sendStatus(200);
+    // }
 
     // Load or create user state
-    let user =
-      (await UserState.findOne({ phone: from })) ||
-      (await UserState.create({ phone: from }));
-    await user.save();
+    // let user =
+    //   (await UserState.findOne({ phone: from })) ||
+    //   (await UserState.create({ phone: from }));
+    // await user.save();
 
-    const now = Date.now();
+    // const now = Date.now();
 
     // ------------------------------
     //  SESSION TIMEOUT HANDLING
     // ------------------------------
-    const timeoutSeconds = Number(process.env.MENU_TIMEOUT_SECONDS || 300);
-    if (now - new Date(user.lastUpdated).getTime() > timeoutSeconds * 1000) {
-      user.state = STATES.MAIN_MENU;
-      user.tempData = {};
-      user.lastUpdated = new Date();
-      await user.save();
+    // const timeoutSeconds = Number(process.env.MENU_TIMEOUT_SECONDS || 300);
+    // if (now - new Date(user.lastUpdated).getTime() > timeoutSeconds * 1000) {
+    //   user.state = STATES.MAIN_MENU;
+    //   user.tempData = {};
+    //   user.lastUpdated = new Date();
+    //   await user.save();
 
-      await sendText(from, "Session expired — starting over.");
-      return res.sendStatus(200);
-    }
+    //   await sendText(from, "Session expired — starting over.");
+    //   return res.sendStatus(200);
+    // }
 
     // Helper: Update timestamp on every action
-    const touch = async () => {
-      user.lastUpdated = new Date();
-      await user.save();
-    };
+    // const touch = async () => {
+    //   user.lastUpdated = new Date();
+    //   await user.save();
+    // };
 
     // ------------------------------
     //  BUTTON REPLIES
@@ -69,8 +69,8 @@ export const responseMessage = async (req, res) => {
           { type: "reply", reply: { id: "network_airtel", title: "Airtel" } },
         ]);
 
-        user.state = STATES.SELECTING_NETWORK;
-        await touch();
+        // user.state = STATES.SELECTING_NETWORK;
+        // await touch();
         return res.sendStatus(200);
       }
 
@@ -86,8 +86,8 @@ export const responseMessage = async (req, res) => {
           },
         ]);
 
-        user.state = STATES.SELECTING_PLAN;
-        await touch();
+        // user.state = STATES.SELECTING_PLAN;
+        // await touch();
         return res.sendStatus(200);
       }
 
@@ -106,46 +106,46 @@ export const responseMessage = async (req, res) => {
     //  LIST REPLIES
     // ------------------------------
     const list = msg?.interactive?.list_reply;
-    if (list) {
-      const id = list.id;
-      const title = list.title;
+    // if (list) {
+    //   const id = list.id;
+    //   const title = list.title;
 
-      // Selecting Network
-      if (user.state === STATES.SELECTING_NETWORK) {
-        user.tempData.network = id.includes("mtn") ? "MTN" : "Airtel";
+    //   // Selecting Network
+    //   if (user.state === STATES.SELECTING_NETWORK) {
+    //     user.tempData.network = id.includes("mtn") ? "MTN" : "Airtel";
 
-        const rows = Object.entries(PLAN_MAP).map(([key, v]) => ({
-          id: key,
-          title: v.desc,
-        }));
+    //     const rows = Object.entries(PLAN_MAP).map(([key, v]) => ({
+    //       id: key,
+    //       title: v.desc,
+    //     }));
 
-        await sendList(
-          from,
-          `${user.tempData.network} Plans`,
-          "Choose a plan",
-          [{ title: "Plans", rows }]
-        );
+    //     await sendList(
+    //       from,
+    //       `${user.tempData.network} Plans`,
+    //       "Choose a plan",
+    //       [{ title: "Plans", rows }]
+    //     );
 
-        user.state = STATES.SELECTING_PLAN;
-        await touch();
-        return res.sendStatus(200);
-      }
+    //     user.state = STATES.SELECTING_PLAN;
+    //     await touch();
+    //     return res.sendStatus(200);
+    //   }
 
-      // Selecting Plan
-      if (user.state === STATES.SELECTING_PLAN) {
-        user.tempData.planId = id;
-        user.tempData.planTitle = title;
+    //   // Selecting Plan
+    //   if (user.state === STATES.SELECTING_PLAN) {
+    //     user.tempData.planId = id;
+    //     user.tempData.planTitle = title;
 
-        await sendText(
-          from,
-          `You selected ${title}.\nEnter the phone number to load (e.g. 08012345678)`
-        );
+    //     await sendText(
+    //       from,
+    //       `You selected ${title}.\nEnter the phone number to load (e.g. 08012345678)`
+    //     );
 
-        user.state = STATES.ENTER_PHONE;
-        await touch();
-        return res.sendStatus(200);
-      }
-    }
+    //     user.state = STATES.ENTER_PHONE;
+    //     await touch();
+    //     return res.sendStatus(200);
+    //   }
+    // }
 
     // ------------------------------
     //  TEXT INPUT (ENTERING PHONE)
@@ -153,53 +153,53 @@ export const responseMessage = async (req, res) => {
     const text =
       typeof msg?.text?.body === "string" ? msg.text.body.trim() : null;
 
-    if (text && user.state === STATES.ENTER_PHONE) {
-      // Validate phone number
-      if (!/^0\d{10}$/.test(text)) {
-        await sendText(
-          from,
-          "Invalid phone number.\nEnter an 11-digit number like 08012345678."
-        );
-        return res.sendStatus(200);
-      }
+    // if (text && user.state === STATES.ENTER_PHONE) {
+    //   // Validate phone number
+    //   if (!/^0\d{10}$/.test(text)) {
+    //     await sendText(
+    //       from,
+    //       "Invalid phone number.\nEnter an 11-digit number like 08012345678."
+    //     );
+    //     return res.sendStatus(200);
+    //   }
 
-      user.tempData.beneficiaryPhone = text;
+    //   user.tempData.beneficiaryPhone = text;
 
-      const plan = PLAN_MAP[user.tempData.planId];
-      if (!plan) {
-        await sendText(from, "Invalid plan. Restarting...");
-        user.state = STATES.MAIN_MENU;
-        user.tempData = {};
-        await touch();
-        return res.sendStatus(200);
-      }
+    //   const plan = PLAN_MAP[user.tempData.planId];
+    //   if (!plan) {
+    //     await sendText(from, "Invalid plan. Restarting...");
+    //     user.state = STATES.MAIN_MENU;
+    //     user.tempData = {};
+    //     await touch();
+    //     return res.sendStatus(200);
+    //   }
 
-      const purchase = await Purchase.create({
-        phone: from,
-        userPhoneInput: text,
-        planId: user.tempData.planId,
-        planTitle: user.tempData.planTitle,
-        network: user.tempData.network,
-        amount: plan.amount,
-        paymentProvider: "paystack",
-      });
+    //   const purchase = await Purchase.create({
+    //     phone: from,
+    //     userPhoneInput: text,
+    //     planId: user.tempData.planId,
+    //     planTitle: user.tempData.planTitle,
+    //     network: user.tempData.network,
+    //     amount: plan.amount,
+    //     paymentProvider: "paystack",
+    //   });
 
-      // (Payment initialization removed for now)
-      await purchase.save();
+    //   // (Payment initialization removed for now)
+    //   await purchase.save();
 
-      await sendText(
-        from,
-        "To complete purchase, pay here: (payment link coming)"
-      );
-      user.state = STATES.AWAITING_PAYMENT;
-      await touch();
-      return res.sendStatus(200);
-    }
+    //   await sendText(
+    //     from,
+    //     "To complete purchase, pay here: (payment link coming)"
+    //   );
+    //   user.state = STATES.AWAITING_PAYMENT;
+    //   await touch();
+    //   return res.sendStatus(200);
+    // }
 
     // ------------------------------
     //  DEFAULT — Show Main Menu
     // ------------------------------
-    // await sendButtons(from, `${from}, your are Welcome`, MAIN_MENU_BUTTONS);
+    await sendButtons(from, `${from}, your are Welcome`, MAIN_MENU_BUTTONS);
 
     // user.state = STATES.MAIN_MENU;
     // await touch();
@@ -214,6 +214,214 @@ export const responseMessage = async (req, res) => {
     res.sendStatus(500);
   }
 };
+// export const responseMessage = async (req, res) => {
+//   try {
+//     // Save webhook for debugging (non-blocking)
+//     AuditLog.create({ type: "webhook", payload: req.body }).catch(() => {});
+
+//     // Safely extract message
+//     const entry = req.body.entry?.[0];
+//     const msg = entry?.changes?.[0]?.value?.messages?.[0];
+//     if (!msg) return res.sendStatus(200);
+
+//     const from = msg.from;
+//     const textHI = msg.text.body.trim();
+
+//     // if (textHI.toLowerCase() === "hi") {
+//     // await sendButtons('2347063255405', `, your are Welcome`, MAIN_MENU_BUTTONS);
+
+//     // user.state = STATES.MAIN_MENU;
+//     // await touch();
+//     // return res.sendStatus(200);
+//     // }
+
+//     // Load or create user state
+//     // let user =
+//     //   (await UserState.findOne({ phone: from })) ||
+//     //   (await UserState.create({ phone: from }));
+//     // await user.save();
+
+//     const now = Date.now();
+
+//     // ------------------------------
+//     //  SESSION TIMEOUT HANDLING
+//     // ------------------------------
+//     const timeoutSeconds = Number(process.env.MENU_TIMEOUT_SECONDS || 300);
+//     if (now - new Date(user.lastUpdated).getTime() > timeoutSeconds * 1000) {
+//       user.state = STATES.MAIN_MENU;
+//       user.tempData = {};
+//       user.lastUpdated = new Date();
+//       await user.save();
+
+//       await sendText(from, "Session expired — starting over.");
+//       return res.sendStatus(200);
+//     }
+
+//     // Helper: Update timestamp on every action
+//     const touch = async () => {
+//       user.lastUpdated = new Date();
+//       await user.save();
+//     };
+
+//     // ------------------------------
+//     //  BUTTON REPLIES
+//     // ------------------------------
+//     const button = msg?.interactive?.button_reply;
+//     if (button) {
+//       const id = button.id;
+
+//       // BUY DATA
+//       if (id === "buy_data") {
+//         await sendButtons(from, "Choose network:", [
+//           { type: "reply", reply: { id: "network_mtn", title: "MTN" } },
+//           { type: "reply", reply: { id: "network_airtel", title: "Airtel" } },
+//         ]);
+
+//         user.state = STATES.SELECTING_NETWORK;
+//         await touch();
+//         return res.sendStatus(200);
+//       }
+
+//       // BUY AIRTIME
+//       if (id === "buy_airtime") {
+//         await sendList(from, "Airtime Amounts", "Choose amount", [
+//           {
+//             title: "Amounts",
+//             rows: [
+//               { id: "amt_100", title: "₦100" },
+//               { id: "amt_500", title: "₦500" },
+//             ],
+//           },
+//         ]);
+
+//         user.state = STATES.SELECTING_PLAN;
+//         await touch();
+//         return res.sendStatus(200);
+//       }
+
+//       // SUPPORT
+//       if (id === "support") {
+//         await sendText(
+//           from,
+//           "Support coming soon — chat with our agent at +2349026645775"
+//         );
+//         await touch();
+//         return res.sendStatus(200);
+//       }
+//     }
+
+//     // ------------------------------
+//     //  LIST REPLIES
+//     // ------------------------------
+//     const list = msg?.interactive?.list_reply;
+//     if (list) {
+//       const id = list.id;
+//       const title = list.title;
+
+//       // Selecting Network
+//       if (user.state === STATES.SELECTING_NETWORK) {
+//         user.tempData.network = id.includes("mtn") ? "MTN" : "Airtel";
+
+//         const rows = Object.entries(PLAN_MAP).map(([key, v]) => ({
+//           id: key,
+//           title: v.desc,
+//         }));
+
+//         await sendList(
+//           from,
+//           `${user.tempData.network} Plans`,
+//           "Choose a plan",
+//           [{ title: "Plans", rows }]
+//         );
+
+//         user.state = STATES.SELECTING_PLAN;
+//         await touch();
+//         return res.sendStatus(200);
+//       }
+
+//       // Selecting Plan
+//       if (user.state === STATES.SELECTING_PLAN) {
+//         user.tempData.planId = id;
+//         user.tempData.planTitle = title;
+
+//         await sendText(
+//           from,
+//           `You selected ${title}.\nEnter the phone number to load (e.g. 08012345678)`
+//         );
+
+//         user.state = STATES.ENTER_PHONE;
+//         await touch();
+//         return res.sendStatus(200);
+//       }
+//     }
+
+//     // ------------------------------
+//     //  TEXT INPUT (ENTERING PHONE)
+//     // ------------------------------
+//     const text =
+//       typeof msg?.text?.body === "string" ? msg.text.body.trim() : null;
+
+//     if (text && user.state === STATES.ENTER_PHONE) {
+//       // Validate phone number
+//       if (!/^0\d{10}$/.test(text)) {
+//         await sendText(
+//           from,
+//           "Invalid phone number.\nEnter an 11-digit number like 08012345678."
+//         );
+//         return res.sendStatus(200);
+//       }
+
+//       user.tempData.beneficiaryPhone = text;
+
+//       const plan = PLAN_MAP[user.tempData.planId];
+//       if (!plan) {
+//         await sendText(from, "Invalid plan. Restarting...");
+//         user.state = STATES.MAIN_MENU;
+//         user.tempData = {};
+//         await touch();
+//         return res.sendStatus(200);
+//       }
+
+//       const purchase = await Purchase.create({
+//         phone: from,
+//         userPhoneInput: text,
+//         planId: user.tempData.planId,
+//         planTitle: user.tempData.planTitle,
+//         network: user.tempData.network,
+//         amount: plan.amount,
+//         paymentProvider: "paystack",
+//       });
+
+//       // (Payment initialization removed for now)
+//       await purchase.save();
+
+//       await sendText(
+//         from,
+//         "To complete purchase, pay here: (payment link coming)"
+//       );
+//       user.state = STATES.AWAITING_PAYMENT;
+//       await touch();
+//       return res.sendStatus(200);
+//     }
+
+//     // ------------------------------
+//     //  DEFAULT — Show Main Menu
+//     // ------------------------------
+//     // await sendButtons(from, `${from}, your are Welcome`, MAIN_MENU_BUTTONS);
+
+//     // user.state = STATES.MAIN_MENU;
+//     // await touch();
+//     // return res.sendStatus(200);
+//   } catch (err) {
+//     const entry = req.body.entry?.[0];
+//     const msg = entry?.changes?.[0]?.value?.messages?.[0];
+//     const from = msg.from;
+
+//     await sendText(from, `error: ${err}`);
+//     console.error("WebhookController error", err);
+//     res.sendStatus(500);
+//   }
+// };
 
 // bals
 

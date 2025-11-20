@@ -1,4 +1,9 @@
 import axios from "axios";
+import dotenv from "dotenv";
+import { MAIN_MENU_BUTTONS } from "../utils/templates.js";
+import { PLAN_MAP } from "../utils/planMap.js";
+
+dotenv.config();
 const token = process.env.WAB_API_TOKEN;
 // const phoneId = process.env.PHONE_NUMBER_ID;
 const base = `https://graph.facebook.com/v22.0/886326117894676/messages`;
