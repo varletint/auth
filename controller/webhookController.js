@@ -17,6 +17,15 @@ export const responseMessage = async (req, res) => {
     if (!msg) return res.sendStatus(200);
 
     const from = msg.from;
+    const textHI = msg.text.body.trim();
+
+    if (textHI.toLowerCase() === "hi") {
+      await sendButtons(from, `${from}, your are Welcome`, MAIN_MENU_BUTTONS);
+
+      user.state = STATES.MAIN_MENU;
+      // await touch();
+      return res.sendStatus(200);
+    }
 
     // Load or create user state
     let user =
@@ -25,16 +34,6 @@ export const responseMessage = async (req, res) => {
     await user.save();
 
     const now = Date.now();
-
-    // const textHI = msg.text.body.trim();
-
-    // if (textHI.toLowerCase() === "hi") {
-    //   await sendButtons(from, `${from}, your are Welcome`, MAIN_MENU_BUTTONS);
-
-    //   user.state = STATES.MAIN_MENU;
-    //   // await touch();
-    //   return res.sendStatus(200);
-    // }
 
     // ------------------------------
     //  SESSION TIMEOUT HANDLING
@@ -200,11 +199,11 @@ export const responseMessage = async (req, res) => {
     // ------------------------------
     //  DEFAULT — Show Main Menu
     // ------------------------------
-    await sendButtons(from, `${from}, your are Welcome`, MAIN_MENU_BUTTONS);
+    // await sendButtons(from, `${from}, your are Welcome`, MAIN_MENU_BUTTONS);
 
-    user.state = STATES.MAIN_MENU;
-    await touch();
-    return res.sendStatus(200);
+    // user.state = STATES.MAIN_MENU;
+    // await touch();
+    // return res.sendStatus(200);
   } catch (err) {
     const entry = req.body.entry?.[0];
     const msg = entry?.changes?.[0]?.value?.messages?.[0];
