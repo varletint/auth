@@ -124,7 +124,12 @@ router.post("/webhook", async (req, res) => {
           from,
           `${user.tempData.network} Plans`,
           "Choose a plan",
-          [{ title: "Plans", rows }]
+          [
+            {
+              title: "Plans",
+              rows: rows,
+            },
+          ]
         );
 
         user.state = STATES.SELECTING_PLAN;
