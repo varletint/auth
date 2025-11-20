@@ -4,7 +4,7 @@ import { sendText } from "../services/whatsapp.js";
 
 const router = express.Router();
 
-router.post("/webhook", async () => {
+router.post("/webhook", async (req, res) => {
   try {
     const entry = req.body.entry?.[0];
     const changes = entry?.changes?.[0];
