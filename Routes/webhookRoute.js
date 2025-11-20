@@ -18,10 +18,10 @@ router.post("/webhook", async (req, res) => {
     const from = message.from;
     const text = message.text?.body;
 
-    if (text.toLowerCase().trim() === "hi".trim()) {
-      await sendButtons(from, `, your are Welcome`, MAIN_MENU_BUTTONS);
-      return res.sendStatus(200);
-    }
+    // if (text.toLowerCase().trim() === "hi".trim()) {
+    await sendButtons(from, `, your are Welcome`, MAIN_MENU_BUTTONS);
+    return res.sendStatus(200);
+    // }
 
     const button = message?.interactive?.button_reply;
     if (button) {
@@ -67,7 +67,10 @@ router.post("/webhook", async (req, res) => {
       }
     }
 
-    res.sendStatus(200);
+    await sendButtons(from, `Hello, your are Welcome`, MAIN_MENU_BUTTONS);
+    return res.sendStatus(200);
+
+    // res.sendStatus(200);
   } catch (err) {
     const entry = req.body.entry?.[0];
     const msg = entry?.changes?.[0]?.value?.messages?.[0];
