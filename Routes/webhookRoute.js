@@ -1,6 +1,11 @@
 import express from "express";
+import UserState from "../Models/UserState.js";
+import Purchase from "../Models/Purchase.js";
+import AuditLog from "../Models/AuditLog.js";
 import { sendButtons, sendList, sendText } from "../services/whatsapp.js";
+import { STATES } from "../services/fsm.js";
 import { MAIN_MENU_BUTTONS } from "../utils/templates.js";
+import { PLAN_MAP } from "../utils/planMap.js";
 // import { responseMessage } from "../controller/webhookController.js";
 
 const router = express.Router();
@@ -11,12 +16,11 @@ router.post("/webhook", async (req, res) => {
     const changes = entry?.changes?.[0];
     const value = changes?.value;
 
-    const message = value?.messages?.[0]; // Could be undefined
+    const message = value?.messages?.[0];
     const from = message?.from;
 
-    // ⛔ If it's not a user message (e.g. status update), stop here
     if (!message) {
-      console.log("No user message — ignoring.");
+      console.log("No user message ignoring.");
       return res.sendStatus(200);
     }
 
@@ -35,8 +39,12 @@ router.post("/webhook", async (req, res) => {
         return res.sendStatus(200);
       }
     }
+    let user =
+      (await UserState.findOne({ phone: from })) ||
+      (await UserState.create({ phone: from }));
+    await user.save();
 
-    // ---------------- BUTTON REPLIES ----------------
+    //  BUTTON REPLIES
     if (button) {
       const id = button.id;
 
@@ -70,17 +78,12 @@ router.post("/webhook", async (req, res) => {
       }
     }
 
-    // ---------------- LIST REPLIES (OPTIONAL) ----------------
+    //  LIST REPLIES
     if (list) {
       const id = list.id;
       await sendText(from, `You selected: ${id}`);
       return res.sendStatus(200);
     }
-
-    // ---------------- DEFAULT MESSAGE ----------------
-    // await sendButtons(from, "Hello, you are Welcome", MAIN_MENU_BUTTONS);
-
-    // return res.sendStatus(200);
   } catch (err) {
     const entry = req.body.entry?.[0];
     const msg = entry?.changes?.[0]?.value?.messages?.[0];
