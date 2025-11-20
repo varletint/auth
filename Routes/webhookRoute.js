@@ -1,5 +1,6 @@
 import express from "express";
-import { sendText } from "../services/whatsapp.js";
+import { sendButtons, sendText } from "../services/whatsapp.js";
+import { MAIN_MENU_BUTTONS } from "../utils/templates.js";
 // import { responseMessage } from "../controller/webhookController.js";
 
 const router = express.Router();
@@ -18,9 +19,54 @@ router.post("/webhook", async (req, res) => {
     const text = message.text?.body;
 
     if (text.toLowerCase().trim() === "hi".trim()) {
-      await sendText(from, "working");
+      await sendButtons(from, `, your are Welcome`, MAIN_MENU_BUTTONS);
       return res.sendStatus(200);
     }
+
+    const button = message?.interactive?.button_reply;
+    if (button) {
+      const id = button.id;
+
+      // BUY DATA
+      if (id === "buy_data") {
+        await sendButtons(from, "Choose network:", [
+          { type: "reply", reply: { id: "network_mtn", title: "MTN" } },
+          { type: "reply", reply: { id: "network_airtel", title: "Airtel" } },
+        ]);
+
+        // user.state = STATES.SELECTING_NETWORK;
+        // await touch();
+        return res.sendStatus(200);
+      }
+
+      // BUY AIRTIME
+      if (id === "buy_airtime") {
+        await sendList(from, "Airtime Amounts", "Choose amount", [
+          {
+            title: "Amounts",
+            rows: [
+              { id: "amt_100", title: "₦100" },
+              { id: "amt_500", title: "₦500" },
+            ],
+          },
+        ]);
+
+        // user.state = STATES.SELECTING_PLAN;
+        // await touch();
+        return res.sendStatus(200);
+      }
+
+      // SUPPORT
+      if (id === "support") {
+        await sendText(
+          from,
+          "Support coming soon — chat with our agent at +2349026645775"
+        );
+        // await touch();
+        return res.sendStatus(200);
+      }
+    }
+
     res.sendStatus(200);
   } catch (err) {
     const entry = req.body.entry?.[0];
