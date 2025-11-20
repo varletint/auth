@@ -11,17 +11,12 @@ router.post("/webhook", async (req, res) => {
     const changes = entry?.changes?.[0];
     const message = changes?.value?.messages?.[0];
 
-    if (!message) {
-      return res.status(400).json({ error: "No message found in webhook" });
-    }
+    // if (!message) {
+    //   return res.status(400).json({ error: "No message found in webhook" });
+    // }
 
     const from = message.from;
     const text = message.text?.body;
-
-    // if (text.toLowerCase().trim() === "hi".trim()) {
-    // await sendButtons(from, `, your are Welcome`, MAIN_MENU_BUTTONS);
-    // return res.sendStatus(200);
-    // }
 
     const button = message?.interactive?.button_reply;
     if (button) {
