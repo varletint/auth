@@ -175,6 +175,11 @@ router.post("/webhook", async (req, res) => {
           await touch();
           return res.sendStatus(200);
         }
+        await sendText(
+          from,
+          `the following number \n${phone_number} will credit soon.`
+        );
+        return res.sendStatus(200);
 
         //       const purchase = await Purchase.create({
         //         phone: from,
