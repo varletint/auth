@@ -27,6 +27,19 @@ router.post("/webhook", async (req, res) => {
     const button = message?.interactive?.button_reply;
     const list = message?.interactive?.list_reply;
 
+    if (text) {
+      const chat = text.toLowerCase().trim();
+
+      if (chat === "hi" || chat === "hello") {
+        await sendButtons(
+          from,
+          `${from} What can i do for you?`,
+          MAIN_MENU_BUTTONS
+        );
+        return res.sendStatus(200);
+      }
+    }
+
     // ---------------- BUTTON REPLIES ----------------
     if (button) {
       const id = button.id;
