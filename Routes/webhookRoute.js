@@ -78,15 +78,15 @@ router.post("/webhook", async (req, res) => {
       // Buy Data
       if (id === "buy_data") {
         // await sendButtons(from, "Choose Network", [
-        //   { type: "reply", reply: { id: "network_mtn", title: "MTN" } },
-        //   { type: "reply", reply: { id: "network_airtel", title: "Airtel" } },
+        //   { type: "reply", reply: { id: "mtn", title: "MTN" } },
+        //   { type: "reply", reply: { id: "airtel", title: "Airtel" } },
         // ]);
         await sendList(from, "Network", "Select Network", [
           {
             title: "Networks",
             rows: [
-              { id: "amt_100", title: "₦100" },
-              { id: "amt_500", title: "₦500" },
+              { id: "mtn", title: "MTN" },
+              { id: "airtel", title: "Airtel" },
             ],
           },
         ]);
@@ -129,13 +129,17 @@ router.post("/webhook", async (req, res) => {
       const id = list.id;
       const title = list.title;
       user.tempData = user.tempData || {};
-      user.tempData.network = id.includes("mtn") ? "MTN" : "Airtel";
+      user.tempData.network = id.includes("mtn")
+        ? "MTN".toLowerCase()
+        : "Airtel".toLowerCase();
       await user.save();
 
       // Select Network
       if (user.state === STATES.SELECTING_NETWORK) {
         user.tempData = user.tempData || {};
-        user.tempData.network = id.includes("mtn") ? "MTN" : "Airtel";
+        user.tempData.network = id.includes("mtn")
+          ? "MTN".toLowerCase()
+          : "Airtel".toLowerCase();
         // user.markModified("tempData"); // <- mark modified after changing tempData
 
         const rowss = Object.entries(PLAN_MAP).map(([key, v]) => ({
