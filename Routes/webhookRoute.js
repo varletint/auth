@@ -81,6 +81,15 @@ router.post("/webhook", async (req, res) => {
           { type: "reply", reply: { id: "network_mtn", title: "MTN" } },
           { type: "reply", reply: { id: "network_airtel", title: "Airtel" } },
         ]);
+        await sendList(from, "Network", "Select Network", [
+          {
+            title: "Networks",
+            rows: [
+              { id: "amt_100", title: "₦100" },
+              { id: "amt_500", title: "₦500" },
+            ],
+          },
+        ]);
 
         user.state = STATES.SELECTING_NETWORK;
         await touch();
@@ -119,6 +128,9 @@ router.post("/webhook", async (req, res) => {
     if (list) {
       const id = list.id;
       const title = list.title;
+      user.tempData = user.tempData || {};
+      user.tempData.network = id.includes("mtn") ? "MTN" : "Airtel";
+      await user.save();
 
       // Select Network
       if (user.state === STATES.SELECTING_NETWORK) {
