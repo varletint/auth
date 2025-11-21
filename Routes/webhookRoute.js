@@ -124,7 +124,7 @@ router.post("/webhook", async (req, res) => {
       if (user.state === STATES.SELECTING_NETWORK) {
         user.tempData = user.tempData || {};
         user.tempData.network = id.includes("mtn") ? "MTN" : "Airtel";
-        user.markModified("tempData"); // <- mark modified after changing tempData
+        // user.markModified("tempData"); // <- mark modified after changing tempData
 
         const rowss = Object.entries(PLAN_MAP).map(([key, v]) => ({
           id: key,
@@ -145,7 +145,7 @@ router.post("/webhook", async (req, res) => {
         user.tempData = user.tempData || {};
         user.tempData.planId = id;
         user.tempData.planTitle = title;
-        user.markModified("tempData"); // <- mark modified
+        // user.markModified("tempData"); // <- mark modified
 
         await sendText(
           from,
@@ -205,6 +205,10 @@ router.post("/webhook", async (req, res) => {
       return res.sendStatus(200);
     }
 
+    if (user.state === STATES.MAIN_MENU) {
+      await sendButtons(from, "What can I do for you?", MAIN_MENU_BUTTONS);
+      return res.sendStatus(200);
+    }
     // -------------------------------------------------------------
     // FALLBACK
     // -------------------------------------------------------------
