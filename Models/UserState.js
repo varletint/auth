@@ -11,8 +11,10 @@ const userStateSchema = new mongoose.Schema({
     default: "START",
   },
   tempData: {
-    type: mongoose.Schema.Types.Mixed,
-    default: {},
+    network: { type: String, default: null },
+    planId: { type: String, default: null },
+    planTitle: { type: String, default: null },
+    beneficiaryPhone: { type: String, default: null },
   },
   lastUpdated: {
     type: Date,

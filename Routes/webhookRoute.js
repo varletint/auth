@@ -126,13 +126,13 @@ router.post("/webhook", async (req, res) => {
         user.tempData.network = id.includes("mtn") ? "MTN" : "Airtel";
         user.markModified("tempData"); // <- mark modified after changing tempData
 
-        const rows = Object.entries(PLAN_MAP).map(([key, v]) => ({
+        const rowss = Object.entries(PLAN_MAP).map(([key, v]) => ({
           id: key,
           title: v.desc,
         }));
 
         await sendList(from, `${user.tempData.network} Plans`, "Choose Plan", [
-          { title: "Plans", rows },
+          { title: "Plans", rows: rowss },
         ]);
 
         user.state = STATES.SELECTING_PLAN;
