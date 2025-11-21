@@ -77,10 +77,10 @@ router.post("/webhook", async (req, res) => {
 
       // Buy Data
       if (id === "buy_data") {
-        await sendButtons(from, "Choose Network", [
-          { type: "reply", reply: { id: "network_mtn", title: "MTN" } },
-          { type: "reply", reply: { id: "network_airtel", title: "Airtel" } },
-        ]);
+        // await sendButtons(from, "Choose Network", [
+        //   { type: "reply", reply: { id: "network_mtn", title: "MTN" } },
+        //   { type: "reply", reply: { id: "network_airtel", title: "Airtel" } },
+        // ]);
         await sendList(from, "Network", "Select Network", [
           {
             title: "Networks",
