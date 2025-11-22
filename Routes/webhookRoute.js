@@ -70,7 +70,6 @@ router.post("/webhook", async (req, res) => {
     if (button) {
       const id = button.id;
 
-      // Buy Data
       if (id === "buy_data") {
         await sendButtons(from, "Choose Network", [
           { type: "reply", reply: { id: "mtn", title: "MTN" } },
@@ -123,7 +122,7 @@ router.post("/webhook", async (req, res) => {
       // user.tempData.network = id.includes("mtn")
       //   ? "MTN".toLowerCase()
       //   : "Airtel".toLowerCase();
-      // await user.save();
+      await user.save();
 
       if (user.state === STATES.SELECTING_NETWORK) {
         user.tempData = user.tempData || {};
@@ -131,8 +130,8 @@ router.post("/webhook", async (req, res) => {
         //   ? "MTN".toLowerCase()
         //   : "Airtel".toLowerCase();
         user.markModified("tempData");
-
-        const rowss = Object.entries(plan_map[id.toUpperCase()]).map(
+        const data_plan_id = id.toUpperCase();
+        const rowss = Object.entries(plan_map[data_plan_id]).map(
           ([key, v]) => ({
             id: key,
             title: v.desc,
