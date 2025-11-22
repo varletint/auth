@@ -22,7 +22,7 @@ export const plan_map = {
     },
     plan_1000: {
       amount: 1000,
-      desc: "₦1000 - 2.5GB",
+      desc: "₦1000 - 2.6GB",
       network: "mtn",
     },
     plan_1500: {
