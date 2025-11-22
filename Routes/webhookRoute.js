@@ -212,7 +212,11 @@ router.post("/webhook", async (req, res) => {
 
       await sendText(
         from,
-        `Your purchase request:\n\nNetwork: ${user.tempData.network}\nPlan: ${user.tempData.planTitle}\nAmount: ₦${plan.amount}\nPhone: ${phone}\n\nThe number will be credited soon.`
+        `Your purchase request:\n\nNetwork: ${user.tempData.network.toUpperCase()}\nPlan: ${
+          user.tempData.planTitle
+        }\nAmount: ₦${
+          plan.amount
+        }\nPhone: ${phone}\n\nThe number will be credited soon.`
       );
 
       // Optional: Save Purchase
