@@ -7,4 +7,5 @@ const audit = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.model("AuditLog", audit);
+const AuditLog = mongoose.model("AuditLog", audit);
+export default AuditLog;
