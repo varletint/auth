@@ -6,14 +6,13 @@ import AuditLog from "../Models/AuditLog.js";
 import { sendButtons, sendList, sendText } from "../services/whatsapp.js";
 import { STATES } from "../services/fsm.js";
 import { MAIN_MENU_BUTTONS } from "../utils/templates.js";
-import { plan_map } from "../utils/planMap.js";
+import { PLAN_MAP } from "../utils/planMap.js";
 
 const router = express.Router();
 
 router.post("/webhook", async (req, res) => {
   try {
-    AuditLog.create({ type: "webhook", payload: req.body });
-
+    // --- Extract WhatsApp fields ---
     const entry = req.body.entry?.[0];
     const changes = entry?.changes?.[0];
     const value = changes?.value;
@@ -31,6 +30,7 @@ router.post("/webhook", async (req, res) => {
     const button = message?.interactive?.button_reply || null;
     const list = message?.interactive?.list_reply || null;
 
+    // --- Load/Create User State ---
     let user =
       (await UserState.findOne({ phone: from })) ||
       (await UserState.create({
@@ -44,22 +44,24 @@ router.post("/webhook", async (req, res) => {
       await user.save();
     };
 
+    // --- Session 5 minutes timeout ---
     const now = Date.now();
     if (now - new Date(user.lastUpdated).getTime() > 300 * 1000) {
       user.state = STATES.MAIN_MENU;
       user.tempData = {};
-      user.markModified("tempData");
+      user.markModified("tempData"); // <- mark before saving
       await user.save();
       await sendText(from, "Session expired. Starting over.");
       return res.sendStatus(200);
     }
 
+    // --- GREETINGS ---
     if (text) {
       const t = text.toLowerCase().trim();
       if (t === "hi" || t === "hello") {
         user.state = STATES.MAIN_MENU;
         user.tempData = {};
-        user.markModified("tempData");
+        user.markModified("tempData"); // <- mark before saving
         await user.save();
 
         await sendButtons(from, "What can I do for you?", MAIN_MENU_BUTTONS);
@@ -67,29 +69,34 @@ router.post("/webhook", async (req, res) => {
       }
     }
 
+    // -------------------------------------------------------------
+    //  BUTTON HANDLING
+    // -------------------------------------------------------------
     if (button) {
       const id = button.id;
 
+      // Buy Data
       if (id === "buy_data") {
-        await sendButtons(from, "Choose Network", [
-          { type: "reply", reply: { id: "mtn", title: "MTN" } },
-          { type: "reply", reply: { id: "airtel", title: "Airtel" } },
-        ]);
-        // await sendList(from, "Network", "Select Network", [
-        //   {
-        //     title: "Networks",
-        //     rows: [
-        //       { id: "mtn", title: "MTN" },
-        //       { id: "airtel", title: "Airtel" },
-        //     ],
-        //   },
+        // await sendButtons(from, "Choose Network", [
+        //   { type: "reply", reply: { id: "mtn", title: "MTN" } },
+        //   { type: "reply", reply: { id: "airtel", title: "Airtel" } },
         // ]);
+        await sendList(from, "Network", "Select Network", [
+          {
+            title: "Networks",
+            rows: [
+              { id: "mtn", title: "MTN" },
+              { id: "airtel", title: "Airtel" },
+            ],
+          },
+        ]);
 
         user.state = STATES.SELECTING_NETWORK;
         await touch();
         return res.sendStatus(200);
       }
 
+      // Buy Airtime (using list)
       if (id === "buy_airtime") {
         await sendList(from, "Airtime Amounts", "Select Amount", [
           {
@@ -115,28 +122,30 @@ router.post("/webhook", async (req, res) => {
       }
     }
 
+    // -------------------------------------------------------------
+    //  LIST SELECTION HANDLING
+    // -------------------------------------------------------------
     if (list) {
       const id = list.id;
       const title = list.title;
       user.tempData = user.tempData || {};
-      // user.tempData.network = id.includes("mtn")
-      //   ? "MTN".toLowerCase()
-      //   : "Airtel".toLowerCase();
+      user.tempData.network = id.includes("mtn")
+        ? "MTN".toLowerCase()
+        : "Airtel".toLowerCase();
       await user.save();
 
+      // Select Network
       if (user.state === STATES.SELECTING_NETWORK) {
         user.tempData = user.tempData || {};
-        // user.tempData.network = id.includes("mtn")
-        //   ? "MTN".toLowerCase()
-        //   : "Airtel".toLowerCase();
-        user.markModified("tempData");
-        const data_plan_id = id.toUpperCase();
-        const rowss = Object.entries(plan_map[data_plan_id]).map(
-          ([key, v]) => ({
-            id: key,
-            title: v.desc,
-          })
-        );
+        user.tempData.network = id.includes("mtn")
+          ? "MTN".toLowerCase()
+          : "Airtel".toLowerCase();
+        // user.markModified("tempData"); // <- mark modified after changing tempData
+
+        const rowss = Object.entries(PLAN_MAP).map(([key, v]) => ({
+          id: key,
+          title: v.desc,
+        }));
 
         await sendList(
           from,
@@ -150,11 +159,12 @@ router.post("/webhook", async (req, res) => {
         return res.sendStatus(200);
       }
 
+      // Select Plan
       if (user.state === STATES.SELECTING_PLAN) {
         user.tempData = user.tempData || {};
         user.tempData.planId = id;
         user.tempData.planTitle = title;
-        user.markModified("tempData"); // <- mark modified
+        // user.markModified("tempData"); // <- mark modified
 
         await sendText(
           from,
@@ -169,6 +179,9 @@ router.post("/webhook", async (req, res) => {
       return res.sendStatus(200);
     }
 
+    // -------------------------------------------------------------
+    //  PHONE NUMBER HANDLING (RAW TEXT)
+    // -------------------------------------------------------------
     if (user.state === STATES.ENTER_PHONE && message?.text?.body) {
       let phone = text.trim();
 
@@ -183,15 +196,15 @@ router.post("/webhook", async (req, res) => {
 
       user.tempData = user.tempData || {};
       user.tempData.beneficiaryPhone = phone;
-      user.markModified("tempData");
+      user.markModified("tempData"); // <- mark modified
 
-      const plan = plan_map[user.tempData.planId];
+      const plan = PLAN_MAP[user.tempData.planId];
 
       if (!plan) {
         await sendText(from, "Invalid plan. Restarting...");
         user.state = STATES.MAIN_MENU;
         user.tempData = {};
-        user.markModified("tempData");
+        user.markModified("tempData"); // <- mark modified before save
         await user.save();
         return res.sendStatus(200);
       }
@@ -206,7 +219,7 @@ router.post("/webhook", async (req, res) => {
 
       user.state = STATES.MAIN_MENU;
       user.tempData = {};
-      user.markModified("tempData");
+      user.markModified("tempData"); // <- mark modified before save
       await user.save();
       return res.sendStatus(200);
     }
@@ -215,7 +228,9 @@ router.post("/webhook", async (req, res) => {
       await sendButtons(from, "What can I do for you?", MAIN_MENU_BUTTONS);
       return res.sendStatus(200);
     }
-
+    // -------------------------------------------------------------
+    // FALLBACK
+    // -------------------------------------------------------------
     await sendButtons(from, "What can I do for you?", MAIN_MENU_BUTTONS);
     return res.sendStatus(200);
   } catch (err) {
