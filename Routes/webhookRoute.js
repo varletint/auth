@@ -6,7 +6,7 @@ import AuditLog from "../Models/AuditLog.js";
 import { sendButtons, sendList, sendText } from "../services/whatsapp.js";
 import { STATES } from "../services/fsm.js";
 import { MAIN_MENU_BUTTONS } from "../utils/templates.js";
-import { plan_map, PLAN_MAP } from "../utils/planMap.js";
+import { plan_map } from "../utils/planMap.js";
 
 const router = express.Router();
 
@@ -186,7 +186,7 @@ router.post("/webhook", async (req, res) => {
       user.tempData.beneficiaryPhone = phone;
       user.markModified("tempData");
 
-      const plan = PLAN_MAP[user.tempData.planId];
+      const plan = plan_map[user.tempData.planId];
 
       if (!plan) {
         await sendText(from, "Invalid plan. Restarting...");

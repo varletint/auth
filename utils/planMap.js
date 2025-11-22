@@ -31,7 +31,7 @@ export const plan_map = {
       network: "mtn",
     },
   },
-  airtel: {
+  AIRTEL: {
     plan_500: {
       amount: 500,
       desc: "₦500 - 1GB",
