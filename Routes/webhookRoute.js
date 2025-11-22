@@ -129,9 +129,9 @@ router.post("/webhook", async (req, res) => {
       const id = list.id;
       const title = list.title;
       user.tempData = user.tempData || {};
-      user.tempData.network = id.includes("mtn")
-        ? "MTN".toLowerCase()
-        : "Airtel".toLowerCase();
+      // user.tempData.network = id.includes("mtn")
+      //   ? "MTN".toLowerCase()
+      //   : "Airtel".toLowerCase();
       await user.save();
 
       // Select Network
@@ -140,7 +140,8 @@ router.post("/webhook", async (req, res) => {
         user.tempData.network = id.includes("mtn")
           ? "MTN".toLowerCase()
           : "Airtel".toLowerCase();
-        // user.markModified("tempData"); // <- mark modified after changing tempData
+        user.markModified("tempData");
+        user.save();
 
         const rowss = Object.entries(PLAN_MAP).map(([key, v]) => ({
           id: key,
