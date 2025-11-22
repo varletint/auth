@@ -77,19 +77,19 @@ router.post("/webhook", async (req, res) => {
 
       // Buy Data
       if (id === "buy_data") {
-        await sendButtons(from, "Choose Network", [
-          { type: "reply", reply: { id: "mtn", title: "MTN" } },
-          { type: "reply", reply: { id: "airtel", title: "Airtel" } },
-        ]);
-        // await sendList(from, "Network", "Select Network", [
-        //   {
-        //     title: "Networks",
-        //     rows: [
-        //       { id: "mtn", title: "MTN" },
-        //       { id: "airtel", title: "Airtel" },
-        //     ],
-        //   },
+        // await sendButtons(from, "Choose Network", [
+        //   { type: "reply", reply: { id: "mtn", title: "MTN" } },
+        //   { type: "reply", reply: { id: "airtel", title: "Airtel" } },
         // ]);
+        await sendList(from, "Network", "Select Network", [
+          {
+            title: "Networks",
+            rows: [
+              { id: "mtn", title: "MTN" },
+              { id: "airtel", title: "Airtel" },
+            ],
+          },
+        ]);
 
         user.state = STATES.SELECTING_NETWORK;
         await touch();
