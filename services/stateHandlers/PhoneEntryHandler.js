@@ -27,10 +27,10 @@ export default class PhoneEntryHandler extends BaseHandler {
         }
 
 
-        text = processedPhoneNumber;
+        // text = processedPhoneNumber;
 
         user.tempData = user.tempData || {};
-        user.tempData.beneficiaryPhone = text;
+        user.tempData.beneficiaryPhone = processedPhoneNumber;
         user.markModified("tempData");
 
         const plan = PLAN_MAP[user.tempData.planId];

@@ -33,7 +33,7 @@ router.post("/webhook", async (req, res) => {
     if (user.lastUpdated && now - new Date(user.lastUpdated).getTime() > 300 * 1000) {
       user.state = STATES.MAIN_MENU;
       user.tempData = {};
-      await sendText(from, "Session expired. Starting over.");
+      await sendText(from, "Session expired. \n Type hi or hello to start over.");
     }
 
     // Update last updated time
