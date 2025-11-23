@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.post("/webhook", async (req, res) => {
   try {
-    // --- Extract WhatsApp fields ---
+
     const entry = req.body.entry?.[0];
     const changes = entry?.changes?.[0];
     const value = changes?.value;
@@ -30,7 +30,7 @@ router.post("/webhook", async (req, res) => {
     const button = message?.interactive?.button_reply || null;
     const list = message?.interactive?.list_reply || null;
 
-    // --- Load/Create User State ---
+
     let user =
       (await UserState.findOne({ phone: from })) ||
       (await UserState.create({
@@ -44,18 +44,18 @@ router.post("/webhook", async (req, res) => {
       await user.save();
     };
 
-    // --- Session 5 minutes timeout ---
+
     const now = Date.now();
     if (now - new Date(user.lastUpdated).getTime() > 300 * 1000) {
       user.state = STATES.MAIN_MENU;
       user.tempData = {};
-      user.markModified("tempData"); // <- mark before saving
+      user.markModified("tempData");
       await user.save();
       await sendText(from, "Session expired. Starting over.");
       return res.sendStatus(200);
     }
 
-    // --- GREETINGS ---
+
     if (text) {
       const t = text.toLowerCase().trim();
       if (t === "hi" || t === "hello") {
@@ -69,18 +69,13 @@ router.post("/webhook", async (req, res) => {
       }
     }
 
-    // -------------------------------------------------------------
-    //  BUTTON HANDLING
-    // -------------------------------------------------------------
+
     if (button) {
       const id = button.id;
 
-      // Buy Data
+
       if (id === "buy_data") {
-        // await sendButtons(from, "Choose Network", [
-        //   { type: "reply", reply: { id: "mtn", title: "MTN" } },
-        //   { type: "reply", reply: { id: "airtel", title: "Airtel" } },
-        // ]);
+
         await sendList(from, "Network", "Select Network", [
           {
             title: "Networks",
@@ -96,7 +91,7 @@ router.post("/webhook", async (req, res) => {
         return res.sendStatus(200);
       }
 
-      // Buy Airtime (using list)
+
       if (id === "buy_airtime") {
         await sendList(from, "Airtime Amounts", "Select Amount", [
           {
@@ -122,19 +117,15 @@ router.post("/webhook", async (req, res) => {
       }
     }
 
-    // -------------------------------------------------------------
-    //  LIST SELECTION HANDLING
-    // -------------------------------------------------------------
+
     if (list) {
       const id = list.id;
       const title = list.title;
       user.tempData = user.tempData || {};
-      // user.tempData.network = id.includes("mtn")
-      //   ? "MTN".toLowerCase()
-      //   : "Airtel".toLowerCase();
+
       await user.save();
 
-      // Select Network
+
       if (user.state === STATES.SELECTING_NETWORK) {
         user.tempData = user.tempData || {};
         user.tempData.network = id.includes("mtn")
@@ -160,12 +151,12 @@ router.post("/webhook", async (req, res) => {
         return res.sendStatus(200);
       }
 
-      // Select Plan
+
       if (user.state === STATES.SELECTING_PLAN) {
         user.tempData = user.tempData || {};
         user.tempData.planId = id;
         user.tempData.planTitle = title;
-        // user.markModified("tempData"); // <- mark modified
+
 
         await sendText(
           from,
@@ -180,13 +171,11 @@ router.post("/webhook", async (req, res) => {
       return res.sendStatus(200);
     }
 
-    // -------------------------------------------------------------
-    //  PHONE NUMBER HANDLING (RAW TEXT)
-    // -------------------------------------------------------------
+
     if (user.state === STATES.ENTER_PHONE && message?.text?.body) {
       let phone = text.trim();
 
-      // Validate
+
       if (!/^0\d{10}$/.test(phone)) {
         await sendText(
           from,
@@ -197,7 +186,7 @@ router.post("/webhook", async (req, res) => {
 
       user.tempData = user.tempData || {};
       user.tempData.beneficiaryPhone = phone;
-      user.markModified("tempData"); // <- mark modified
+      user.markModified("tempData");
 
       const plan = PLAN_MAP[user.tempData.planId];
 
@@ -205,26 +194,22 @@ router.post("/webhook", async (req, res) => {
         await sendText(from, "Invalid plan. Restarting...");
         user.state = STATES.MAIN_MENU;
         user.tempData = {};
-        user.markModified("tempData"); // <- mark modified before save
+        user.markModified("tempData");
         await user.save();
         return res.sendStatus(200);
       }
 
       await sendText(
         from,
-        `Your purchase request:\n\nNetwork: ${user.tempData.network.toUpperCase()}\nPlan: ${
-          user.tempData.planTitle
-        }\nAmount: ₦${
-          plan.amount
+        `Your purchase request:\n\nNetwork: ${user.tempData.network.toUpperCase()}\nPlan: ${user.tempData.planTitle
+        }\nAmount: ₦${plan.amount
         }\nPhone: ${phone}\n\nThe number will be credited soon.`
       );
 
-      // Optional: Save Purchase
-      // await Purchase.create(...)
 
       user.state = STATES.MAIN_MENU;
       user.tempData = {};
-      user.markModified("tempData"); // <- mark modified before save
+      user.markModified("tempData");
       await user.save();
       return res.sendStatus(200);
     }
@@ -233,9 +218,7 @@ router.post("/webhook", async (req, res) => {
       await sendButtons(from, "What can I do for you?", MAIN_MENU_BUTTONS);
       return res.sendStatus(200);
     }
-    // -------------------------------------------------------------
-    // FALLBACK
-    // -------------------------------------------------------------
+
     await sendButtons(from, "What can I do for you?", MAIN_MENU_BUTTONS);
     return res.sendStatus(200);
   } catch (err) {
