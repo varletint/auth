@@ -13,20 +13,18 @@ const base = `https://graph.facebook.com/v22.0/886326117894676/messages`;
 // }
 
 export const sendMessage = async (payload) => {
-  // return await axios.post(base, payload, {
-  //   headers: { Authorization: `Bearer ${token}` },
-  // });
-  return await fetch(
-    `https://graph.facebook.com/v22.0/886326117894676/messages`,
-    {
-      method: "POST",
+  try {
+    const response = await axios.post(base, payload, {
       headers: {
         Authorization: `Bearer ${process.env.WAB_API_TOKEN}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload),
-    }
-  );
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error sending message:", error.response?.data || error.message);
+    return null;
+  }
 };
 
 export const sendText = (from, text) =>
