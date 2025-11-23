@@ -47,7 +47,7 @@ router.post("/webhook", async (req, res) => {
   } catch (err) {
     console.error("ERROR in webhook:", err);
     const from = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from;
-    if (from) await sendText(from, "An error occurred.");
+
     return res.sendStatus(500);
   }
 });
