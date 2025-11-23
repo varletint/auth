@@ -5,12 +5,7 @@ import { PLAN_MAP } from "../utils/planMap.js";
 
 dotenv.config();
 const token = process.env.WAB_API_TOKEN;
-// const phoneId = process.env.PHONE_NUMBER_ID;
 const base = `https://graph.facebook.com/v22.0/886326117894676/messages`;
-
-// if (!token)
-//   console.warn("WA_TOKEN or PHONE_NUMBER_ID not set in env");
-// }
 
 export const sendMessage = async (payload) => {
   try {
@@ -34,8 +29,6 @@ export const sendText = (from, text) =>
     type: "text",
     text: { body: text },
   });
-
-// console.log(await sendText(2347063255405, "hello"));
 
 export const sendButtons = (from, bodyText, buttons) =>
   sendMessage({

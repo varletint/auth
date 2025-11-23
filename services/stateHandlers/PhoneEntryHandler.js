@@ -13,13 +13,21 @@ export default class PhoneEntryHandler extends BaseHandler {
             return;
         }
 
-        if (!/^0\d{10}$/.test(text)) {
+        let processedPhoneNumber = text;
+        if (/^\d{10}$/.test(processedPhoneNumber) && !processedPhoneNumber.startsWith('0')) {
+            processedPhoneNumber = '0' + processedPhoneNumber;
+        }
+
+        if (!/^0\d{10}$/.test(processedPhoneNumber)) {
             await this.sendText(
                 from,
                 "Invalid phone number.\nEnter an 11-digit number like 08012345678."
             );
             return;
         }
+
+
+        text = processedPhoneNumber;
 
         user.tempData = user.tempData || {};
         user.tempData.beneficiaryPhone = text;

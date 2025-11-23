@@ -12,8 +12,8 @@ app.use(express.json());
 
 const startServer = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_KEYS); // <-- wait for DB
-    console.log("Connected to MongoDB");
+    // await mongoose.connect(process.env.MONGO_KEYS); // <-- wait for DB
+    // console.log("Connected to MongoDB");
 
     app.listen(3000, () => {
       console.log("Server is running on port 3000");
