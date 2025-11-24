@@ -101,7 +101,7 @@ export default function Profile() {
         {/* Overlay for mobile sidebar */}
         {isSidebarOpen && (
           <div
-            className='fixed inset-0 bg-black/90 z-30 md:hidden'
+            className='fixed inset-0 bg-black/70 z-30 md:hidden'
             onClick={() => setIsSidebarOpen(false)}
           ></div>
         )}
