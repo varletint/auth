@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 
 import webhookRoute from "./Routes/webhookRoute.js";
+import authRouter from "./Routes/auth.route.js";
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ import { verifyWebhook } from "./controller/webhookController.js";
 // app.get("/webhook", verifyWebhook);
 
 app.use("/", webhookRoute);
+app.use("/api/auth", authRouter);
 
 // app.post("/webhook", async (req, res) => {
 //   const entry = req.body.entry?.[0];

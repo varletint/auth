@@ -2,28 +2,41 @@ import React, { useState } from "react";
 import Header from "../Components/Header";
 import Input from "../Components/Input";
 import Button from "../Components/Button";
+import { useNavigate } from "react-router-dom";
+import useAuthStore from "../store/useAuthStore";
 import {
-  UserIcon,
   GridViewIcon,
-  PackageIcon,
+  UserIcon,
+  ShoppingBag02Icon,
   Settings02Icon,
   Logout01Icon,
   Camera01Icon,
   Edit02Icon,
   PlusSignIcon,
-  Menu01Icon, // Added for mobile menu button
-  // XCloseIcon, // Added for mobile menu close button
+  Menu01Icon,
   MultiplicationSignIcon
 } from "hugeicons-react";
 
 export default function Profile() {
   const [activeTab, setActiveTab] = useState("overview");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State for mobile sidebar visibility
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { currentUser, signOut } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    try {
+      await fetch("/api/auth/signout");
+      signOut();
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const sidebarItems = [
     { id: "overview", label: "Overview", icon: <GridViewIcon size={20} /> },
     { id: "profile", label: "My Profile", icon: <UserIcon size={20} /> },
-    { id: "products", label: "My Products", icon: <PackageIcon size={20} /> },
+    { id: "products", label: "My Products", icon: <ShoppingBag02Icon size={20} /> },
     { id: "settings", label: "Settings", icon: <Settings02Icon size={20} /> },
   ];
 
@@ -32,12 +45,12 @@ export default function Profile() {
       {/* <Header /> */}
       <div className='min-h-screen bg-gray-50 flex border border-gray-900'>
         {/* Mobile menu button */}
-        {/* <button
+        <button
           className='md:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-white shadow-md text-gray-700'
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
           {isSidebarOpen ? <MultiplicationSignIcon size={24} /> : <Menu01Icon size={24} />}
-        </button> */}
+        </button>
 
         {/* Sidebar */}
         <aside
@@ -47,11 +60,11 @@ export default function Profile() {
         >
           <div className='p-6 pt-20 md:pt-6 flex flex-col flex-grow'>
             <div className='flex items-center gap-3 mb-8'>
-              <div className='w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold'>
-                JD
+              <div className='w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold uppercase'>
+                {currentUser?.username?.[0] || "U"}
               </div>
               <div>
-                <h3 className='font-semibold text-gray-900'>John Doe</h3>
+                <h3 className='font-semibold text-gray-900'>{currentUser?.username || "User"}</h3>
                 <p className='text-xs text-gray-500'>Free Account</p>
               </div>
             </div>
@@ -75,7 +88,10 @@ export default function Profile() {
             </nav>
           </div>
           <div className='p-6 pt-0'>
-            <button className='w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors'>
+            <button
+              onClick={handleSignOut}
+              className='w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors'
+            >
               <Logout01Icon size={20} />
               Sign Out
             </button>
@@ -100,33 +116,26 @@ export default function Profile() {
               {isSidebarOpen ? <MultiplicationSignIcon size={24} /> : <Menu01Icon size={24} />}
             </button>
             <h2 className='ml-20 text-2xl font-bold text-gray-900'>My Profile</h2>
-            {/* You can add a logo or other elements here */}
-            {/* <img src="/path/to/your/logo.png" alt="Logo" className="h-8" /> */}
           </div>
           <div className='max-w- mx-auto p-2'>
             {/* Header Section */}
-            {/* </div> */}
             <div className='relative mb-2.5 rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-200'>
               <div className='h-32 bg-gradient-to-r from-indigo-500 to-purple-600'></div>
               <div className='px-8 pb-8'>
                 <div className='relative flex justify-between items-end -mt-12 mb-6'>
                   <div className='relative'>
-                    <div className='w-24 h-24 rounded-full border-4 border-white bg-gray-200 overflow-hidden'>
-                      <img
-                        src='https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-                        alt='Profile'
-                        className='w-full h-full object-cover'
-                      />
+                    <div className='w-24 h-24 rounded-full border-4 border-white bg-white overflow-hidden shadow-md flex items-center justify-center text-3xl font-bold text-gray-400 bg-gray-100 uppercase'>
+                      {currentUser?.username?.[0] || "U"}
                     </div>
-                    <button className='absolute bottom-0 right-0 p-1.5 bg-white rounded-full border border-gray-200 shadow-sm text-gray-600 hover:text-indigo-600'>
-                      <Camera01Icon size={16} />
+                    <button className='absolute bottom-0 right-0 p-1.5 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 shadow-sm border-2 border-white'>
+                      <Camera01Icon size={14} />
                     </button>
                   </div>
-                  <Button text='Edit Profile' className='bg-white border border-gray-200 !text-gray-700 hover:bg-gray-50 !py-2 !px-4 !shadow-sm' />
+                  <Button text='Edit Profile' className='!py-2 !px-4 !text-sm bg-white !text-gray-700 border border-gray-200 hover:bg-gray-50 !shadow-sm' />
                 </div>
                 <div>
-                  <h1 className='text-2xl font-bold text-gray-900'>John Doe</h1>
-                  <p className='text-gray-500'>Gadget Seller • Niger, KNT</p>
+                  <h1 className='text-2xl font-bold text-gray-900'>{currentUser?.username || "User"}</h1>
+                  <p className='text-gray-500'>{currentUser?.email || "user@example.com"}</p>
                 </div>
               </div>
             </div>
@@ -220,3 +229,4 @@ export default function Profile() {
     </>
   );
 }
+// </aside >

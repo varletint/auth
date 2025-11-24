@@ -1,15 +1,58 @@
-import React, { useState } from "react";
+import React from "react";
 import Input from "../Components/Input";
 import Button from "../Components/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import useAuthStore from "../store/useAuthStore";
+
+const schema = yup.object({
+  username: yup.string().required("Username is required"),
+  password: yup.string().required("Password is required"),
+}).required();
 
 export default function Login() {
   document.title = "Login | Welcome Back";
+  const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({});
+  const { loading, error, signInStart, signInSuccess, signInFailure } = useAuthStore();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  console.log(watch());
+
+  const onSubmit = async (data) => {
+    signInStart();
+    try {
+      const res = await fetch("/api/auth/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: data.username, password: data.password }),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        signInFailure(result.message || "Login failed");
+        return;
+      }
+
+      console.log("Login success:", result);
+      signInSuccess(result);
+      navigate("/profile");
+    } catch (err) {
+      signInFailure(err.message);
+    }
   };
 
   return (
@@ -27,25 +70,37 @@ export default function Login() {
             <p className='text-gray-500'>Please enter your details to sign in</p>
           </div>
 
-          <div className='flex flex-col gap-5'>
-            <Input
-              type={"text"}
-              placeholder={"Username"}
-              OnChange={handleChange}
-              id={"username"}
-            />
-            <Input
-              type={"password"}
-              placeholder={"Password"}
-              OnChange={handleChange}
-              id='password'
-            />
+          <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
+            <div>
+              <Input
+                type={"text"}
+                placeholder={"Email"}
+                id={"username"}
+                {...register("username")}
+                className={errors.username ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""}
+              />
+              {errors.username && <p className="text-red-500 text-xs mt-1 ml-1">{errors.username.message}</p>}
+            </div>
+
+            <div>
+              <Input
+                type={"password"}
+                placeholder={"Password"}
+                id='password'
+                {...register("password")}
+                className={errors.password ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""}
+              />
+              {errors.password && <p className="text-red-500 text-xs mt-1 ml-1">{errors.password.message}</p>}
+            </div>
+
+            {error && <div className="text-red-500 text-sm text-center bg-red-50 p-2 rounded">{error}</div>}
 
             <Button
-              text='Sign In'
-              className='bg-indigo-600 hover:bg-indigo-700 w-full mt-2'
+              text={loading ? "Signing In..." : "Sign In"}
+              className={`bg-indigo-600 hover:bg-indigo-700 w-full mt-2 ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
+              disabled={loading}
             />
-          </div>
+          </form>
 
           <div className='mt-6 text-center text-sm text-gray-500'>
             Don't have an account?{" "}
