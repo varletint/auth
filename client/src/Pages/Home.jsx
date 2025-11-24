@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Header from "../Components/Header";
+import Footer from "../Components/Footer";
 import {
   AdvertisimentIcon,
   FireIcon,
@@ -14,17 +15,15 @@ export default function Home() {
   const [apiData, setApiData] = useState([]);
   console.log(apiData);
 
-  const fetchApiData = async () => {
+  const fetchApiData = useCallback(async () => {
     const res = await fetch(`https://dummyjson.com/product?limit=10`);
-
     const data = await res.json();
-
     setApiData(data.products);
-  };
+  }, [setApiData]);
 
   useEffect(() => {
     fetchApiData();
-  }, []);
+  }, [fetchApiData]);
 
   return (
     <>
@@ -89,6 +88,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 }

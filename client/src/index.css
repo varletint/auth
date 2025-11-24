@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 .header {
   grid-template-columns: 50px 1fr 50px;
   grid-row: 50px;
