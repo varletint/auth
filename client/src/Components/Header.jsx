@@ -21,6 +21,19 @@ export default function Header() {
         {/* <li>sign up</li>
         <li>sign up</li> */}
       </ul>
+      <div className="">
+        <ul className=" flex gap-[10px] justify-end font-bold">
+          <li>
+            <Link to={"/profile"}>Profile</Link>
+          </li>
+          <li>
+            <Link to={"/login"}>Login</Link>
+          </li>
+          <li>
+            <Link to={"/register"}>Register</Link>
+          </li>
+        </ul>
+      </div>
 
       <button className='flex sm:hidden justify-end font-semibold '>
         <Link to={"/profile"}>
