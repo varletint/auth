@@ -42,9 +42,11 @@ import { verifyWebhook } from "./controller/webhookController.js";
 // app.get("/webhook", verifyWebhook);
 
 import productRoute from "./Routes/productRoute.js";
+import forgotPasswordRoute from "./Routes/forgotPasswordRoute.js";
 
 app.use("/", webhookRoute);
 app.use("/api/products", productRoute);
+app.use("/api/auth", forgotPasswordRoute);
 // app.use("/api/auth", authRouter);
 
 // app.post("/webhook", async (req, res) => {

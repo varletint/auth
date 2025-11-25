@@ -40,6 +40,14 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: () => dayjs().add(7, "days").startOf("day").toDate(),
     },
+    resetOTP: {
+      type: String,
+      default: null,
+    },
+    resetOTPExpiry: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );

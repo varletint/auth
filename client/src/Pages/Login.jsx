@@ -91,6 +91,11 @@ export default function Login() {
                 className={errors.password ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""}
               />
               {errors.password && <p className="text-red-500 text-xs mt-1 ml-1">{errors.password.message}</p>}
+              <div className="text-right mt-1">
+                <Link to="/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-500 transition-colors">
+                  Forgot Password?
+                </Link>
+              </div>
             </div>
 
             {error && <div className="text-red-500 text-sm text-center bg-red-50 p-2 rounded">{error}</div>}
