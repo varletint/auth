@@ -40,7 +40,7 @@ export default function ForgotPassword() {
     document.title = "Forgot Password | Reset Your Password";
     const navigate = useNavigate();
 
-    const [step, setStep] = useState(1); // 1: Email, 2: OTP, 3: New Password
+    const [step, setStep] = useState(3); // 1: Email, 2: OTP, 3: New Password
     const [email, setEmail] = useState("");
     const [otp, setOtp] = useState("");
     const [loading, setLoading] = useState(false);
@@ -255,10 +255,10 @@ export default function ForgotPassword() {
                             <div key={s} className="flex items-center flex-1">
                                 <div
                                     className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all ${s < step
-                                            ? "bg-green-500 text-white"
-                                            : s === step
-                                                ? "bg-indigo-600 text-white"
-                                                : "bg-gray-200 text-gray-400"
+                                        ? "bg-green-500 text-white"
+                                        : s === step
+                                            ? "bg-indigo-600 text-white"
+                                            : "bg-gray-200 text-gray-400"
                                         }`}
                                 >
                                     {s < step ? <CheckmarkCircle02Icon size={20} /> : s}
