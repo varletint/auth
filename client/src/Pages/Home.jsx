@@ -10,6 +10,7 @@ import {
   OrganicFoodIcon,
   SmartPhone01Icon,
 } from "hugeicons-react";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   const [apiData, setApiData] = useState([]);
@@ -46,13 +47,13 @@ export default function Home() {
           {apiData && apiData.length > 0 && (
             <div className='carousel'>
               {apiData.map((product) => (
-                <div className='card' id={product.id}>
+                <Link to={`/product/${product.id}`} className='card' id={product.id}>
                   <img
                     src={product.images[0]}
                     className=' w-full h-full object-cover'
                     alt={product.title}
                   />
-                </div>
+                </Link>
               ))}
             </div>
           )}

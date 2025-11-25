@@ -33,7 +33,7 @@ export default function ProductPage() {
         setError(null);
         try {
             // Fetch product details
-            const productRes = await fetch(`/api/products/${id}`);
+            const productRes = await fetch(`https://dummyjson.com/product/${id}`);
             if (!productRes.ok) throw new Error("Product not found");
             const productData = await productRes.json();
             setProduct(productData);
@@ -55,7 +55,7 @@ export default function ProductPage() {
             if (productData.category) {
                 try {
                     const relatedRes = await fetch(
-                        `/api/products?category=${productData.category}&limit=4`
+                        `https://dummyjson.com/product?category=beauty&limit=4`
                     );
                     if (relatedRes.ok) {
                         const relatedData = await relatedRes.json();
