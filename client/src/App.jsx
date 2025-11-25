@@ -7,6 +7,8 @@ import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import Profile from "./Pages/Profile";
 import Edit from "./Pages/Edit";
+import EditProfile from "./Pages/EditProfile";
+import ProductPage from "./Pages/ProductPage";
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
           <Route path='/register' element={<Register />} />
           <Route path='/login' element={<Login />} />
           <Route path='/profile' element={<Profile />} />
+          <Route path='/edit-profile' element={<EditProfile />} />
+          <Route path='/product/:id' element={<ProductPage />} />
         </Routes>
         {/* <Footer /> */}
       </BrowserRouter>

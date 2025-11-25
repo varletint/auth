@@ -1,7 +1,9 @@
 import Product from "../Models/product.model.js";
+import U from "../Models/user.js";
 import redisClient, { isRedisAvailable } from "../config/redis.js";
 import { errorHandler } from "../Utilis/errorHandler.js";
 import { validateProductInput } from "../Utilis/validation.js";
+import dayjs from "dayjs";
 
 const CACHE_EXPIRATION = 3600; // 1 hour
 
@@ -55,10 +57,44 @@ export const testCreate = async (req, res, next) => {
 
 export const createProduct = async (req, res, next) => {
     try {
-        // const validationError = validateProductInput(req.body); 
-        // if (validationError) {
-        //     return next(errorHandler(400, validationError));
-        // }
+        // Get user data to verify profile completeness and post count
+        const user = await U.findById(req.user.id);
+        if (!user) {
+            return next(errorHandler(404, "User not found"));
+        }
+
+        // Check 1: Verify profile is complete
+        const missingFields = [];
+        if (!user.fullname || user.fullname.trim() === '') missingFields.push('fullname');
+        if (!user.email || user.email.trim() === '') missingFields.push('email');
+        if (!user.business_name || user.business_name.trim() === '') missingFields.push('business_name');
+
+        if (missingFields.length > 0) {
+            return next(errorHandler(400, `Please complete your profile. Missing: ${missingFields.join(', ')}`));
+        }
+
+        // Check 2: Verify post count limits
+        const now = dayjs();
+        const resetDate = dayjs(user.postResetAt);
+
+        // If the reset date has passed, reset the counter
+        if (now.isAfter(resetDate)) {
+            user.post_count = 0;
+            user.postResetAt = dayjs().add(7, 'days').startOf('day').toDate();
+            await user.save();
+        }
+
+        // Check if user has reached post limit
+        if (user.post_count >= 7) {
+            const resetDateFormatted = dayjs(user.postResetAt).format('MMMM D, YYYY');
+            return next(errorHandler(429, `You have reached your posting limit (7 posts per week). You can post again on ${resetDateFormatted}`));
+        }
+
+        // Validate product input (if needed)
+        const validationError = validateProductInput(req.body);
+        if (validationError) {
+            return next(errorHandler(400, validationError));
+        }
 
         const { name, price, category, stock, images, description, sku, isActive } = req.body;
 
@@ -71,12 +107,16 @@ export const createProduct = async (req, res, next) => {
             description: description ? description.trim() : undefined,
             sku: sku ? sku.trim() : undefined,
             isActive: isActive !== undefined ? isActive : true,
-            userId: '1'
+            userId: req.user.id
         });
 
         const savedProduct = await newProduct.save();
 
-        // await clearProductCache();
+        // Increment user's post count
+        user.post_count += 1;
+        await user.save();
+
+        await clearProductCache();
 
         res.status(201).json(savedProduct);
     } catch (error) {

@@ -131,7 +131,7 @@ export default function Profile() {
                       <Camera01Icon size={14} />
                     </button>
                   </div>
-                  <Button text='Edit Profile' className='!py-2 !px-4 !text-sm bg-white !text-gray-700 border border-gray-200 hover:bg-gray-50 !shadow-sm' />
+                  <Button text='Edit Profile' onClick={() => navigate('/edit-profile')} className='!py-2 !px-4 !text-sm bg-white !text-gray-700 border border-gray-200 hover:bg-gray-50 !shadow-sm' />
                 </div>
                 <div>
                   <h1 className='text-2xl font-bold text-gray-900'>{currentUser?.username || "User"}</h1>

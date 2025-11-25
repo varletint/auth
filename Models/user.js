@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import dayjs from "dayjs";
 
 const userSchema = new mongoose.Schema(
   {
@@ -14,10 +15,18 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    fullname: {
+      type: String,
+      // required: true,
+    },
+    business_name: {
+      type: String,
+      // required: true,
+    },
     email: {
       type: String,
       unique: true,
-      required: true,
+      // required: true,
     },
     role: {
       type: String,

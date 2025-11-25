@@ -1,0 +1,386 @@
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import Button from "../Components/Button";
+import {
+    ShoppingCart01Icon,
+    Mail01Icon,
+    Location01Icon,
+    UserIcon,
+    StarIcon,
+    Share08Icon,
+    ArrowLeft01Icon,
+    PackageIcon,
+    CheckmarkCircle02Icon,
+} from "hugeicons-react";
+
+export default function ProductPage() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [product, setProduct] = useState(null);
+    const [seller, setSeller] = useState(null);
+    const [relatedProducts, setRelatedProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(0);
+    const [quantity, setQuantity] = useState(1);
+
+    useEffect(() => {
+        fetchProductDetails();
+    }, [id]);
+
+    const fetchProductDetails = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            // Fetch product details
+            const productRes = await fetch(`/api/products/${id}`);
+            if (!productRes.ok) throw new Error("Product not found");
+            const productData = await productRes.json();
+            setProduct(productData);
+
+            // Fetch seller information
+            if (productData.userId) {
+                try {
+                    const sellerRes = await fetch(`/api/user/${productData.userId}`);
+                    if (sellerRes.ok) {
+                        const sellerData = await sellerRes.json();
+                        setSeller(sellerData);
+                    }
+                } catch (err) {
+                    console.log("Could not fetch seller info:", err);
+                }
+            }
+
+            // Fetch related products (same category)
+            if (productData.category) {
+                try {
+                    const relatedRes = await fetch(
+                        `/api/products?category=${productData.category}&limit=4`
+                    );
+                    if (relatedRes.ok) {
+                        const relatedData = await relatedRes.json();
+                        // Filter out current product
+                        const filtered = relatedData.products?.filter(
+                            (p) => p._id !== productData._id
+                        ) || [];
+                        setRelatedProducts(filtered.slice(0, 3));
+                    }
+                } catch (err) {
+                    console.log("Could not fetch related products:", err);
+                }
+            }
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleAddToCart = () => {
+        if (!product) return;
+
+        const cartItem = {
+            _id: product._id,
+            name: product.name,
+            price: product.price,
+            image: product.images?.[0],
+            quantity: quantity,
+        };
+
+        const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
+        const itemIndex = existingCart.findIndex(item => item._id === product._id);
+
+        if (itemIndex > -1) {
+            existingCart[itemIndex].quantity += quantity;
+        } else {
+            existingCart.push(cartItem);
+        }
+
+        localStorage.setItem('cart', JSON.stringify(existingCart));
+        alert(`${quantity} ${product.name}(s) added to cart!`);
+    };
+
+    const handleContactSeller = () => {
+        // TODO: Implement contact seller functionality
+        if (seller?.email) {
+            window.location.href = `mailto:${seller.email}?subject=Inquiry about ${product.name}`;
+        } else {
+            alert("Seller contact information not available");
+        }
+    };
+
+    const handleShare = () => {
+        if (navigator.share) {
+            navigator.share({
+                title: product.name,
+                text: product.description,
+                url: window.location.href,
+            });
+        } else {
+            navigator.clipboard.writeText(window.location.href);
+            alert("Product link copied to clipboard!");
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Loading product details...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error || !product) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="text-center">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Product Not Found</h2>
+                    <p className="text-gray-600 mb-6">{error || "The product you're looking for doesn't exist."}</p>
+                    <Button text="Go Back" onClick={() => navigate(-1)} className="bg-indigo-600" />
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen bg-gray-50">
+            {/* Header */}
+            <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                    <div className="flex items-center justify-between">
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+                        >
+                            <ArrowLeft01Icon size={20} />
+                            <span className="font-medium">Back</span>
+                        </button>
+                        <button
+                            onClick={handleShare}
+                            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+                        >
+                            <Share08Icon size={20} />
+                            <span className="font-medium">Share</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Main Content */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                    {/* Product Images */}
+                    <div className="space-y-4">
+                        {/* Main Image */}
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden aspect-square">
+                            <img
+                                src={product.images?.[selectedImage] || "https://via.placeholder.com/600"}
+                                alt={product.name}
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+
+                        {/* Thumbnail Images */}
+                        {product.images && product.images.length > 1 && (
+                            <div className="grid grid-cols-4 gap-3">
+                                {product.images.map((image, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => setSelectedImage(index)}
+                                        className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedImage === index
+                                            ? "border-indigo-600 ring-2 ring-indigo-200"
+                                            : "border-gray-200 hover:border-gray-300"
+                                            }`}
+                                    >
+                                        <img src={image} alt={`${product.name} ${index + 1}`} className="w-full h-full object-cover" />
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Product Details */}
+                    <div className="space-y-6">
+                        <div>
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="px-3 py-1 bg-indigo-100 text-indigo-700 text-sm font-medium rounded-full">
+                                    {product.category}
+                                </span>
+                                {product.stock > 0 ? (
+                                    <span className="flex items-center gap-1 text-green-600 text-sm font-medium">
+                                        <CheckmarkCircle02Icon size={16} />
+                                        In Stock
+                                    </span>
+                                ) : (
+                                    <span className="text-red-600 text-sm font-medium">Out of Stock</span>
+                                )}
+                            </div>
+                            <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
+                            <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-1">
+                                    {[...Array(5)].map((_, i) => (
+                                        <StarIcon
+                                            key={i}
+                                            size={18}
+                                            className={i < 4 ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}
+                                        />
+                                    ))}
+                                    <span className="text-sm text-gray-600 ml-1">(4.0)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="border-t border-b border-gray-200 py-6">
+                            <div className="flex items-baseline gap-3">
+                                <span className="text-4xl font-bold text-indigo-600">${product.price?.toFixed(2)}</span>
+                                {product.sku && <span className="text-sm text-gray-500">SKU: {product.sku}</span>}
+                            </div>
+                        </div>
+
+                        {product.description && (
+                            <div>
+                                <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
+                                <p className="text-gray-600 leading-relaxed">{product.description}</p>
+                            </div>
+                        )}
+
+                        <div className="flex items-center gap-2">
+                            <PackageIcon size={20} className="text-gray-400" />
+                            <span className="text-sm text-gray-600">Stock Available: {product.stock} units</span>
+                        </div>
+
+                        {/* Quantity Selector */}
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">Quantity</label>
+                            <div className="flex items-center gap-3">
+                                <button
+                                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                                    className="w-10 h-10 rounded-lg border border-gray-300 hover:bg-gray-50 font-semibold"
+                                    disabled={quantity <= 1}
+                                >
+                                    -
+                                </button>
+                                <input
+                                    type="number"
+                                    value={quantity}
+                                    onChange={(e) => setQuantity(Math.max(1, Math.min(product.stock, parseInt(e.target.value) || 1)))}
+                                    className="w-20 h-10 text-center border border-gray-300 rounded-lg font-semibold"
+                                    min="1"
+                                    max={product.stock}
+                                />
+                                <button
+                                    onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                                    className="w-10 h-10 rounded-lg border border-gray-300 hover:bg-gray-50 font-semibold"
+                                    disabled={quantity >= product.stock}
+                                >
+                                    +
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex gap-3">
+                            <Button
+                                text={
+                                    <span className="flex items-center gap-2">
+                                        <ShoppingCart01Icon size={20} />
+                                        Add to Cart
+                                    </span>
+                                }
+                                onClick={handleAddToCart}
+                                className="flex-1 bg-indigo-600 hover:bg-indigo-700 justify-center"
+                                disabled={product.stock === 0}
+                            />
+                            <Button
+                                text={
+                                    <span className="flex items-center gap-2">
+                                        <Mail01Icon size={20} />
+                                        Contact
+                                    </span>
+                                }
+                                onClick={handleContactSeller}
+                                className="flex-1 bg-white !text-gray-700 border border-gray-200 hover:bg-gray-50 !shadow-sm justify-center"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Seller Information */}
+                {seller && (
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-12">
+                        <h2 className="text-xl font-bold text-gray-900 mb-6">Seller Information</h2>
+                        <div className="flex items-start gap-6">
+                            <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center text-2xl font-bold text-indigo-600 flex-shrink-0 uppercase">
+                                {seller.username?.[0] || seller.fullname?.[0] || "S"}
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="text-lg font-semibold text-gray-900">{seller.fullname || seller.username || "Seller"}</h3>
+                                {seller.business_name && (
+                                    <p className="text-sm text-gray-600 mb-2">{seller.business_name}</p>
+                                )}
+                                <div className="flex flex-wrap gap-4 mt-3">
+                                    {seller.email && (
+                                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                                            <Mail01Icon size={16} className="text-gray-400" />
+                                            {seller.email}
+                                        </div>
+                                    )}
+                                    {seller.phone_no && (
+                                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                                            <UserIcon size={16} className="text-gray-400" />
+                                            {seller.phone_no}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            <Button
+                                text="View Profile"
+                                onClick={() => navigate(`/seller/${seller._id}`)}
+                                className="bg-indigo-600 !py-2 !px-4 !text-sm"
+                            />
+                        </div>
+                    </div>
+                )}
+
+                {/* Related Products */}
+                {relatedProducts.length > 0 && (
+                    <div>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-6">Related Products</h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {relatedProducts.map((relatedProduct) => (
+                                <Link
+                                    key={relatedProduct._id}
+                                    to={`/product/${relatedProduct._id}`}
+                                    className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden group hover:shadow-md transition-all"
+                                >
+                                    <div className="aspect-square bg-gray-200 overflow-hidden">
+                                        <img
+                                            src={relatedProduct.images?.[0] || "https://via.placeholder.com/400"}
+                                            alt={relatedProduct.name}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                        />
+                                    </div>
+                                    <div className="p-4">
+                                        <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">{relatedProduct.name}</h3>
+                                        <p className="text-sm text-gray-500 mb-2">{relatedProduct.category}</p>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-xl font-bold text-indigo-600">
+                                                ${relatedProduct.price?.toFixed(2)}
+                                            </span>
+                                            {relatedProduct.stock > 0 && (
+                                                <span className="text-xs text-green-600 font-medium">In Stock</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
