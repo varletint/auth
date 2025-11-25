@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 
 import webhookRoute from "./Routes/webhookRoute.js";
 // import authRouter from "./Routes/auth.route.js";
+import { connectRedis } from "./config/redis.js";
 
 dotenv.config();
 
@@ -11,26 +12,39 @@ const app = express();
 
 app.use(express.json());
 
-const startServer = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_KEYS); // <-- wait for DB
-    console.log("Connected to MongoDB");
+const PORT = process.env.PORT || 3000;
 
-    app.listen(3000, () => {
-      console.log("Server is running on port 3000");
-    });
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI || process.env.MONGO_KEYS);
+    console.log("MongoDB Connected Successfully!");
   } catch (err) {
-    console.error("MongoDB connection error:", err);
+    console.error(`MongoDB Connection Error: ${err.message}`);
+    process.exit(1); // Exit process with failure
   }
 };
 
-startServer();
+const startServer = () => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+};
+
+// Connect to DB then start the server
+connectDB().then(() => {
+  // Attempt to connect to Redis (non-blocking)
+  // connectRedis();
+  startServer();
+});
 
 import { verifyWebhook } from "./controller/webhookController.js";
 
 // app.get("/webhook", verifyWebhook);
 
+import productRoute from "./Routes/productRoute.js";
+
 app.use("/", webhookRoute);
+app.use("/api/products", productRoute);
 // app.use("/api/auth", authRouter);
 
 // app.post("/webhook", async (req, res) => {
