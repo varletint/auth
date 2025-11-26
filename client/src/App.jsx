@@ -10,6 +10,7 @@ import Edit from "./Pages/Edit";
 import EditProfile from "./Pages/EditProfile";
 import ProductPage from "./Pages/ProductPage";
 import ForgotPassword from "./Pages/ForgotPassword";
+import AddProduct from "./Pages/AddProduct";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path='/edit-profile' element={<EditProfile />} />
           <Route path='/product/:id' element={<ProductPage />} />
           <Route path='/forgot-password' element={<ForgotPassword />} />
+          <Route path='/add-product' element={<AddProduct />} />
         </Routes>
         {/* <Footer /> */}
       </BrowserRouter>

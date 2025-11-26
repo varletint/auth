@@ -218,11 +218,11 @@ export default function ForgotPassword() {
     };
 
     return (
-        <div className="min-h-screen w-full relative flex items-center justify-center bg-gray-50 overflow-hidden">
+        <div className="min-h-screen w-full relative flex items-center justify-center bg-off-white overflow-hidden">
             {/* Background decoration */}
             <div className="absolute inset-0 z-0">
-                <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-200/30 blur-[100px]"></div>
-                <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-purple-200/30 blur-[100px]"></div>
+                <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-primary/20/30 blur-[100px]"></div>
+                <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-cyan-accent/20/30 blur-[100px]"></div>
             </div>
 
             <div className="relative z-10 w-full max-w-md mx-4">
@@ -231,13 +231,13 @@ export default function ForgotPassword() {
                     <div className="mb-8">
                         <button
                             onClick={() => (step === 1 ? navigate("/login") : step > 1 ? setStep(step - 1) : null)}
-                            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors"
+                            className="flex items-center gap-2 text-gray-600 hover:text-deep-black mb-4 transition-colors"
                         >
                             <ArrowLeft01Icon size={20} />
                             <span className="text-sm font-medium">Back</span>
                         </button>
 
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                        <h1 className="text-3xl font-bold text-deep-black mb-2">
                             {step === 1 && "Forgot Password"}
                             {step === 2 && "Verify OTP"}
                             {step === 3 && "Set New Password"}
@@ -257,7 +257,7 @@ export default function ForgotPassword() {
                                     className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all ${s < step
                                         ? "bg-green-500 text-white"
                                         : s === step
-                                            ? "bg-indigo-600 text-white"
+                                            ? "bg-primary text-white"
                                             : "bg-gray-200 text-gray-400"
                                         }`}
                                 >
@@ -314,7 +314,7 @@ export default function ForgotPassword() {
                                     <div className="text-sm text-gray-600">
                                         {isTimerActive ? (
                                             <span>
-                                                Time remaining: <span className="font-bold text-indigo-600">{formatTime(timeLeft)}</span>
+                                                Time remaining: <span className="font-bold text-cyan-accent">{formatTime(timeLeft)}</span>
                                             </span>
                                         ) : (
                                             <span className="text-red-600">OTP expired</span>
@@ -324,7 +324,7 @@ export default function ForgotPassword() {
                                         type="button"
                                         onClick={handleResendOTP}
                                         disabled={loading || (isTimerActive && timeLeft > 210)}
-                                        className="text-sm font-medium text-indigo-600 hover:text-indigo-700 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                        className="text-sm font-medium text-cyan-accent hover:text-cyan-dark disabled:text-gray-400 disabled:cursor-not-allowed"
                                     >
                                         Resend OTP
                                     </button>
@@ -396,7 +396,7 @@ export default function ForgotPassword() {
                                             ? "Verify OTP"
                                             : "Reset Password"
                             }
-                            className={`bg-indigo-600 hover:bg-indigo-700 w-full mt-2 ${loading ? "opacity-70 cursor-not-allowed" : ""
+                            className={`bg-primary hover:bg-primary-dark w-full mt-2 ${loading ? "opacity-70 cursor-not-allowed" : ""
                                 }`}
                             disabled={loading}
                         />
@@ -405,7 +405,7 @@ export default function ForgotPassword() {
                     {/* Back to Login */}
                     <div className="mt-6 text-center text-sm text-gray-500">
                         Remember your password?{" "}
-                        <Link to="/login" className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">
+                        <Link to="/login" className="font-semibold text-cyan-accent hover:text-cyan-accent transition-colors">
                             Log in
                         </Link>
                     </div>
@@ -414,3 +414,5 @@ export default function ForgotPassword() {
         </div>
     );
 }
+
+

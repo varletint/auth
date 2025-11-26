@@ -77,7 +77,7 @@ export default function EditProfile() {
     };
 
     return (
-        <div className='min-h-screen bg-gray-50'>
+        <div className='min-h-screen bg-off-white'>
             {/* Header */}
             <div className='bg-white border-b border-gray-200 sticky top-0 z-10'>
                 <div className='max-w-4xl mx-auto px-4 sm:px-6 py-4'>
@@ -89,7 +89,7 @@ export default function EditProfile() {
                             <ArrowLeft01Icon size={20} className='text-gray-700' />
                         </button>
                         <div>
-                            <h1 className='text-2xl font-bold text-gray-900'>Edit Profile</h1>
+                            <h1 className='text-2xl font-bold text-deep-black'>Edit Profile</h1>
                             <p className='text-sm text-gray-500'>Update your personal information</p>
                         </div>
                     </div>
@@ -100,7 +100,7 @@ export default function EditProfile() {
             <div className='max-w-4xl mx-auto px-4 sm:px-6 py-8'>
                 {/* Profile Picture Section */}
                 <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6'>
-                    <h2 className='text-lg font-semibold text-gray-900 mb-4'>Profile Picture</h2>
+                    <h2 className='text-lg font-semibold text-deep-black mb-4'>Profile Picture</h2>
                     <div className='flex items-center gap-6'>
                         <div className='relative'>
                             <div className='w-24 h-24 rounded-full bg-indigo-100 flex items-center justify-center text-3xl font-bold text-indigo-600 uppercase overflow-hidden'>
@@ -119,7 +119,7 @@ export default function EditProfile() {
                                     text='Upload Photo'
                                     className='!py-2 !px-4 !text-sm bg-indigo-600 hover:bg-indigo-700'
                                 />
-                                <button className='py-2 px-4 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors'>
+                                <button className='py-2 px-4 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-off-white transition-colors'>
                                     Remove
                                 </button>
                             </div>
@@ -131,7 +131,7 @@ export default function EditProfile() {
                 <form onSubmit={handleSubmit}>
                     {/* Personal Information */}
                     <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6'>
-                        <h2 className='text-lg font-semibold text-gray-900 mb-6'>Personal Information</h2>
+                        <h2 className='text-lg font-semibold text-deep-black mb-6'>Personal Information</h2>
 
                         {/* Error/Success Messages */}
                         {error && (
@@ -257,7 +257,7 @@ export default function EditProfile() {
                                     name='bio'
                                     value={formData.bio}
                                     onChange={handleChange}
-                                    className='w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all duration-200 bg-gray-50 text-gray-800 placeholder-gray-400 min-h-[120px] resize-none'
+                                    className='w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all duration-200 bg-off-white text-gray-800 placeholder-gray-400 min-h-[120px] resize-none'
                                     placeholder='Tell us about yourself...'
                                 />
                                 <p className='text-xs text-gray-500'>
@@ -272,7 +272,7 @@ export default function EditProfile() {
                         <button
                             type='button'
                             onClick={() => navigate("/profile")}
-                            className='px-6 py-3 text-gray-700 bg-white border border-gray-200 rounded-lg font-medium hover:bg-gray-50 transition-colors'
+                            className='px-6 py-3 text-gray-700 bg-white border border-gray-200 rounded-lg font-medium hover:bg-off-white transition-colors'
                         >
                             Cancel
                         </button>
@@ -287,3 +287,5 @@ export default function EditProfile() {
         </div>
     );
 }
+
+

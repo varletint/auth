@@ -59,7 +59,7 @@ export default function Home() {
     {
       id: 1,
       title: "Summer Collection",
-      gradient: "from-emerald-500 via-teal-500 to-cyan-500"
+      gradient: "from-primary via-cyan-accent to-cyan-accent"
     },
     {
       id: 2,
@@ -124,13 +124,13 @@ export default function Home() {
         <div className="container mx-auto px-2">
           {/* Trending Lookups Section with Auto-Sliding */}
           <div className="mb-12 animate-fade-in">
-            <h1 className="font-bold text-2xl md:text-3xl flex items-center gap-2 mb-4 text-[#222]">
+            <h1 className="font-bold text-2xl md:text-3xl flex items-center gap-2 mb-4 text-deep-black">
               Trending Lookups
-              <FireIcon size={24} className="text-[#222] animate-pulse" />
+              <FireIcon size={24} className="text-deep-black animate-pulse" />
             </h1>
-            {/* <h1 className="font-bold text-2xl md:text-3xl flex items-center gap-2 mb-4 bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+            {/* <h1 className="font-bold text-2xl md:text-3xl flex items-center gap-2 mb-4 bg-gradient-to-r from-primary to-yellow-accent bg-clip-text text-transparent">
               Trending Lookups
-              <FireIcon size={24} className="text-emerald-500 animate-pulse" />
+              <FireIcon size={24} className="text-cyan-accent animate-pulse" />
             </h1> */}
 
             {heroLoading ? (
@@ -163,7 +163,7 @@ export default function Home() {
                       key={slide.id}
                       onClick={() => goToSlide(index)}
                       className={`h-2 rounded-full transition-all duration-300 ${index === currentSlide
-                        ? 'w-3 bg-emerald-600'
+                        ? 'w-3 bg-primary'
                         : 'w-2 bg-gray-300 hover:bg-gray-900'
                         }`}
                       aria-label={`Go to slide ${index + 1}`}
@@ -178,13 +178,13 @@ export default function Home() {
           <div className="mb-12 animate-fade-in-up">
             <div className="flex justify-between items-center mb-4">
               {/* <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 rounded-lg shadow-lg transform transition-all hover:scale-105"> */}
-              <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 text-[#222] transform transition-all hover:scale-105">
+              <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 text-deep-black transform transition-all hover:scale-105">
                 Latest Lookups
                 <HotPriceIcon size={22} className="animate-bounce" />
               </h1>
               <Link
                 to="/products"
-                className="text-emerald-600 hover:text-emerald-700 font-semibold text-sm md:text-base transition-colors duration-200 hover:underline"
+                className="text-cyan-accent hover:text-cyan-dark font-semibold text-sm md:text-base transition-colors duration-200 hover:underline"
               >
                 View All →
               </Link>
@@ -227,14 +227,14 @@ export default function Home() {
           {/* Food to Order Section */}
           <div className="mb-12 animate-fade-in-up">
             <div className="flex justify-between items-center mb-4">
-              {/* <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-4 rounded-lg shadow-lg transform transition-all hover:scale-105"> */}
-              <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 text-[#222] transform transition-all hover:scale-105">
+              {/* <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 bg-gradient-to-r from-primary to-yellow-accent text-white px-4 rounded-lg shadow-lg transform transition-all hover:scale-105"> */}
+              <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 text-deep-black transform transition-all hover:scale-105">
                 Food to Order
                 <OrganicFoodIcon size={22} className="animate-pulse" />
               </h1>
               <Link
                 to="/food"
-                className="text-emerald-600 hover:text-emerald-700 font-semibold text-sm md:text-base transition-colors duration-200 hover:underline"
+                className="text-cyan-accent hover:text-cyan-dark font-semibold text-sm md:text-base transition-colors duration-200 hover:underline"
               >
                 View All →
               </Link>
@@ -273,13 +273,13 @@ export default function Home() {
           <div className="mb-12 animate-fade-in-up">
             <div className="flex justify-between items-center mb-4">
               {/* <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 bg-gradient-to-r from-slate-700 to-slate-800 text-white px-4 rounded-lg shadow-lg transform transition-all hover:scale-105"> */}
-              <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 text-[#222] transform transition-all hover:scale-105">
+              <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 text-deep-black transform transition-all hover:scale-105">
                 Tech & Gadgets
                 <Settings03Icon size={22} className="animate-spin" />
               </h1>
               <Link
                 to="/phones"
-                className="text-emerald-600 hover:text-emerald-700 font-semibold text-sm md:text-base transition-colors duration-200 hover:underline"
+                className="text-cyan-accent hover:text-cyan-dark font-semibold text-sm md:text-base transition-colors duration-200 hover:underline"
               >
                 View All →
               </Link>
@@ -338,7 +338,7 @@ export default function Home() {
               {/* Product Info */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold text-emerald-600">
+                  <span className="text-3xl font-bold text-cyan-accent">
                     ${previewProduct.price}
                   </span>
                   {previewProduct.rating && (
@@ -363,8 +363,8 @@ export default function Home() {
                     to={`/product/${previewProduct.id}`}
                     className="flex items-end "
                   >
-                    <button className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-nowrap
-                  hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-2 px-2 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl">
+                    <button className="w-full bg-gradient-to-r from-primary to-yellow-accent text-nowrap
+                  hover:from-primary-dark hover:to-cyan-dark text-white font-bold py-2 px-2 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl">
                       View
                     </button>
                   </Link>
@@ -441,3 +441,5 @@ export default function Home() {
     </>
   );
 }
+
+

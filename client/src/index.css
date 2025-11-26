@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #FF6B00;
+  --color-primary-dark: #E66100;
+  --color-deep-black: #101010;
+  --color-off-white: #F6F6F6;
+  --color-cyan-accent: #00C2FF;
+  --color-cyan-dark: #00A8E0;
+  --color-yellow-accent: #FFE600;
+  --color-yellow-dark: #E6D000;
+}
+
 .header {
   grid-template-columns: 50px 1fr 50px;
   grid-row: 50px;
