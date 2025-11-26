@@ -198,7 +198,7 @@ export default function Home() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/0 ">
                       <div className="absolute bottom-0 left-0 right-0 p-4 text-blue-600 ">
                         <h3 className="font-bold text-lg truncate">{product.title}</h3>
-                        <p className="text-sm opacity-90 text-orange-950">${product.price}</p>
+                        <p className="text-sm opacity-90 text-orange-700">${product.price}</p>
                       </div>
                     </div>
                   </Link>
