@@ -109,7 +109,7 @@ export default function Home() {
     <>
       <Header />
       <div className="min-h-screen scroll-smooth mt-10 pb-8">
-        <div className="container mx-auto px-3">
+        <div className="container mx-auto px-2">
           {/* Trending Lookups Section with Auto-Sliding */}
           <div className="mb-12 animate-fade-in">
             <h1 className="font-bold text-2xl md:text-3xl flex items-center gap-2 mb-4 text-[#222]">
@@ -126,7 +126,7 @@ export default function Home() {
             ) : (
               <div className="relative">
                 {/* Slides Container */}
-                <div className="relative w-full lg:h-[500px] md:h-[350px] h-60 mt-3 rounded-lg shadow-2xl overflow-hidden">
+                <div className="relative w-full lg:h-[500px] md:h-[350px] h-60 mt-3 rounded-lg  overflow-hidden">
                   {trendingSlides.map((slide, index) => (
                     <div
                       key={slide.id}
@@ -150,8 +150,8 @@ export default function Home() {
                       key={slide.id}
                       onClick={() => goToSlide(index)}
                       className={`h-2 rounded-full transition-all duration-300 ${index === currentSlide
-                        ? 'w-8 bg-emerald-600'
-                        : 'w-2 bg-gray-300 hover:bg-gray-400'
+                        ? 'w-3 bg-emerald-600'
+                        : 'w-2 bg-gray-300 hover:bg-gray-900'
                         }`}
                       aria-label={`Go to slide ${index + 1}`}
                     />
