@@ -40,6 +40,31 @@ export default function Home() {
   const [apiData, setApiData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [heroLoading, setHeroLoading] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Trending slides data
+  const trendingSlides = [
+    {
+      id: 1,
+      title: "Summer Collection",
+      gradient: "from-emerald-500 via-teal-500 to-cyan-500"
+    },
+    {
+      id: 2,
+      title: "New Arrivals",
+      gradient: "from-blue-500 via-indigo-500 to-purple-500"
+    },
+    {
+      id: 3,
+      title: "Hot Deals",
+      gradient: "from-orange-500 via-pink-500 to-red-500"
+    },
+    {
+      id: 4,
+      title: "Featured Products",
+      gradient: "from-violet-500 via-purple-500 to-fuchsia-500"
+    }
+  ];
 
   const fetchApiData = useCallback(async () => {
     try {
@@ -65,24 +90,72 @@ export default function Home() {
     return () => clearTimeout(heroTimer);
   }, [fetchApiData]);
 
+  // Auto-slide for trending section
+  useEffect(() => {
+    if (!heroLoading) {
+      const slideInterval = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % trendingSlides.length);
+      }, 4000); // Change slide every 4 seconds
+
+      return () => clearInterval(slideInterval);
+    }
+  }, [heroLoading, trendingSlides.length]);
+
+  const goToSlide = (index) => {
+    setCurrentSlide(index);
+  };
+
   return (
     <>
       <Header />
       <div className="min-h-screen scroll-smooth mt-10 pb-8">
         <div className="container mx-auto px-3">
-          {/* Trending Lookups Section */}
+          {/* Trending Lookups Section with Auto-Sliding */}
           <div className="mb-12 animate-fade-in">
-            <h1 className="font-bold text-2xl md:text-3xl flex items-center gap-2 mb-4 bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+            <h1 className="font-bold text-2xl md:text-3xl flex items-center gap-2 mb-4 text-[#222]">
+              Trending Lookups
+              <FireIcon size={24} className="text-[#222] animate-pulse" />
+            </h1>
+            {/* <h1 className="font-bold text-2xl md:text-3xl flex items-center gap-2 mb-4 bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
               Trending Lookups
               <FireIcon size={24} className="text-emerald-500 animate-pulse" />
-            </h1>
+            </h1> */}
 
             {heroLoading ? (
               <HeroSkeleton />
             ) : (
-              <div className="w-full lg:h-[500px] md:h-[350px] h-60 mt-3 bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 rounded-lg shadow-2xl overflow-hidden transform transition-all duration-300 hover:scale-[1.02] hover:shadow-3xl">
-                <div className="w-full h-full flex items-center justify-center text-white text-2xl font-bold">
-                  Featured Content
+              <div className="relative">
+                {/* Slides Container */}
+                <div className="relative w-full lg:h-[500px] md:h-[350px] h-60 mt-3 rounded-lg shadow-2xl overflow-hidden">
+                  {trendingSlides.map((slide, index) => (
+                    <div
+                      key={slide.id}
+                      className={`absolute inset-0 w-full h-full bg-gradient-to-br ${slide.gradient} transition-all duration-700 ease-in-out transform ${index === currentSlide
+                        ? 'opacity-100 scale-100'
+                        : 'opacity-0 scale-95 pointer-events-none'
+                        }`}
+                    >
+                      <div className="w-full h-full flex flex-col items-center justify-center text-white">
+                        <h2 className="text-3xl md:text-5xl font-bold mb-2">{slide.title}</h2>
+                        <p className="text-lg md:text-xl opacity-90">Discover Amazing Products</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Navigation Dots */}
+                <div className="flex justify-center gap-2 mt-4">
+                  {trendingSlides.map((slide, index) => (
+                    <button
+                      key={slide.id}
+                      onClick={() => goToSlide(index)}
+                      className={`h-2 rounded-full transition-all duration-300 ${index === currentSlide
+                        ? 'w-8 bg-emerald-600'
+                        : 'w-2 bg-gray-300 hover:bg-gray-400'
+                        }`}
+                      aria-label={`Go to slide ${index + 1}`}
+                    />
+                  ))}
                 </div>
               </div>
             )}
@@ -91,7 +164,8 @@ export default function Home() {
           {/* Latest Lookups Section */}
           <div className="mb-12 animate-fade-in-up">
             <div className="flex justify-between items-center mb-4">
-              <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 rounded-lg shadow-lg transform transition-all hover:scale-105">
+              {/* <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 rounded-lg shadow-lg transform transition-all hover:scale-105"> */}
+              <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 text-[#222] transform transition-all hover:scale-105">
                 Latest Lookups
                 <HotPriceIcon size={22} className="animate-bounce" />
               </h1>
@@ -139,7 +213,8 @@ export default function Home() {
           {/* Food to Order Section */}
           <div className="mb-12 animate-fade-in-up">
             <div className="flex justify-between items-center mb-4">
-              <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-4 rounded-lg shadow-lg transform transition-all hover:scale-105">
+              {/* <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-4 rounded-lg shadow-lg transform transition-all hover:scale-105"> */}
+              <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 text-[#222] transform transition-all hover:scale-105">
                 Food to Order
                 <OrganicFoodIcon size={22} className="animate-pulse" />
               </h1>
@@ -183,7 +258,8 @@ export default function Home() {
           {/* Tech & Gadgets Section */}
           <div className="mb-12 animate-fade-in-up">
             <div className="flex justify-between items-center mb-4">
-              <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 bg-gradient-to-r from-slate-700 to-slate-800 text-white px-4 rounded-lg shadow-lg transform transition-all hover:scale-105">
+              {/* <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 bg-gradient-to-r from-slate-700 to-slate-800 text-white px-4 rounded-lg shadow-lg transform transition-all hover:scale-105"> */}
+              <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 text-[#222] transform transition-all hover:scale-105">
                 Tech & Gadgets
                 <Settings03Icon size={22} className="animate-spin" />
               </h1>
