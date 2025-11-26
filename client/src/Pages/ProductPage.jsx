@@ -126,7 +126,7 @@ export default function ProductPage() {
         return (
             <div className="min-h-screen flex items-center justify-center bg-off-white">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto"></div>
+                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
                     <p className="mt-4 text-gray-600">Loading product details...</p>
                 </div>
             </div>
@@ -137,9 +137,9 @@ export default function ProductPage() {
         return (
             <div className="min-h-screen flex items-center justify-center bg-off-white">
                 <div className="text-center">
-                    <h2 className="text-2xl font-bold text-deep-black mb-2">Product Not Found</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Product Not Found</h2>
                     <p className="text-gray-600 mb-6">{error || "The product you're looking for doesn't exist."}</p>
-                    <Button text="Go Back" onClick={() => navigate(-1)} className="bg-primary hover:bg-primary-dark" />
+                    <Button text="Go Back" onClick={() => navigate(-1)} className="bg-blue-600 hover:bg-blue-600-dark" />
                 </div>
             </div>
         );
@@ -153,14 +153,14 @@ export default function ProductPage() {
                     <div className="flex items-center justify-between">
                         <button
                             onClick={() => navigate(-1)}
-                            className="flex items-center gap-2 text-gray-600 hover:text-deep-black transition-colors"
+                            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
                         >
                             <ArrowLeft01Icon size={20} />
                             <span className="font-medium">Back</span>
                         </button>
                         <button
                             onClick={handleShare}
-                            className="flex items-center gap-2 text-gray-600 hover:text-deep-black transition-colors"
+                            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
                         >
                             <Share08Icon size={20} />
                             <span className="font-medium">Share</span>
@@ -191,7 +191,7 @@ export default function ProductPage() {
                                         key={index}
                                         onClick={() => setSelectedImage(index)}
                                         className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedImage === index
-                                            ? "border-primary ring-2 ring-primary/20"
+                                            ? "border-blue-600 ring-2 ring-primary/20"
                                             : "border-gray-200 hover:border-gray-300"
                                             }`}
                                     >
@@ -206,7 +206,7 @@ export default function ProductPage() {
                     <div className="space-y-6">
                         <div>
                             <div className="flex items-center gap-2 mb-2">
-                                <span className="px-3 py-1 bg-primary/10 text-cyan-dark text-sm font-medium rounded-full">
+                                <span className="px-3 py-1 bg-emerald-600/10 text-emerald-600 text-sm font-medium rounded-full">
                                     {product.category}
                                 </span>
                                 {product.stock > 0 ? (
@@ -218,7 +218,7 @@ export default function ProductPage() {
                                     <span className="text-red-600 text-sm font-medium">Out of Stock</span>
                                 )}
                             </div>
-                            <h1 className="text-3xl font-bold text-deep-black mb-2">{product.brand || product.name} </h1>
+                            <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.brand || product.name} </h1>
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-1">
                                     {[...Array(5)].map((_, i) => (
@@ -235,14 +235,14 @@ export default function ProductPage() {
 
                         <div className="border-t border-b border-gray-200 py-6">
                             <div className="flex items-baseline gap-3">
-                                <span className="text-4xl font-bold text-cyan-accent">${product.price?.toFixed(2)}</span>
+                                <span className="text-4xl font-bold text-emerald-600">${product.price?.toFixed(2)}</span>
                                 {product.sku && <span className="text-sm text-gray-500">SKU: {product.sku}</span>}
                             </div>
                         </div>
 
                         {product.description && (
                             <div>
-                                <h3 className="font-semibold text-deep-black mb-2">Description</h3>
+                                <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
                                 <p className="text-gray-600 leading-relaxed">{product.description}</p>
                             </div>
                         )}
@@ -291,7 +291,7 @@ export default function ProductPage() {
                                     </span>
                                 }
                                 onClick={handleAddToCart}
-                                className="flex-1 bg-primary hover:bg-primary-dark justify-center"
+                                className="flex-1 bg-blue-600 hover:bg-blue-600-dark justify-center"
                                 disabled={product.stock === 0}
                             />
                             <Button
@@ -311,13 +311,13 @@ export default function ProductPage() {
                 {/* Seller Information */}
                 {seller && (
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-12">
-                        <h2 className="text-xl font-bold text-deep-black mb-6">Seller Information</h2>
+                        <h2 className="text-xl font-bold text-gray-900 mb-6">Seller Information</h2>
                         <div className="flex items-start gap-6">
-                            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-2xl font-bold text-cyan-accent flex-shrink-0 uppercase">
+                            <div className="w-16 h-16 rounded-full bg-blue-600/10 flex items-center justify-center text-2xl font-bold text-blue-500 flex-shrink-0 uppercase">
                                 {seller.username?.[0] || seller.fullname?.[0] || "S"}
                             </div>
                             <div className="flex-1">
-                                <h3 className="text-lg font-semibold text-deep-black">{seller.fullname || seller.username || "Seller"}</h3>
+                                <h3 className="text-lg font-semibold text-gray-900">{seller.fullname || seller.username || "Seller"}</h3>
                                 {seller.business_name && (
                                     <p className="text-sm text-gray-600 mb-2">{seller.business_name}</p>
                                 )}
@@ -339,7 +339,7 @@ export default function ProductPage() {
                             <Button
                                 text="View Profile"
                                 onClick={() => navigate(`/seller/${seller._id}`)}
-                                className="bg-primary hover:bg-primary-dark !py-2 !px-4 !text-sm"
+                                className="bg-blue-600 hover:bg-blue-600-dark !py-2 !px-4 !text-sm"
                             />
                         </div>
                     </div>
@@ -348,7 +348,7 @@ export default function ProductPage() {
                 {/* Related Products */}
                 {relatedProducts.length > 0 && (
                     <div>
-                        <h2 className="text-2xl font-bold text-deep-black mb-6">Related Products</h2>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-6">Related Products</h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {relatedProducts.map((relatedProduct) => (
                                 <Link
@@ -364,10 +364,10 @@ export default function ProductPage() {
                                         />
                                     </div>
                                     <div className="p-4">
-                                        <h3 className="font-semibold text-deep-black mb-1 line-clamp-2">{relatedProduct.name}</h3>
+                                        <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">{relatedProduct.name}</h3>
                                         <p className="text-sm text-gray-500 mb-2">{relatedProduct.category}</p>
                                         <div className="flex items-center justify-between">
-                                            <span className="text-xl font-bold text-cyan-accent">
+                                            <span className="text-xl font-bold text-emerald-600">
                                                 ${relatedProduct.price?.toFixed(2)}
                                             </span>
                                             {relatedProduct.stock > 0 && (

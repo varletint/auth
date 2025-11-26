@@ -82,14 +82,14 @@ export default function Register() {
     <div className='min-h-screen w-full relative flex items-center justify-center bg-off-white overflow-hidden'>
       {/* Background decoration */}
       <div className='absolute inset-0 z-0'>
-        <div className='absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/20/30 blur-[100px]'></div>
-        <div className='absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-cyan-accent/20/30 blur-[100px]'></div>
+        <div className='absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/20/30 blur-[100px]'></div>
+        <div className='absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-500/20/30 blur-[100px]'></div>
       </div>
 
       <div className='relative z-10 w-full max-w-md mx-4'>
         <div className='bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-8'>
           <div className='mb-8 text-center'>
-            <h1 className='text-3xl font-bold text-deep-black mb-2'>Create Account</h1>
+            <h1 className='text-3xl font-bold text-gray-900 mb-2'>Create Account</h1>
             <p className='text-gray-500'>Join us and start your journey</p>
           </div>
 
@@ -100,7 +100,7 @@ export default function Register() {
                 placeholder={"Username"}
                 id={"username"}
                 {...register("username")}
-                className={errors.username ? "border-red-500 focus:border-red-500 focus:ring-red-200" : "focus:border-primary focus:ring-primary/20"}
+                className={errors.username ? "border-red-500 focus:border-red-500 focus:ring-red-200" : "focus:border-blue-600 focus:ring-primary/20"}
               />
               {errors.username && <p className="text-red-500 text-xs mt-1 ml-1">{errors.username.message}</p>}
             </div>
@@ -111,7 +111,7 @@ export default function Register() {
                 placeholder={"Phone Number"}
                 id={"phone_no"}
                 {...register("phone_no")}
-                className={errors.phone_no ? "border-red-500 focus:border-red-500 focus:ring-red-200" : "focus:border-primary focus:ring-primary/20"}
+                className={errors.phone_no ? "border-red-500 focus:border-red-500 focus:ring-red-200" : "focus:border-blue-600 focus:ring-primary/20"}
               />
               {errors.phone_no && <p className="text-red-500 text-xs mt-1 ml-1">{errors.phone_no.message}</p>}
             </div>
@@ -122,7 +122,7 @@ export default function Register() {
                 placeholder={"Password"}
                 id='password'
                 {...register("password")}
-                className={errors.password ? "border-red-500 focus:border-red-500 focus:ring-red-200" : "focus:border-primary focus:ring-primary/20"}
+                className={errors.password ? "border-red-500 focus:border-red-500 focus:ring-red-200" : "focus:border-blue-600 focus:ring-primary/20"}
               />
               {errors.password && <p className="text-red-500 text-xs mt-1 ml-1">{errors.password.message}</p>}
             </div>
@@ -131,14 +131,14 @@ export default function Register() {
 
             <Button
               text={loading ? "Creating Account..." : "Sign Up"}
-              className={`bg-gradient-to-r from-primary to-yellow-accent hover:from-primary-dark hover:to-cyan-dark w-full mt-2 ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
+              className={`w-full mt-2 ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
               disabled={loading}
             />
           </form>
 
           <div className='mt-6 text-center text-sm text-gray-500'>
             Already have an account?{" "}
-            <Link to='/login' className='font-semibold text-cyan-accent hover:text-cyan-accent transition-colors'>
+            <Link to='/login' className='font-semibold text-blue-500 hover:text-blue-600 transition-colors'>
               Log in
             </Link>
           </div>

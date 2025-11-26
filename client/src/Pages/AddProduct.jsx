@@ -155,7 +155,7 @@ export default function AddProduct() {
                 <div className="container mx-auto px-4 max-w-4xl">
                     {/* Page Header */}
                     <div className="mb-8">
-                        <h1 className="text-3xl md:text-4xl font-bold text-deep-black mb-2">
+                        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
                             Add New Product
                         </h1>
                         <p className="text-gray-600">
@@ -246,7 +246,7 @@ export default function AddProduct() {
                                     <select
                                         id="category"
                                         {...register("category")}
-                                        className={`w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all duration-200 bg-off-white text-gray-800 ${errors.category ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""
+                                        className={`w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all duration-200 bg-off-white text-gray-800 ${errors.category ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""
                                             }`}
                                     >
                                         <option value="">Select a category</option>
@@ -288,10 +288,10 @@ export default function AddProduct() {
                                 <div className="mb-4">
                                     <label
                                         htmlFor="images"
-                                        className="inline-flex items-center gap-2 px-6 py-3 bg-primary/5 hover:bg-primary/10 text-cyan-dark font-semibold rounded-lg cursor-pointer transition-all duration-200 border-2 border-primary/20 hover:border-emerald-300"
+                                        className="inline-flex items-center gap-2 px-6 py-2 bg-blue-600/5 hover:bg-blue-600/10 text-blue-600 font-semibold rounded-lg cursor-pointer transition-all duration-200 border-2 border-blue-200 hover:border-emerald-300"
                                     >
                                         <Image01Icon size={20} />
-                                        <span>Choose Images</span>
+                                        {/* <span>Choose Images</span> */}
                                     </label>
                                     <input
                                         id="images"
@@ -336,7 +336,7 @@ export default function AddProduct() {
 
                             {/* Error Message */}
                             {error && (
-                                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-lg">
                                     {error}
                                 </div>
                             )}
@@ -345,14 +345,14 @@ export default function AddProduct() {
                             <div className="flex gap-4 pt-4">
                                 <Button
                                     text={loading ? "Creating Product..." : "Create Product"}
-                                    className={`bg-gradient-to-r from-primary to-yellow-accent hover:from-primary-dark hover:to-cyan-dark w-full ${loading ? "opacity-70 cursor-not-allowed" : ""
+                                    className={` w-full ${loading ? "opacity-70 cursor-not-allowed" : ""
                                         }`}
                                     disabled={loading}
                                 />
                                 <button
                                     type="button"
                                     onClick={() => navigate(-1)}
-                                    className="px-6 py-3 border-2 border-gray-300 hover:border-gray-400 text-gray-700 font-semibold rounded-lg transition-all duration-200"
+                                    className="px-6 py-2 border-2 border-gray-300 hover:border-gray-400 text-gray-700 font-semibold rounded-lg transition-all duration-200"
                                 >
                                     Cancel
                                 </button>

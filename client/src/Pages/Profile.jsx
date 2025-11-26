@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Header from "../Components/Header";
 import Input from "../Components/Input";
 import Button from "../Components/Button";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../store/useAuthStore";
 import {
   GridViewIcon,
@@ -64,7 +64,7 @@ export default function Profile() {
                 {currentUser?.username?.[0] || "U"}
               </div>
               <div>
-                <h3 className='font-semibold text-deep-black'>{currentUser?.username || "User"}</h3>
+                <h3 className='font-semibold text-gray-900'>{currentUser?.username || "User"}</h3>
                 <p className='text-xs text-gray-500'>Free Account</p>
               </div>
             </div>
@@ -78,7 +78,7 @@ export default function Profile() {
                   }}
                   className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors ${activeTab === item.id
                     ? "bg-indigo-50 text-indigo-600"
-                    : "text-gray-600 hover:bg-off-white hover:text-deep-black"
+                    : "text-gray-600 hover:bg-off-white hover:text-gray-900"
                     }`}
                 >
                   {item.icon}
@@ -115,26 +115,26 @@ export default function Profile() {
             >
               {isSidebarOpen ? <MultiplicationSignIcon size={24} /> : <Menu01Icon size={24} />}
             </button>
-            <h2 className='ml-20 text-2xl font-bold text-deep-black'>My Profile</h2>
+            <h2 className='ml-20 text-2xl font-bold text-gray-900'>My Profile</h2>
           </div>
           <div className='max-w- mx-auto p-2'>
             {/* Header Section */}
             <div className='relative mb-2.5 rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-200'>
-              <div className='h-32 bg-gradient-to-r from-primary to-yellow-accent'></div>
+              <div className='h-32 bg-gradient-to-r from-blue-600 to-amber-400'></div>
               <div className='px-8 pb-8'>
                 <div className='relative flex justify-between items-end -mt-12 mb-6'>
                   <div className='relative'>
-                    <div className='w-24 h-24 rounded-full border-4 border-white bg-white overflow-hidden shadow-md flex items-center justify-center text-3xl font-bold text-gray-400 bg-gray-100 uppercase'>
+                    <div className='w-24 h-24 rounded-full border-4 border-white overflow-hidden shadow-md flex items-center justify-center text-3xl font-bold text-gray-400 bg-gray-100 uppercase'>
                       {currentUser?.username?.[0] || "U"}
                     </div>
-                    <button className='absolute bottom-0 right-0 p-1.5 bg-primary hover:bg-primary-dark text-white rounded-full hover:bg-indigo-700 shadow-sm border-2 border-white'>
+                    <button className='absolute bottom-0 right-0 p-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full  shadow-sm border-2 border-white'>
                       <Camera01Icon size={14} />
                     </button>
                   </div>
                   <Button text='Edit Profile' onClick={() => navigate('/edit-profile')} className='!py-2 !px-4 !text-sm bg-white !text-gray-700 border border-gray-200 hover:bg-off-white !shadow-sm' />
                 </div>
                 <div>
-                  <h1 className='text-2xl font-bold text-deep-black'>{currentUser?.username || "User"}</h1>
+                  <h1 className='text-2xl font-bold text-gray-900'>{currentUser?.username || "User"}</h1>
                   <p className='text-gray-500'>{currentUser?.email || "user@example.com"}</p>
                 </div>
               </div>
@@ -146,19 +146,19 @@ export default function Profile() {
                 {/* Left Column - Stats/Info */}
                 <div className='space-y-6'>
                   <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
-                    <h3 className='font-semibold text-deep-black mb-4'>Profile Stats</h3>
+                    <h3 className='font-semibold text-gray-900 mb-4'>Profile Stats</h3>
                     <div className='space-y-4'>
                       <div className='flex justify-between items-center'>
                         <span className='text-gray-600'>Profile Views</span>
-                        <span className='font-semibold text-deep-black'>1,234</span>
+                        <span className='font-semibold text-gray-900'>1,234</span>
                       </div>
                       <div className='flex justify-between items-center'>
                         <span className='text-gray-600'>Products</span>
-                        <span className='font-semibold text-deep-black'>45</span>
+                        <span className='font-semibold text-gray-900'>45</span>
                       </div>
                       <div className='flex justify-between items-center'>
                         <span className='text-gray-600'>Followers</span>
-                        <span className='font-semibold text-deep-black'>892</span>
+                        <span className='font-semibold text-gray-900'>892</span>
                       </div>
                     </div>
                   </div>
@@ -169,7 +169,7 @@ export default function Profile() {
                   {/* Edit Form */}
                   <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
                     <div className='flex justify-between items-center mb-6'>
-                      <h3 className='font-semibold text-deep-black'>Personal Information</h3>
+                      <h3 className='font-semibold text-gray-900'>Personal Information</h3>
                       <button className='text-indigo-600 hover:text-indigo-700 text-sm font-medium'>Save Changes</button>
                     </div>
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
@@ -201,8 +201,10 @@ export default function Profile() {
               </div>
               <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
                 <div className='flex justify-between items-center mb-6'>
-                  <h3 className='font-semibold text-deep-black'>My Products</h3>
-                  <Button text='Add Product' className='bg-primary hover:bg-primary-dark !py-2 !px-4 !text-sm' />
+                  <h3 className='font-semibold text-gray-900'>My Products</h3>
+                  <Link to='/add-product'>
+                    <Button text='Add Product' className='bg-blue-600 hover:bg-blue-600-dark !py-2 !px-4 !text-sm' />
+                  </Link>
                 </div>
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
                   {[1, 2, 3, 4].map((item) => (
@@ -211,7 +213,7 @@ export default function Profile() {
                         <div className='absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors'></div>
                       </div>
                       <div className='p-4'>
-                        <h4 className='font-semibold text-deep-black mb-1'>Product Name {item}</h4>
+                        <h4 className='font-semibold text-gray-900 mb-1'>Product Name {item}</h4>
                         <p className='text-sm text-gray-500 mb-3'>$99.00</p>
                         <div className='flex gap-2'>
                           <button className='flex-1 py-2 text-sm font-medium text-gray-600 bg-off-white rounded-lg hover:bg-gray-100'>Edit</button>

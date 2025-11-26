@@ -41,3 +41,49 @@ export const validateProductInput = (data, isUpdate = false) => {
 
     return null;
 };
+
+export const validateSigninInput = (data) => {
+    const { email, password } = data;
+
+    if (!email || typeof email !== 'string') {
+        return "Email is required and must be a string";
+    }
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+        return "Invalid email format";
+    }
+
+    if (!password || typeof password !== 'string') {
+        return "Password is required and must be a string";
+    }
+
+    return null;
+};
+
+export const validateSignupInput = (data) => {
+    const { username, email, password, phone_no } = data;
+
+    if (!username || typeof username !== 'string' || username.trim().length < 3) {
+        return "Username is required and must be at least 3 characters long";
+    }
+
+    if (!email || typeof email !== 'string') {
+        return "Email is required and must be a string";
+    }
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+        return "Invalid email format";
+    }
+
+    if (!password || typeof password !== 'string' || password.length < 6) {
+        return "Password is required and must be at least 6 characters long";
+    }
+
+    if (!phone_no || isNaN(phone_no)) {
+        return "Phone number is required and must be a number";
+    }
+
+    return null;
+};

@@ -89,7 +89,7 @@ export default function EditProfile() {
                             <ArrowLeft01Icon size={20} className='text-gray-700' />
                         </button>
                         <div>
-                            <h1 className='text-2xl font-bold text-deep-black'>Edit Profile</h1>
+                            <h1 className='text-2xl font-bold text-gray-900'>Edit Profile</h1>
                             <p className='text-sm text-gray-500'>Update your personal information</p>
                         </div>
                     </div>
@@ -100,7 +100,7 @@ export default function EditProfile() {
             <div className='max-w-4xl mx-auto px-4 sm:px-6 py-8'>
                 {/* Profile Picture Section */}
                 <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6'>
-                    <h2 className='text-lg font-semibold text-deep-black mb-4'>Profile Picture</h2>
+                    <h2 className='text-lg font-semibold text-gray-900 mb-4'>Profile Picture</h2>
                     <div className='flex items-center gap-6'>
                         <div className='relative'>
                             <div className='w-24 h-24 rounded-full bg-indigo-100 flex items-center justify-center text-3xl font-bold text-indigo-600 uppercase overflow-hidden'>
@@ -131,7 +131,7 @@ export default function EditProfile() {
                 <form onSubmit={handleSubmit}>
                     {/* Personal Information */}
                     <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6'>
-                        <h2 className='text-lg font-semibold text-deep-black mb-6'>Personal Information</h2>
+                        <h2 className='text-lg font-semibold text-gray-900 mb-6'>Personal Information</h2>
 
                         {/* Error/Success Messages */}
                         {error && (
