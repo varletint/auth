@@ -103,10 +103,10 @@ export default function EditProfile() {
                     <h2 className='text-lg font-semibold text-gray-900 mb-4'>Profile Picture</h2>
                     <div className='flex items-center gap-6'>
                         <div className='relative'>
-                            <div className='w-24 h-24 rounded-full bg-indigo-100 flex items-center justify-center text-3xl font-bold text-indigo-600 uppercase overflow-hidden'>
+                            <div className='w-24 h-24 rounded-full bg-emerald-100 flex items-center justify-center text-3xl font-bold text-emerald-600 uppercase overflow-hidden'>
                                 {currentUser?.username?.[0] || "U"}
                             </div>
-                            <button className='absolute bottom-0 right-0 p-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 shadow-md border-2 border-white transition-colors'>
+                            <button className='absolute bottom-0 right-0 p-2 bg-emerald-600 text-white rounded-full hover:bg-emerald-700 shadow-md border-2 border-white transition-colors'>
                                 <Camera01Icon size={16} />
                             </button>
                         </div>
@@ -117,7 +117,7 @@ export default function EditProfile() {
                             <div className='flex gap-3'>
                                 <Button
                                     text='Upload Photo'
-                                    className='!py-2 !px-4 !text-sm bg-indigo-600 hover:bg-indigo-700'
+                                    className='!py-2 !px-4 !text-sm bg-emerald-600 hover:bg-emerald-700'
                                 />
                                 <button className='py-2 px-4 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-off-white transition-colors'>
                                     Remove
@@ -278,7 +278,7 @@ export default function EditProfile() {
                         </button>
                         <Button
                             text={isLoading ? "Saving..." : "Save Changes"}
-                            className='bg-indigo-600 hover:bg-indigo-700'
+                            className='bg-emerald-600 hover:bg-emerald-700'
                             onClick={handleSubmit}
                         />
                     </div>

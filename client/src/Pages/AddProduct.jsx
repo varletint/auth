@@ -288,7 +288,7 @@ export default function AddProduct() {
                                 <div className="mb-4">
                                     <label
                                         htmlFor="images"
-                                        className="inline-flex items-center gap-2 px-6 py-2 bg-blue-600/5 hover:bg-blue-600/10 text-blue-600 font-semibold rounded-lg cursor-pointer transition-all duration-200 border-2 border-blue-200 hover:border-emerald-300"
+                                        className="inline-flex items-center gap-2 px-6 py-2 bg-emerald-600/5 hover:bg-emerald-600/10 text-emerald-600 font-semibold rounded-lg cursor-pointer transition-all duration-200 border-2 border-emerald-200 hover:border-emerald-300"
                                     >
                                         <Image01Icon size={20} />
                                         {/* <span>Choose Images</span> */}
@@ -361,14 +361,14 @@ export default function AddProduct() {
                     </div>
 
                     {/* Info Card */}
-                    <div className="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-6">
-                        <h3 className="font-bold text-blue-900 mb-2 flex items-center gap-2">
+                    <div className="mt-8 bg-emerald-50 border border-emerald-200 rounded-xl p-6">
+                        <h3 className="font-bold text-emerald-900 mb-2 flex items-center gap-2">
                             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                             </svg>
                             Tips for a Great Listing
                         </h3>
-                        <ul className="text-sm text-blue-800 space-y-1 ml-7">
+                        <ul className="text-sm text-emerald-800 space-y-1 ml-7">
                             <li>• Use high-quality images that showcase your product</li>
                             <li>• Write a detailed, honest description</li>
                             <li>• Set a competitive price based on market research</li>
