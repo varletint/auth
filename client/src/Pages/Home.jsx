@@ -185,7 +185,7 @@ export default function Home() {
                   <Link
                     to={`/product/${product.id}`}
                     key={product.id}
-                    className="card group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    className="card group relative overflow-hidden rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
                     <img
@@ -194,10 +194,11 @@ export default function Home() {
                       alt={product.title}
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                    {/* <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"> */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/0 ">
+                      <div className="absolute bottom-0 left-0 right-0 p-4 text-blue-600 ">
                         <h3 className="font-bold text-lg truncate">{product.title}</h3>
-                        <p className="text-sm opacity-90">${product.price}</p>
+                        <p className="text-sm opacity-90 text-orange-950">${product.price}</p>
                       </div>
                     </div>
                   </Link>

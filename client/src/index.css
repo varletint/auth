@@ -5,16 +5,18 @@
   grid-row: 50px;
   /* background: red; */
 }
+
 .product-card {
   grid-template-columns: 50px 1fr 50px;
   grid-row: 50px;
 }
+
 .card {
   flex: 0 0 12em;
   padding: 1em;
   align-content: center;
   height: 12em;
-  background: #ff0000;
+
 }
 
 .carousel {
