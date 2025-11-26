@@ -218,7 +218,7 @@ export default function ProductPage() {
                                     <span className="text-red-600 text-sm font-medium">Out of Stock</span>
                                 )}
                             </div>
-                            <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
+                            <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.brand || product.name} </h1>
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-1">
                                     {[...Array(5)].map((_, i) => (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu01Icon, MultiplicationSignIcon } from "hugeicons-react";
+import { Menu01Icon, MultiplicationSignIcon, Plant01Icon, Plant03Icon, Plant04Icon } from "hugeicons-react";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -26,8 +26,9 @@ export default function Header() {
     <div
       className='header w-[1500px] max-w-[95%] m-auto
       flex justify-between items-center relative z-[100] px-[10px] py-[15px]'>
-      <Link to='/' className='font-bold text-[25px] text-nowrap'>
-        Lookups
+      <Link to='/' className='font-bold text-[25px] text-nowrap
+      flex items-center gap-[0px] text-emerald-600'>
+        Lookups <Plant03Icon size={35} className="text-emerald-600" />
       </Link>
 
       {/* Desktop Navigation */}
