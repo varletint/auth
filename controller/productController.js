@@ -1,4 +1,4 @@
-import Product from "../Models/product.model.js";
+import Product from "../Models/product.js";
 import U from "../Models/user.js";
 import redisClient, { isRedisAvailable } from "../config/redis.js";
 import { errorHandler } from "../Utilis/errorHandler.js";
