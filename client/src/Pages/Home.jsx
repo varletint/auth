@@ -41,6 +41,18 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [heroLoading, setHeroLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [previewProduct, setPreviewProduct] = useState(null);
+
+  useEffect(() => {
+    if (previewProduct) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [previewProduct]);
 
   // Trending slides data
   const trendingSlides = [
@@ -92,14 +104,14 @@ export default function Home() {
 
   // Auto-slide for trending section
   useEffect(() => {
-    if (!heroLoading) {
+    if (!heroLoading && trendingSlides.length > 0) {
       const slideInterval = setInterval(() => {
         setCurrentSlide((prev) => (prev + 1) % trendingSlides.length);
       }, 4000); // Change slide every 4 seconds
 
       return () => clearInterval(slideInterval);
     }
-  }, [heroLoading, trendingSlides.length]);
+  }, [heroLoading]);
 
   const goToSlide = (index) => {
     setCurrentSlide(index);
@@ -135,9 +147,10 @@ export default function Home() {
                         : 'opacity-0 scale-95 pointer-events-none'
                         }`}
                     >
-                      <div className="w-full h-full flex flex-col items-center justify-center text-white">
-                        <h2 className="text-3xl md:text-5xl font-bold mb-2">{slide.title}</h2>
-                        <p className="text-lg md:text-xl opacity-90">Discover Amazing Products</p>
+                      <div className="w-full h-full flex flex-col items-center justify-center text-white 
+                      ">
+                        <h2 className="text-3xl md:text-5xl font-bold mb-2 cursor-grab">{slide.title}</h2>
+                        <p className="text-lg md:text-xl opacity-90 cursor-pointer">Discover Amazing Products</p>
                       </div>
                     </div>
                   ))}
@@ -182,10 +195,10 @@ export default function Home() {
             ) : apiData && apiData.length > 0 ? (
               <div className="carousel">
                 {apiData.map((product, index) => (
-                  <Link
-                    to={`/product/${product.id}`}
+                  <div
                     key={product.id}
-                    className="card group relative overflow-hidden rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    onClick={() => setPreviewProduct(product)}
+                    className="card group relative overflow-hidden rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
                     <img
@@ -201,7 +214,7 @@ export default function Home() {
                         <p className="text-sm opacity-90 text-orange-500">${product.price}</p>
                       </div>
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
             ) : (
@@ -284,6 +297,84 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Preview Modal */}
+      {previewProduct && (
+        <div
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-2 animate-fade-in"
+          onClick={() => setPreviewProduct(null)}
+        >
+          <div
+            className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl transform transition-all duration-300 animate-scale-in"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h2 className="text-xl font-bold text-gray-800 truncate flex-1 pr-4">
+                {previewProduct.title}
+              </h2>
+              <button
+                onClick={() => setPreviewProduct(null)}
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors duration-200 text-gray-600 hover:text-gray-800"
+                aria-label="Close preview"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-2">
+              {/* Product Image */}
+              <div className="w-full aspect-video mb-6 rounded-xl overflow-hidden bg-gray-100">
+                <img
+                  src={previewProduct.images[0]}
+                  alt={previewProduct.title}
+                  className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+
+              {/* Product Info */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-3xl font-bold text-emerald-600">
+                    ${previewProduct.price}
+                  </span>
+                  {previewProduct.rating && (
+                    <div className="flex items-center gap-1 text-sm text-gray-600">
+                      <svg className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                      </svg>
+                      <span className="font-semibold">{previewProduct.rating}</span>
+                    </div>
+                  )}
+                </div>
+
+                {previewProduct.description && (
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    {previewProduct.description}
+                  </p>
+                )}
+
+                {/* View Full Product Button */}
+                <div className="flex w-full justify-end mb-2.5">
+                  <Link
+                    to={`/product/${previewProduct.id}`}
+                    className="flex items-end "
+                  >
+                    <button className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-nowrap
+                  hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-2 px-2 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl">
+                      View
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Footer />
 
       {/* Add custom styles */}
@@ -330,6 +421,21 @@ export default function Home() {
         .animate-fade-in-up {
           animation: fade-in-up 0.8s ease-out;
           animation-fill-mode: both;
+        }
+
+        @keyframes scale-in {
+          from {
+            opacity: 0;
+            transform: scale(0.9);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        .animate-scale-in {
+          animation: scale-in 0.3s ease-out;
         }
       `}</style>
     </>
