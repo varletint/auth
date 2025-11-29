@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import Button from "../Components/Button";
+import { productApi } from "../api/productApi";
 import {
     ShoppingCart01Icon,
     Mail01Icon,
@@ -24,6 +25,8 @@ export default function ProductPage() {
     const [selectedImage, setSelectedImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
 
+    console.log(`seller ${seller}`);
+
     useEffect(() => {
         fetchProductDetails();
     }, [id]);
@@ -32,16 +35,20 @@ export default function ProductPage() {
         setLoading(true);
         setError(null);
         try {
-            // Fetch product details
-            const productRes = await fetch(`https://dummyjson.com/product/${id}`);
-            if (!productRes.ok) throw new Error("Product not found");
-            const productData = await productRes.json();
+            // Fetch product details using productApi
+            // Backend returns the product directly, not wrapped in { success, product }
+            const productData = await productApi.getProduct(id);
+
+            if (!productData) {
+                throw new Error("Product not found");
+            }
+
             setProduct(productData);
 
             // Fetch seller information
             if (productData.userId) {
                 try {
-                    const sellerRes = await fetch(`/api/user/${productData.userId}`);
+                    const sellerRes = await fetch(`/api/seller/${productData.userId}`);
                     if (sellerRes.ok) {
                         const sellerData = await sellerRes.json();
                         setSeller(sellerData);
@@ -54,15 +61,17 @@ export default function ProductPage() {
             // Fetch related products (same category)
             if (productData.category) {
                 try {
-                    const relatedRes = await fetch(
-                        `https://dummyjson.com/product?category=beauty&limit=4`
-                    );
-                    if (relatedRes.ok) {
-                        const relatedData = await relatedRes.json();
+                    // Backend returns { products, totalPages, currentPage, totalProducts }
+                    const relatedResponse = await productApi.getProducts({
+                        category: productData.category,
+                        limit: 4
+                    });
+
+                    if (relatedResponse && relatedResponse.products) {
                         // Filter out current product
-                        const filtered = relatedData.products?.filter(
+                        const filtered = relatedResponse.products.filter(
                             (p) => p._id !== productData._id
-                        ) || [];
+                        );
                         setRelatedProducts(filtered.slice(0, 3));
                     }
                 } catch (err) {
@@ -209,6 +218,12 @@ export default function ProductPage() {
                                 <span className="px-3 py-1 bg-emerald-600/10 text-emerald-600 text-sm font-medium rounded-full">
                                     {product.category}
                                 </span>
+
+                                {product.brand && (
+                                    <span className="px-3 py-1 bg-emerald-600/10 text-emerald-600 text-sm font-medium rounded-full">
+                                        {product.brand}
+                                    </span>
+                                )}
                                 {product.stock > 0 ? (
                                     <span className="flex items-center gap-1 text-green-600 text-sm font-medium">
                                         <CheckmarkCircle02Icon size={16} />
@@ -218,7 +233,7 @@ export default function ProductPage() {
                                     <span className="text-red-600 text-sm font-medium">Out of Stock</span>
                                 )}
                             </div>
-                            <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.brand || product.name} </h1>
+                            <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name} </h1>
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-1">
                                     {[...Array(5)].map((_, i) => (
@@ -235,7 +250,7 @@ export default function ProductPage() {
 
                         <div className="border-t border-b border-gray-200 py-6">
                             <div className="flex items-baseline gap-3">
-                                <span className="text-4xl font-bold text-emerald-600">${product.price?.toFixed(2)}</span>
+                                <span className="text-4xl font-bold text-emerald-600">{new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(product.price)}</span>
                                 {product.sku && <span className="text-sm text-gray-500">SKU: {product.sku}</span>}
                             </div>
                         </div>
@@ -312,20 +327,20 @@ export default function ProductPage() {
                 {seller && (
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-12">
                         <h2 className="text-xl font-bold text-gray-900 mb-6">Seller Information</h2>
-                        <div className="flex items-start gap-6">
+                        <div className="flex flex-col sm:flex-row items-start gap-6">
                             <div className="w-16 h-16 rounded-full bg-blue-600/10 flex items-center justify-center text-2xl font-bold text-blue-500 flex-shrink-0 uppercase">
                                 {seller.username?.[0] || seller.fullname?.[0] || "S"}
                             </div>
-                            <div className="flex-1">
-                                <h3 className="text-lg font-semibold text-gray-900">{seller.fullname || seller.username || "Seller"}</h3>
-                                {seller.business_name && (
-                                    <p className="text-sm text-gray-600 mb-2">{seller.business_name}</p>
+                            <div className="flex-1 w-full sm:w-auto">
+                                <h3 className="text-lg font-semibold text-gray-900">{seller.fullName || seller.username || "Seller"}</h3>
+                                {seller.businessInfo?.businessName && (
+                                    <p className="text-sm text-gray-600 mb-2">{seller.businessInfo.businessName}</p>
                                 )}
                                 <div className="flex flex-wrap gap-4 mt-3">
                                     {seller.email && (
                                         <div className="flex items-center gap-2 text-sm text-gray-600">
                                             <Mail01Icon size={16} className="text-gray-400" />
-                                            {seller.email}
+                                            <span className="break-all">{seller.email}</span>
                                         </div>
                                     )}
                                     {seller.phone_no && (
@@ -339,7 +354,7 @@ export default function ProductPage() {
                             <Button
                                 text="View Profile"
                                 onClick={() => navigate(`/seller/${seller._id}`)}
-                                className="bg-blue-600 hover:bg-blue-600-dark !py-2 !px-4 !text-sm"
+                                className="bg-blue-600 hover:bg-blue-600-dark !py-2 !px-4 !text-sm w-full sm:w-auto"
                             />
                         </div>
                     </div>

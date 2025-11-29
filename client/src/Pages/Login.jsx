@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import useAuthStore from "../store/useAuthStore";
+import { authApi } from "../api/authApi.js";
 
 const schema = yup.object({
   username: yup.string().required("Username is required"),
@@ -31,27 +32,19 @@ export default function Login() {
 
   const onSubmit = async (data) => {
     signInStart();
+    const signInData = {
+      username: data.username,
+      password: data.password,
+    };
     try {
-      const res = await fetch("/api/auth/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: data.username, password: data.password }),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        signInFailure(result.message || "Login failed");
-        return;
-      }
+      const result = await authApi.signin(signInData);
 
       console.log("Login success:", result);
       signInSuccess(result);
       navigate("/profile");
     } catch (err) {
-      signInFailure(err.message);
+      // err is an ApiError with status and message properties
+      signInFailure(err.message || "Login failed");
     }
   };
 

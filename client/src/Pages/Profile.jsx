@@ -167,7 +167,7 @@ export default function Profile() {
                 {/* Right Column - Main Content */}
                 <div className='lg:col-span-1 md: space-y-6'>
                   {/* Edit Form */}
-                  <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
+                  {/* <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
                     <div className='flex justify-between items-center mb-6'>
                       <h3 className='font-semibold text-gray-900'>Personal Information</h3>
                       <button className='text-indigo-600 hover:text-indigo-700 text-sm font-medium'>Save Changes</button>
@@ -193,7 +193,7 @@ export default function Profile() {
                         ></textarea>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Products Grid */}
 

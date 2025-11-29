@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Input from "../Components/Input";
 import Button from "../Components/Button";
 import { Link, useNavigate } from "react-router-dom";
@@ -27,6 +27,7 @@ const schema = yup.object({
 export default function Register() {
   document.title = "Register | New Account";
   const navigate = useNavigate();
+  const [successMessage, setSuccessMessage] = useState(null);
 
   const { loading, error, signInStart, signInSuccess, signInFailure } = useAuthStore();
 
@@ -41,7 +42,7 @@ export default function Register() {
 
   console.log(watch());
 
-  // Auto-dismiss error after 5 seconds
+  // Auto-dismiss error after 3.5 seconds
   useEffect(() => {
     if (error) {
       const timer = setTimeout(() => {
@@ -51,6 +52,17 @@ export default function Register() {
       return () => clearTimeout(timer);
     }
   }, [error]);
+
+  // Auto-dismiss success message after 3 seconds
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage]);
 
   const onSubmit = async (data) => {
     signInStart();
@@ -72,7 +84,12 @@ export default function Register() {
 
       console.log("Registration success:", result);
       signInSuccess(result);
-      navigate("/profile");
+      setSuccessMessage("Account created successfully! Redirecting...");
+
+      // Navigate after showing success message (2 seconds)
+      setTimeout(() => {
+        navigate("/profile");
+      }, 2000);
     } catch (err) {
       signInFailure(err.message);
     }
@@ -126,6 +143,17 @@ export default function Register() {
               />
               {errors.password && <p className="text-red-500 text-xs mt-1 ml-1">{errors.password.message}</p>}
             </div>
+
+            {successMessage && (
+              <div className="text-green-700 text-sm text-center bg-green-50 border border-green-200 p-3 rounded-lg animate-fade-in">
+                <div className="flex items-center justify-center gap-2">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="font-medium">{successMessage}</span>
+                </div>
+              </div>
+            )}
 
             {error && <div className="text-red-500 text-sm text-center bg-red-50 p-2 rounded">{error}</div>}
 

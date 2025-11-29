@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
+import { productApi } from "../api/productApi";
 import {
   AdvertisimentIcon,
   FireIcon,
@@ -82,11 +83,17 @@ export default function Home() {
   const fetchApiData = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch(`https://dummyjson.com/products?limit=10`);
-      const data = await res.json();
-      setApiData(data.products);
+      // Fetch from your backend instead of dummy API
+      const data = await productApi.getProducts({ limit: 10 });
+      setApiData(data.products || []);
+
+      // OLD: Dummy API call (commented out)
+      // const res = await fetch(`https://dummyjson.com/products?limit=10`);
+      // const data = await res.json();
+      // setApiData(data.products);
     } catch (error) {
       console.error("Error fetching products:", error);
+      setApiData([]);
     } finally {
       setLoading(false);
     }
@@ -199,15 +206,15 @@ export default function Home() {
                   <div
                     key={product.id}
                     onClick={() => setPreviewProduct(product)}
-                    className="card group relative overflow-hidden rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
+                    className="card group relative overflow-hidden  rounded shadow-sm hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
-                    <div className=" w-[120px] h-[120px]">
+                    <div className=" w-full h-[139px] ">
 
                       <img
                         src={product.images[0]}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        alt={product.title}
+                        alt={product.name}
                         loading="lazy"
                       />
                     </div>
@@ -218,11 +225,9 @@ export default function Home() {
                         <p className="text-sm opacity-90 text-orange-500">${product.price}</p>
                       </div>
                     </div> */}
-                    <div className="">
-                      <div className="">
-                        <h3 className="font-semibold text-sm truncate">{product.title}</h3>
-                        <p className="text-sm opacity-90 text-orange-500">${product.price}</p>
-                      </div>
+                    <div className=" flex flex-col gap-[-.5px]">
+                      <h3 className="font-semibold text-sm truncate">{product.name}</h3>
+                      <p className="text-xs opacity-90 text-orange-500">₦{product.price.toLocaleString()}</p>
                     </div>
                   </div>
                 ))}
@@ -311,21 +316,21 @@ export default function Home() {
       {/* Preview Modal */}
       {previewProduct && (
         <div
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-2 animate-fade-in"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-2 animate-fade-out"
           onClick={() => setPreviewProduct(null)}
         >
           <div
-            className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl transform transition-all duration-300 animate-scale-in"
+            className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl transform transition-all duration-00 animate-scale-in"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <h2 className="text-xl font-bold text-gray-800 truncate flex-1 pr-4">
-                {previewProduct.title}
+                {previewProduct.name}
               </h2>
               <button
                 onClick={() => setPreviewProduct(null)}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors duration-200 text-gray-600 hover:text-gray-800"
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors duration-00 text-gray-600 hover:text-gray-800"
                 aria-label="Close preview"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -340,7 +345,7 @@ export default function Home() {
               <div className="w-full aspect-video mb-6 rounded-xl overflow-hidden bg-gray-100">
                 <img
                   src={previewProduct.images[0]}
-                  alt={previewProduct.title}
+                  alt={previewProduct.name}
                   className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
                 />
               </div>
@@ -349,21 +354,23 @@ export default function Home() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-3xl font-bold text-emerald-600">
-                    ${previewProduct.price}
+                    ₦{previewProduct.price.toLocaleString()}
                   </span>
-                  {previewProduct.rating && (
+                  {previewProduct.averageRating && (
                     <div className="flex items-center gap-1 text-sm text-gray-600">
                       <svg className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
                         <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
                       </svg>
-                      <span className="font-semibold">{previewProduct.rating}</span>
+                      <span className="font-semibold">{previewProduct.averageRating}</span>
                     </div>
                   )}
                 </div>
 
                 {previewProduct.description && (
                   <p className="text-gray-600 text-sm leading-relaxed">
-                    {previewProduct.description}
+                    {previewProduct.description.split(' ').length > 40
+                      ? previewProduct.description.split(' ').slice(0, 40).join(' ') + '.....'
+                      : previewProduct.description}
                   </p>
                 )}
 

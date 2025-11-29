@@ -1,28 +1,29 @@
 import Product from "../Models/product.js";
 import U from "../Models/user.js";
-import redisClient, { isRedisAvailable } from "../config/redis.js";
+// import redisClient, { isRedisAvailable } from "../config/redis.js";
 import { errorHandler } from "../Utilis/errorHandler.js";
 import { validateProductInput } from "../Utilis/validation.js";
 import dayjs from "dayjs";
 
-const CACHE_EXPIRATION = 3600; // 1 hour
+
+// const CACHE_EXPIRATION = 3600; // 1 hour
 
 // Helper to clear cache
-const clearProductCache = async (productId = null) => {
-    if (!redisClient.isOpen) return;
-    try {
-        const keys = await redisClient.keys('products_list:*');
-        if (keys.length > 0) {
-            await redisClient.del(keys);
-        }
+// const clearProductCache = async (productId = null) => {
+//     if (!redisClient.isOpen) return;
+//     try {
+//         const keys = await redisClient.keys('products_list:*');
+//         if (keys.length > 0) {
+//             await redisClient.del(keys);
+//         }
 
-        if (productId) {
-            await redisClient.del(`product:${productId}`);
-        }
-    } catch (error) {
-        console.error("Cache clear error:", error);
-    }
-};
+//         if (productId) {
+//             await redisClient.del(`product:${productId}`);
+//         }
+//     } catch (error) {
+//         console.error("Cache clear error:", error);
+//     }
+// };
 
 export const testCreate = async (req, res, next) => {
     try {
@@ -35,7 +36,8 @@ export const testCreate = async (req, res, next) => {
             stock: stock ? Number(stock) : 0,
             images: images || [],
             description: description ? description.trim() : undefined,
-            sku: sku ? sku.trim() : undefined,
+            // sku: sku ? sku.trim() : undefined,
+            brand: brand ? brand.trim() : undefined,
             isActive: isActive !== undefined ? isActive : true,
             userId: '1'
         });
@@ -64,14 +66,14 @@ export const createProduct = async (req, res, next) => {
         }
 
         // Check 1: Verify profile is complete
-        const missingFields = [];
-        if (!user.fullname || user.fullname.trim() === '') missingFields.push('fullname');
-        if (!user.email || user.email.trim() === '') missingFields.push('email');
-        if (!user.business_name || user.business_name.trim() === '') missingFields.push('business_name');
+        // const missingFields = [];
+        // if (!user.fullname || user.fullname.trim() === '') missingFields.push('fullname');
+        // if (!user.email || user.email.trim() === '') missingFields.push('email');
+        // if (!user.business_name || user.business_name.trim() === '') missingFields.push('business_name');
 
-        if (missingFields.length > 0) {
-            return next(errorHandler(400, `Please complete your profile. Missing: ${missingFields.join(', ')}`));
-        }
+        // if (missingFields.length > 0) {
+        //     return next(errorHandler(400, `Please complete your profile. Missing: ${missingFields.join(', ')}`));
+        // }
 
         // Check 2: Verify post count limits
         const now = dayjs();
@@ -90,22 +92,31 @@ export const createProduct = async (req, res, next) => {
             return next(errorHandler(429, `You have reached your posting limit (7 posts per week). You can post again on ${resetDateFormatted}`));
         }
 
-        // Validate product input (if needed)
         const validationError = validateProductInput(req.body);
         if (validationError) {
             return next(errorHandler(400, validationError));
         }
 
-        const { name, price, category, stock, images, description, sku, isActive } = req.body;
+        const { name, title, price, category, stock, images, description, sku, isActive, brand, subcategory, model, color } = req.body;
+
+        // Accept both 'name' and 'title' for product name
+        const productName = name || title;
+        if (!productName) {
+            return next(errorHandler(400, "Product name/title is required"));
+        }
 
         const newProduct = new Product({
-            name: name.trim(),
+            name: productName.trim(),
             price: Number(price),
             category: category.trim(),
             stock: stock ? Number(stock) : 0,
             images: images || [],
             description: description ? description.trim() : undefined,
             sku: sku ? sku.trim() : undefined,
+            brand: brand ? brand.trim() : undefined,
+            subcategory: subcategory ? subcategory.trim() : undefined,
+            model: model ? model.trim() : undefined,
+            color: color ? color.trim() : undefined,
             isActive: isActive !== undefined ? isActive : true,
             userId: req.user.id
         });
@@ -116,7 +127,7 @@ export const createProduct = async (req, res, next) => {
         user.post_count += 1;
         await user.save();
 
-        await clearProductCache();
+        // await clearProductCache();
 
         res.status(201).json(savedProduct);
     } catch (error) {
@@ -162,7 +173,7 @@ export const updateProduct = async (req, res, next) => {
 
         if (!updatedProduct) return next(errorHandler(404, "Product not found"));
 
-        await clearProductCache(req.params.id);
+        // await clearProductCache(req.params.id);
 
         res.status(200).json(updatedProduct);
     } catch (error) {
@@ -185,7 +196,7 @@ export const deleteProduct = async (req, res, next) => {
 
         await Product.findByIdAndDelete(req.params.id);
 
-        await clearProductCache(req.params.id);
+        // await clearProductCache(req.params.id);
 
         res.status(200).json({ message: "Product deleted successfully" });
     } catch (error) {
@@ -210,20 +221,20 @@ export const getProduct = async (req, res, next) => {
         const { id } = req.params;
 
         // Check cache
-        if (redisClient.isOpen) {
-            const cachedProduct = await redisClient.get(`product:${id}`);
-            if (cachedProduct) {
-                return res.status(200).json(JSON.parse(cachedProduct));
-            }
-        }
+        // if (redisClient.isOpen) {
+        //     const cachedProduct = await redisClient.get(`product:${id}`);
+        //     if (cachedProduct) {
+        //         return res.status(200).json(JSON.parse(cachedProduct));
+        //     }
+        // }
 
         const product = await Product.findById(id);
         if (!product) return next(errorHandler(404, "Product not found"));
 
         // Set cache
-        if (redisClient.isOpen) {
-            await redisClient.setEx(`product:${id}`, CACHE_EXPIRATION, JSON.stringify(product));
-        }
+        // if (redisClient.isOpen) {
+        //     await redisClient.setEx(`product:${id}`, CACHE_EXPIRATION, JSON.stringify(product));
+        // }
 
         res.status(200).json(product);
     } catch (error) {
@@ -233,21 +244,22 @@ export const getProduct = async (req, res, next) => {
 
 export const getProducts = async (req, res, next) => {
     try {
-        const { page = 1, limit = 10, category, minPrice, maxPrice, sort, name, searchTerm } = req.query;
+        const { page = 1, limit = 10, category, minPrice, maxPrice, sort, name, searchTerm, userId } = req.query;
 
         // Create a unique cache key based on query params
-        const cacheKey = `products_list:${JSON.stringify(req.query)}`;
+        // const cacheKey = `products_list:${JSON.stringify(req.query)}`;
 
-        if (redisClient.isOpen) {
-            const cachedList = await redisClient.get(cacheKey);
-            if (cachedList) {
-                return res.status(200).json(JSON.parse(cachedList));
-            }
-        }
+        // if (redisClient.isOpen) {
+        //     const cachedList = await redisClient.get(cacheKey);
+        //     if (cachedList) {
+        //         return res.status(200).json(JSON.parse(cachedList));
+        //     }
+        // }
 
         const query = {};
         if (category) query.category = category;
         if (name) query.name = { $regex: name, $options: 'i' }; // Case-insensitive name search
+        if (userId) query.userId = userId; // Filter by user ID
 
         if (searchTerm) {
             query.$or = [
@@ -288,9 +300,9 @@ export const getProducts = async (req, res, next) => {
         };
 
         // Set cache
-        if (redisClient.isOpen) {
-            await redisClient.setEx(cacheKey, CACHE_EXPIRATION, JSON.stringify(response));
-        }
+        // if (redisClient.isOpen) {
+        //     await redisClient.setEx(cacheKey, CACHE_EXPIRATION, JSON.stringify(response));
+        // }
 
         res.status(200).json(response);
     } catch (error) {

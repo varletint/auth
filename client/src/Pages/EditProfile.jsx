@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import useAuthStore from "../store/useAuthStore";
 import Input from "../Components/Input";
 import Button from "../Components/Button";
+import { authApi } from "../api/authApi";
 import {
     ArrowLeft01Icon,
     Camera01Icon,
@@ -13,19 +14,22 @@ import {
 } from "hugeicons-react";
 
 export default function EditProfile() {
-    const { currentUser } = useAuthStore();
+    const { currentUser, updateUser } = useAuthStore();
     const navigate = useNavigate();
 
     // Form state
     const [formData, setFormData] = useState({
         username: currentUser?.username || "",
         email: currentUser?.email || "",
-        firstName: "",
-        lastName: "",
-        phone: "",
-        bio: "",
-        location: "",
-        website: "",
+        fullName: currentUser?.userDetails?.fullName || "",
+        phone: currentUser?.phone_no || "",
+        bio: currentUser?.userDetails?.bio || "",
+        location: currentUser?.userDetails?.location?.address || "",
+        website: currentUser?.userDetails?.socialMedia?.website || "",
+        businessName: currentUser?.userDetails?.businessInfo?.businessName || "",
+        businessEmail: currentUser?.userDetails?.businessInfo?.businessEmail || "",
+        businessPhone: currentUser?.userDetails?.businessInfo?.businessPhone || "",
+        businessAddress: currentUser?.userDetails?.businessInfo?.businessAddress || "",
     });
 
     const [isLoading, setIsLoading] = useState(false);
@@ -49,20 +53,11 @@ export default function EditProfile() {
         setSuccess("");
 
         try {
-            // TODO: Replace with actual API endpoint
-            const response = await fetch("/api/user/update", {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
-            });
+            const updatedUser = await authApi.updateProfile(formData);
 
-            if (!response.ok) {
-                throw new Error("Failed to update profile");
-            }
+            // Update store
+            updateUser(updatedUser);
 
-            const data = await response.json();
             setSuccess("Profile updated successfully!");
 
             // Navigate back to profile after a short delay
@@ -176,22 +171,22 @@ export default function EditProfile() {
                                 />
                             </div>
 
-                            {/* First Name */}
+                            {/* FullName*/}
                             <div className='space-y-2'>
                                 <label className='text-sm font-medium text-gray-700'>
-                                    First Name
+                                    Full Name
                                 </label>
                                 <Input
                                     type='text'
-                                    name='firstName'
-                                    placeholder='Enter first name'
-                                    value={formData.firstName}
+                                    name='fullName'
+                                    placeholder='Enter full name'
+                                    value={formData.fullName}
                                     OnChange={handleChange}
                                 />
                             </div>
 
                             {/* Last Name */}
-                            <div className='space-y-2'>
+                            {/* <div className='space-y-2'>
                                 <label className='text-sm font-medium text-gray-700'>
                                     Last Name
                                 </label>
@@ -202,7 +197,7 @@ export default function EditProfile() {
                                     value={formData.lastName}
                                     OnChange={handleChange}
                                 />
-                            </div>
+                            </div> */}
 
                             {/* Phone */}
                             <div className='space-y-2'>
@@ -251,18 +246,81 @@ export default function EditProfile() {
                             {/* Bio */}
                             <div className='space-y-2 md:col-span-2'>
                                 <label className='text-sm font-medium text-gray-700'>
-                                    Bio
+                                    Bio. <span> ({200 - formData.bio.length}/200 char left)</span>
                                 </label>
                                 <textarea
                                     name='bio'
                                     value={formData.bio}
                                     onChange={handleChange}
-                                    className='w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all duration-200 bg-off-white text-gray-800 placeholder-gray-400 min-h-[120px] resize-none'
+                                    className='w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all duration-200 bg-off-white text-gray-800 placeholder-gray-400 min-h-[120px] resize-none'
                                     placeholder='Tell us about yourself...'
+                                // disabled={formData.bio.length >= 200}
                                 />
                                 <p className='text-xs text-gray-500'>
                                     Brief description for your profile. Max 200 characters.
                                 </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Business Information */}
+                    <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6'>
+                        <h2 className='text-lg font-semibold text-gray-900 mb-6'>Business Information</h2>
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                            {/* Business Name */}
+                            <div className='space-y-2'>
+                                <label className='text-sm font-medium text-gray-700'>
+                                    Business Name
+                                </label>
+                                <Input
+                                    type='text'
+                                    name='businessName'
+                                    placeholder='Enter business name'
+                                    value={formData.businessName}
+                                    OnChange={handleChange}
+                                />
+                            </div>
+
+                            {/* Business Email */}
+                            <div className='space-y-2'>
+                                <label className='text-sm font-medium text-gray-700'>
+                                    Business Email
+                                </label>
+                                <Input
+                                    type='email'
+                                    name='businessEmail'
+                                    placeholder='Enter business email'
+                                    value={formData.businessEmail}
+                                    OnChange={handleChange}
+                                />
+                            </div>
+
+                            {/* Business Phone */}
+                            <div className='space-y-2'>
+                                <label className='text-sm font-medium text-gray-700'>
+                                    Business Phone
+                                </label>
+                                <Input
+                                    type='tel'
+                                    name='businessPhone'
+                                    placeholder='Enter business phone'
+                                    value={formData.businessPhone}
+                                    OnChange={handleChange}
+                                />
+                            </div>
+
+                            {/* Business Address */}
+                            <div className='space-y-2'>
+                                <label className='text-sm font-medium text-gray-700'>
+                                    Business Address
+                                </label>
+                                <Input
+                                    type='text'
+                                    name='businessAddress'
+                                    placeholder='Enter business address'
+                                    value={formData.businessAddress}
+                                    OnChange={handleChange}
+                                />
                             </div>
                         </div>
                     </div>
@@ -272,13 +330,13 @@ export default function EditProfile() {
                         <button
                             type='button'
                             onClick={() => navigate("/profile")}
-                            className='px-6 py-3 text-gray-700 bg-white border border-gray-200 rounded-lg font-medium hover:bg-off-white transition-colors'
+                            className='px-6 py-2 text-gray-700 bg-white border border-gray-200 rounded-lg font-medium hover:bg-off-white transition-colors'
                         >
                             Cancel
                         </button>
                         <Button
                             text={isLoading ? "Saving..." : "Save Changes"}
-                            className='bg-emerald-600 hover:bg-emerald-700'
+                            className=' py-2 bg-emerald-600 hover:bg-emerald-700'
                             onClick={handleSubmit}
                         />
                     </div>

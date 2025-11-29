@@ -32,9 +32,9 @@ export const validateProductInput = (data, isUpdate = false) => {
     if (description !== undefined && typeof description !== 'string') {
         return "Description must be a string";
     }
-    if (sku !== undefined && typeof sku !== 'string') {
-        return "SKU must be a string";
-    }
+    // if (sku !== undefined && typeof sku !== 'string') {
+    //     return "SKU must be a string";
+    // }
     if (isActive !== undefined && typeof isActive !== 'boolean') {
         return "isActive must be a boolean";
     }
@@ -43,16 +43,16 @@ export const validateProductInput = (data, isUpdate = false) => {
 };
 
 export const validateSigninInput = (data) => {
-    const { email, password } = data;
+    const { username, password } = data;
 
-    if (!email || typeof email !== 'string') {
-        return "Email is required and must be a string";
+    if (!username || typeof username !== 'string') {
+        return "Username is required and must be a string";
     }
 
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(email)) {
-        return "Invalid email format";
-    }
+    // const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    // if (!emailRegex.test(email)) {
+    //     return "Invalid email format";
+    // }
 
     if (!password || typeof password !== 'string') {
         return "Password is required and must be a string";
@@ -62,20 +62,20 @@ export const validateSigninInput = (data) => {
 };
 
 export const validateSignupInput = (data) => {
-    const { username, email, password, phone_no } = data;
+    const { username, password, phone_no } = data;
 
     if (!username || typeof username !== 'string' || username.trim().length < 3) {
         return "Username is required and must be at least 3 characters long";
     }
 
-    if (!email || typeof email !== 'string') {
-        return "Email is required and must be a string";
-    }
+    // if (!email || typeof email !== 'string') {
+    //     return "Email is required and must be a string";
+    // }
 
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(email)) {
-        return "Invalid email format";
-    }
+    // const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    // if (!emailRegex.test(email)) {
+    //     return "Invalid email format";
+    // }
 
     if (!password || typeof password !== 'string' || password.length < 6) {
         return "Password is required and must be at least 6 characters long";

@@ -9,8 +9,10 @@ import Profile from "./Pages/Profile";
 import Edit from "./Pages/Edit";
 import EditProfile from "./Pages/EditProfile";
 import ProductPage from "./Pages/ProductPage";
+import UserPage from "./Pages/UserPage";
 import ForgotPassword from "./Pages/ForgotPassword";
 import AddProduct from "./Pages/AddProduct";
+import ProtectedRoute from "./Components/ProtectedRoute";
 
 function App() {
   return (
@@ -21,11 +23,33 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path='/register' element={<Register />} />
           <Route path='/login' element={<Login />} />
-          <Route path='/profile' element={<Profile />} />
-          <Route path='/edit-profile' element={<EditProfile />} />
+          <Route
+            path='/profile'
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/edit-profile'
+            element={
+              <ProtectedRoute>
+                <EditProfile />
+              </ProtectedRoute>
+            }
+          />
           <Route path='/product/:id' element={<ProductPage />} />
+          <Route path='/seller/:id' element={<UserPage />} />
           <Route path='/forgot-password' element={<ForgotPassword />} />
-          <Route path='/add-product' element={<AddProduct />} />
+          <Route
+            path='/add-product'
+            element={
+              <ProtectedRoute>
+                <AddProduct />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
         {/* <Footer /> */}
       </BrowserRouter>

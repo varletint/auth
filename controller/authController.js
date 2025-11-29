@@ -1,4 +1,5 @@
 import User from "../Models/user.js";
+import UserDetails from "../Models/userDetails.js";
 import argon2 from "argon2";
 import { errorHandler } from "../Utilis/errorHandler.js";
 import { validateSigninInput, validateSignupInput } from "../Utilis/validation.js";
@@ -13,31 +14,52 @@ export const signup = async (req, res, next) => {
   }
 
   try {
-    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+    const existingUser = await User.findOne({ $or: [{ username }, { phone_no }] });
     if (existingUser) {
-      return next(errorHandler(400, "User with this email or username already exists"));
+      return next(errorHandler(400, "User with this username or phone number already exists"));
     }
 
     const hashedPassword = await argon2.hash(password);
 
     const newUser = new User({
       username,
-      email,
+      // email, // Optional field
       password: hashedPassword,
       phone_no,
+      role: ["seller"], // Array format for new schema
+      accountStatus: "active",
     });
 
     await newUser.save();
+    await newUser.save();
 
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+    // Generate tokens
+    const accessToken = jwt.sign(
+      { id: newUser._id, role: newUser.role, username: newUser.username },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    const refreshToken = jwt.sign(
+      { id: newUser._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
     const { password: pass, ...rest } = newUser._doc;
 
     res
-      .cookie("access_token", token, {
+      .cookie("access_token", accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict'
+        sameSite: 'strict',
+        maxAge: 15 * 60 * 1000 // 15 minutes
+      })
+      .cookie("refresh_token", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
       })
       .status(201)
       .json(rest);
@@ -47,11 +69,11 @@ export const signup = async (req, res, next) => {
 };
 
 export const signin = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
 
-  if (req.body.email && typeof req.body.email === 'string') {
-    req.body.email = req.body.email.trim();
+  if (req.body.username && typeof req.body.username === 'string') {
+    req.body.username = req.body.username.trim();
   }
 
 
@@ -61,29 +83,71 @@ export const signin = async (req, res, next) => {
   }
 
   try {
-
-    const validUser = await User.findOne({ email }).lean();
+    // Find user and select password field explicitly
+    const validUser = await User.findOne({ username }).select("+password");
     if (!validUser) return next(errorHandler(404, "User not found"));
 
+    // Check if account is locked
+    if (validUser.accountLockedUntil && validUser.accountLockedUntil > Date.now()) {
+      return next(errorHandler(403, "Account is temporarily locked due to multiple failed login attempts. Please try again later."));
+    }
+
+    // Check account status
+    if (validUser.accountStatus !== "active") {
+      return next(errorHandler(403, `Account is ${validUser.accountStatus}. Please contact support.`));
+    }
 
     const validPassword = await argon2.verify(validUser.password, password);
-    if (!validPassword) return next(errorHandler(401, "Wrong credentials"));
+    if (!validPassword) {
+      // Increment failed login attempts
+      await validUser.incrementFailedLogins();
+      return next(errorHandler(401, "Wrong credentials"));
+    }
 
+    // Reset failed login attempts on successful login
+    await validUser.resetFailedLogins();
+    validUser.lastLogin = Date.now();
 
-    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+    await validUser.save();
 
+    const accessToken = jwt.sign(
+      {
+        id: validUser._id,
+        role: validUser.role,
+        username: validUser.username
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
 
-    const { password: pass, ...rest } = validUser;
+    const refreshToken = jwt.sign(
+      { id: validUser._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
+    // Convert to object and remove password
+    const userObject = validUser.toObject();
+    const { password: pass, ...rest } = userObject;
+
+    // Fetch user details
+    const userDetails = await UserDetails.findOne({ user_id: validUser._id });
 
     res
-      .cookie("access_token", token, {
+      .cookie("access_token", accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict'
+        sameSite: 'strict',
+        maxAge: 15 * 60 * 1000 // 15 minutes
+      })
+      .cookie("refresh_token", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
       })
       .status(200)
-      .json(rest);
+      .json({ ...rest, userDetails });
   } catch (error) {
     next(error);
   }
@@ -91,12 +155,96 @@ export const signin = async (req, res, next) => {
 
 export const signout = async (req, res, next) => {
   try {
-    res.clearCookie("access_token", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict'
-    });
+    res.clearCookie("access_token");
+    res.clearCookie("refresh_token");
     res.status(200).json("User has been logged out!");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateProfile = async (req, res, next) => {
+  if (req.user.id !== req.params.id && req.params.id !== 'update') {
+    // Allow if route is /update (handled by middleware/route) or if ID matches
+    // But here we rely on req.user from verifyToken
+  }
+
+  try {
+    const {
+      username,
+      email,
+      phone,
+      fullName,
+      location,
+      website,
+      bio,
+      businessName,
+      businessEmail,
+      businessPhone,
+      businessAddress
+    } = req.body;
+
+    // 1. Update User Model (Basic Info)
+    const userUpdates = {};
+    if (username) userUpdates.username = username;
+    if (email) userUpdates.email = email;
+    if (phone) userUpdates.phone_no = phone;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      { $set: userUpdates },
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    if (!updatedUser) {
+      return next(errorHandler(404, "User not found"));
+    }
+
+    // 2. Update UserDetails Model (Extended Info)
+    const userDetailsUpdates = {};
+
+    if (fullName) userDetailsUpdates.fullName = fullName;
+    if (bio) userDetailsUpdates.bio = bio;
+
+    if (location) {
+      // Simple parsing for "City, Country" format
+      const parts = location.split(",").map(p => p.trim());
+      userDetailsUpdates.location = {
+        city: parts[0] || "",
+        country: { name: parts[1] || "" },
+        address: location // Store full string as address too
+      };
+    }
+
+    if (website) {
+      userDetailsUpdates.socialMedia = { website };
+    }
+
+    // Business Info
+    if (businessName || businessEmail || businessPhone || businessAddress) {
+      userDetailsUpdates.businessInfo = {
+        businessName: businessName || undefined,
+        businessEmail: businessEmail || undefined,
+        businessPhone: businessPhone || undefined,
+        businessAddress: businessAddress || undefined
+      };
+    }
+
+    // Find or create UserDetails
+    const updatedUserDetails = await UserDetails.findOneAndUpdate(
+      { user_id: req.user.id },
+      { $set: userDetailsUpdates },
+      { new: true, upsert: true, runValidators: true }
+    );
+
+    // 3. Combine and return response
+    const responseData = {
+      ...updatedUser._doc,
+      userDetails: updatedUserDetails
+    };
+
+    res.status(200).json(responseData);
+
   } catch (error) {
     next(error);
   }

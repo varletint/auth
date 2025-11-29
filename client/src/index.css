@@ -23,10 +23,11 @@
 }
 
 .card {
-  flex: 0 0 12em;
-  padding: 1em;
+  flex: 0 0 8em;
+  /* padding: 1em; */
   align-content: center;
-  height: 12em;
+  height: 11em;
+  border: 1px solid #f7f2f211;
 
 }
 
