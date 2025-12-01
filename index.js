@@ -21,6 +21,18 @@ const allowedOrigins = [
   "https://lookupsbackend-b90w4zuit-deploy-react-apps-projects.vercel.app",
 ];
 
+// Manual preflight handler to ensure headers are sent
+app.options(/.*/, (req, res) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
+  res.sendStatus(200);
+});
+
 // Enable CORS for all routes
 app.use(
   cors({
@@ -38,18 +50,6 @@ app.use(
     optionsSuccessStatus: 200
   })
 );
-
-// Manual preflight handler to ensure headers are sent
-app.options(/.*/, (req, res) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-  }
-  res.sendStatus(200);
-});
 
 app.use(express.json());
 app.use(cookieParser());
