@@ -52,13 +52,13 @@ export const signup = async (req, res, next) => {
       .cookie("access_token", accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'none',
         maxAge: 15 * 60 * 1000 // 15 minutes
       })
       .cookie("refresh_token", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'none',
         maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
       })
       .status(201)
@@ -137,13 +137,13 @@ export const signin = async (req, res, next) => {
       .cookie("access_token", accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'none',
         maxAge: 15 * 60 * 1000 // 15 minutes
       })
       .cookie("refresh_token", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'none',
         maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
       })
       .status(200)
