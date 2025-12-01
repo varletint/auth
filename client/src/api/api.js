@@ -2,7 +2,8 @@
  * Centralized API utility for making HTTP requests
  */
 
-const BASE_URL = '/api';
+// Use environment variable for production, fallback to /api for local dev with proxy
+const BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 class ApiError extends Error {
     constructor(message, status, data) {
