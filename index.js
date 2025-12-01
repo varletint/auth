@@ -38,8 +38,6 @@ app.use(
       }
     },
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-
-
     credentials: true, // Allow cookies and authentication headers
     optionsSuccessStatus: 200 // Some legacy browsers choke on 204
   })
