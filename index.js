@@ -13,6 +13,18 @@ dotenv.config();
 
 const app = express();
 
+app.use(
+  cors({
+    origin: true, // Allow any origin
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    credentials: true, // Allow cookies and authentication headers
+    optionsSuccessStatus: 200 // Some legacy browsers choke on 204
+  })
+);
+
+// Handle preflight requests for all routes
+app.options('*', cors());
+
 app.use(express.json());
 app.use(cookieParser()); // Add cookie-parser middleware
 
@@ -24,19 +36,6 @@ const allowedOrigins = [
   "https://auth-fawn-eight.vercel.app",
   "https://lookupsbackend-jjph96eps-deploy-react-apps-projects.vercel.app",
 ];
-
-// Enable CORS for all routes
-app.use(
-  cors({
-    origin: true, // Allow any origin
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    credentials: true, // Allow cookies and authentication headers
-    optionsSuccessStatus: 200 // Some legacy browsers choke on 204
-  })
-);
-
-// Handle preflight requests for all routes
-// app.options('*', cors());
 
 const PORT = process.env.PORT || 3000;
 
