@@ -31,10 +31,9 @@ app.use(cookieParser()); // Add cookie-parser middleware
 // allow preflight requests
 
 const allowedOrigins = [
-  "https://lookupsclient.vercel.app",
-  "http://localhost:5173",
+
   "https://auth-fawn-eight.vercel.app",
-  "https://lookupsbackend-jjph96eps-deploy-react-apps-projects.vercel.app",
+  "http://localhost:5173",
 ];
 
 const PORT = process.env.PORT || 3000;
