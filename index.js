@@ -24,24 +24,19 @@ const allowedOrigins = [
   "https://auth-fawn-eight.vercel.app",
   "https://lookupsbackend-jjph96eps-deploy-react-apps-projects.vercel.app",
 ];
+
+// Enable CORS for all routes
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.log(`CORS blocked origin: ${origin}`);
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: true, // Allow any origin
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true, // Allow cookies and authentication headers
     optionsSuccessStatus: 200 // Some legacy browsers choke on 204
   })
 );
+
+// Handle preflight requests for all routes
+app.options('*', cors());
 
 const PORT = process.env.PORT || 3000;
 
