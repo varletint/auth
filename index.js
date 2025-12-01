@@ -19,21 +19,27 @@ app.use(cookieParser()); // Add cookie-parser middleware
 // allow preflight requests
 
 const allowedOrigins = [
-  "https://lookupsclient.vercel.app/",
+  "https://lookupsclient.vercel.app",
   "http://localhost:5173",
-  "https://auth-fawn-eight.vercel.app/",
+  "https://auth-fawn-eight.vercel.app",
+  "https://lookupsbackend-jjph96eps-deploy-react-apps-projects.vercel.app",
 ];
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
+        console.log(`CORS blocked origin: ${origin}`);
         callback(new Error("Not allowed by CORS"));
       }
     },
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true, // if you need cookies
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    credentials: true, // Allow cookies and authentication headers
+    optionsSuccessStatus: 200 // Some legacy browsers choke on 204
   })
 );
 
