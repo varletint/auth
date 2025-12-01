@@ -2,39 +2,57 @@ import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 import webhookRoute from "./Routes/webhookRoute.js";
 import authRoute from "./Routes/authRoute.js";
 import productRoute from "./Routes/productRoute.js";
 import userRoute from "./Routes/userRoute.js";
-import cors from "cors";
 
 dotenv.config();
 
 const app = express();
 
+const allowedOrigins = [
+  "https://lookupsclient.vercel.app",
+  "https://auth-fawn-eight.vercel.app",
+  "http://localhost:5173",
+  "https://lookupsbackend-jjph96eps-deploy-react-apps-projects.vercel.app",
+  "https://lookupsbackend-b90w4zuit-deploy-react-apps-projects.vercel.app",
+];
+
+// Enable CORS for all routes
 app.use(
   cors({
-    origin: true, // Allow any origin
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    credentials: true, // Allow cookies and authentication headers
-    optionsSuccessStatus: 200 // Some legacy browsers choke on 204
+    credentials: true,
+    optionsSuccessStatus: 200
   })
 );
 
-// Handle preflight requests for all routes
-app.options(/.*/, cors());
+// Manual preflight handler to ensure headers are sent
+app.options(/.*/, (req, res) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
+  res.sendStatus(200);
+});
 
 app.use(express.json());
-app.use(cookieParser()); // Add cookie-parser middleware
-
-// allow preflight requests
-
-const allowedOrigins = [
-
-  "https://auth-fawn-eight.vercel.app",
-  "http://localhost:5173",
-];
+app.use(cookieParser());
 
 const PORT = process.env.PORT || 3000;
 
@@ -44,7 +62,7 @@ const connectDB = async () => {
     console.log("MongoDB Connected Successfully!");
   } catch (err) {
     console.error(`MongoDB Connection Error: ${err.message}`);
-    process.exit(1); // Exit process with failure
+    process.exit(1);
   }
 };
 
@@ -54,16 +72,9 @@ const startServer = () => {
   });
 };
 
-// Connect to DB then start the server
 connectDB().then(() => {
-  // Attempt to connect to Redis (non-blocking)
-  // connectRedis();
   startServer();
 });
-
-
-
-
 
 // Routes
 app.use("/", webhookRoute);
@@ -71,18 +82,14 @@ app.use('/api/auth', authRoute);
 app.use('/api/products', productRoute);
 app.use('/api/seller', userRoute);
 
-// Global Error Handling Middleware (Must be AFTER all routes)
+// Global Error Handling Middleware
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Internal Server Error';
-
-  // Log error to console for debugging
   console.error(`[ERROR ${statusCode}]:`, message);
   if (process.env.NODE_ENV !== 'production') {
     console.error(err.stack);
   }
-
-  // Send error response to frontend
   res.status(statusCode).json({
     success: false,
     message,
@@ -90,4 +97,3 @@ app.use((err, req, res, next) => {
     ...(process.env.NODE_ENV !== 'production' && { stack: err.stack })
   });
 });
-
