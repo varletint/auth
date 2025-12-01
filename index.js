@@ -7,12 +7,35 @@ import webhookRoute from "./Routes/webhookRoute.js";
 import authRoute from "./Routes/authRoute.js";
 import productRoute from "./Routes/productRoute.js";
 import userRoute from "./Routes/userRoute.js";
+import cors from "cors";
+
 dotenv.config();
 
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser()); // Add cookie-parser middleware
+
+// allow preflight requests
+
+const allowedOrigins = [
+  "https://lookupsclient.vercel.app/",
+  "http://localhost:5173",
+  "https://auth-fawn-eight.vercel.app/",
+];
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true, // if you need cookies
+  })
+);
 
 const PORT = process.env.PORT || 3000;
 
