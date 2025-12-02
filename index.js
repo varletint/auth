@@ -49,33 +49,47 @@ app.use(
 app.options(/(.*)/, cors());
 
 app.use(e.json());
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Server running on port ${port}`));
+const PORT = process.env.PORT || 3000;
 
-mongoose
-  .connect(process.env.MONGO_KEYS)
-  .then(() => console.log("db connected"))
-  .catch((err) => console.log(err));
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI || process.env.MONGO_KEYS);
+    console.log("MongoDB Connected Successfully!");
+  } catch (err) {
+    console.error(`MongoDB Connection Error: ${err.message}`);
+    process.exit(1);
+  }
+};
+
+const startServer = () => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+};
+
+connectDB().then(() => {
+  startServer();
+});
 
 
-// app.use("/api/auth", authRoute);
+app.use("/api/auth", authRoute);
 app.use("/api/products", productRoute);
-// app.use("/api/seller", userRoute);
+app.use("/api/seller", userRoute);
 
 // app.use("/", e.json(), testing);
 
 // app.use("/api", testing);
 
-// app.use((err, req, res, next) => {
-//   const statusCode = err.statusCode || 500;
-//   const message = err.message || "Internal server error";
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal server error";
 
-//   res.status(statusCode).json({
-//     success: false,
-//     message,
-//     statusCode,
-//   });
-// });
+  res.status(statusCode).json({
+    success: false,
+    message,
+    statusCode,
+  });
+});
 
 // // module.exports = app;
 
