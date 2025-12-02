@@ -260,12 +260,10 @@ export default function Home() {
               <CarouselSkeleton />
             ) : (
               <div className="carousel">
-                {/* {[1, 2, 3, 4, 5, 6].map((item) => (
-                  <div key={item} className="card bg-gradient-to-br from-emerald-100 to-teal-200 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105"></div>
-                ))} */}
-                {prd.map((item) => (
+                {[1, 2, 3, 4, 5, 6].map((item) => (
                   <div key={item} className="card bg-gradient-to-br from-emerald-100 to-teal-200 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105"></div>
                 ))}
+
               </div>
             )}
           </div>
