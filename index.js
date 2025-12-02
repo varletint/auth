@@ -29,9 +29,8 @@ dotenv.config();
 // allow preflight requests
 
 const allowedOrigins = [
-  "https://lookupsclient.vercel.app/",
+  "https://auth-fawn-eight.vercel.app",
   "http://localhost:5173",
-  "https://auth-fawn-eight.vercel.app/",
 ];
 app.use(
   cors({
