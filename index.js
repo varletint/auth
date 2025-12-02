@@ -1,99 +1,93 @@
-import express from "express";
-import dotenv from "dotenv";
-import mongoose from "mongoose";
-import cookieParser from "cookie-parser";
+import e from "express";
+import bodyParser from "body-parser";
 import cors from "cors";
 
-import webhookRoute from "./Routes/webhookRoute.js";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
+// import testing from "./Routes/webhook.js";
+// import Test from "./Models/testingModel.js";
+import cookieParser from "cookie-parser";
+
+
+// routes
 import authRoute from "./Routes/authRoute.js";
 import productRoute from "./Routes/productRoute.js";
 import userRoute from "./Routes/userRoute.js";
 
+const app = e();
+
+// app.use(
+//   bodyParser.json({
+//     verify: (req, res, buf) => {
+//       req.rawBody = buf.toString();
+//     },
+//   })
+// );
+
 dotenv.config();
 
-const app = express();
+// allow preflight requests
 
 const allowedOrigins = [
-  "https://lookupsclient.vercel.app",
-  "https://auth-fawn-eight.vercel.app",
+  "https://lookupsclient.vercel.app/",
   "http://localhost:5173",
-  "https://lookupsbackend-jjph96eps-deploy-react-apps-projects.vercel.app",
-  "https://lookupsbackend-b90w4zuit-deploy-react-apps-projects.vercel.app",
+  "https://auth-fawn-eight.vercel.app/",
 ];
-
-// Manual preflight handler to ensure headers are sent
-app.options(/.*/, (req, res) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-  }
-  res.sendStatus(200);
-});
-
-// Enable CORS for all routes
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
+      if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(null, false);
+        callback(new Error("Not allowed by CORS"));
       }
     },
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    credentials: true,
-    optionsSuccessStatus: 200
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true, // if you need cookies
   })
 );
+app.options(/(.*)/, cors());
 
-app.use(express.json());
-app.use(cookieParser());
+app.use(e.json());
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Server running on port ${port}`));
 
-const PORT = process.env.PORT || 3000;
+mongoose
+  .connect(process.env.MONGO_KEYS)
+  .then(() => console.log("db connected"))
+  .catch((err) => console.log(err));
 
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI || process.env.MONGO_KEYS);
-    console.log("MongoDB Connected Successfully!");
-  } catch (err) {
-    console.error(`MongoDB Connection Error: ${err.message}`);
-    process.exit(1);
-  }
-};
 
-const startServer = () => {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-};
+// app.use("/api/auth", authRoute);
+app.use("/api/products", productRoute);
+// app.use("/api/seller", userRoute);
 
-connectDB().then(() => {
-  startServer();
-});
+// app.use("/", e.json(), testing);
 
-// Routes
-app.use("/", webhookRoute);
-app.use('/api/auth', authRoute);
-app.use('/api/products', productRoute);
-app.use('/api/seller', userRoute);
+// app.use("/api", testing);
 
-// Global Error Handling Middleware
-app.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
-  console.error(`[ERROR ${statusCode}]:`, message);
-  if (process.env.NODE_ENV !== 'production') {
-    console.error(err.stack);
-  }
-  res.status(statusCode).json({
-    success: false,
-    message,
-    statusCode,
-    ...(process.env.NODE_ENV !== 'production' && { stack: err.stack })
-  });
-});
+// app.use((err, req, res, next) => {
+//   const statusCode = err.statusCode || 500;
+//   const message = err.message || "Internal server error";
+
+//   res.status(statusCode).json({
+//     success: false,
+//     message,
+//     statusCode,
+//   });
+// });
+
+// // module.exports = app;
+
+// // import testing from "./Routes/webhook.js";
+
+// // const app = e();
+
+// // app.get("/", (req, res) => {
+// //   res.send("Hello from Vercel backend!");
+// // });
+
+// // app.use("/api", testing);
+
+// // const port = process.env.PORT || 3000;
+// // app.listen(port, () => console.log(`Server running on port ${port}`));
