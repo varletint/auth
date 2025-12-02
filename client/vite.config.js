@@ -14,7 +14,8 @@ export default defineConfig({
       //   secure: false,
       // },
       // Production proxy (uncomment to use production backend)
-      "/api": "https://lookupsbackend-is4ixi526-deploy-react-apps-projects.vercel.app",
+      // "/api": "https://lookupsbackend-is4ixi526-deploy-react-apps-projects.vercel.app",
+      "/api": "https://lookupsbackend.vercel.app",
     },
   },
   plugins: [react(), tailwindcss()],

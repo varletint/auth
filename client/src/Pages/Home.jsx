@@ -44,20 +44,8 @@ export default function Home() {
   const [heroLoading, setHeroLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [previewProduct, setPreviewProduct] = useState(null);
-  const [prd, setPrd] = useState([])
-
-  console.log(prd);
 
 
-
-  useEffect(() => {
-    const fetchMe = async () => {
-      const res = await fetch(`https://lookupsbackend-is4ixi526-deploy-react-apps-projects.vercel.app/api/products`)
-      const data = await res.json()
-      setPrd(data)
-    }
-    fetchMe()
-  }, [prd])
   useEffect(() => {
     if (previewProduct) {
       document.body.style.overflow = 'hidden'
