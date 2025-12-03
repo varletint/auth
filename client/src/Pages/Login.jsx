@@ -67,7 +67,7 @@ export default function Login() {
             <div>
               <Input
                 type={"text"}
-                placeholder={"Email"}
+                placeholder={"Username"}
                 id={"username"}
                 {...register("username")}
                 className={errors.username ? "border-red-500 focus:border-red-500 focus:ring-red-200" : "focus:border-blue-600 focus:ring-primary/20"}

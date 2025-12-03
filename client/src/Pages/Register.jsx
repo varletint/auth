@@ -66,21 +66,13 @@ export default function Register() {
 
   const onSubmit = async (data) => {
     signInStart();
+    const signUpData = {
+      username: data.username,
+      phone_no: data.phone_no,
+      password: data.password,
+    };
     try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        signInFailure(result.message || "Registration failed");
-        return;
-      }
+      const result = await authApi.signup(signUpData);
 
       console.log("Registration success:", result);
       signInSuccess(result);
