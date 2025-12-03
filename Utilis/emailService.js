@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import crypto from 'crypto';
 
 // Create transporter for Gmail
 const createTransporter = () => {
@@ -118,7 +119,8 @@ export const sendOTPEmail = async (email, otp, username) => {
     }
 };
 
-// Generate random 6-digit OTP
+// Generate cryptographically secure random 6-digit OTP
 export const generateOTP = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString();
+    // Generate a random number between 100000 and 999999
+    return crypto.randomInt(100000, 1000000).toString();
 };

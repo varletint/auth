@@ -13,6 +13,7 @@ import cookieParser from "cookie-parser";
 import authRoute from "./Routes/authRoute.js";
 import productRoute from "./Routes/productRoute.js";
 import userRoute from "./Routes/userRoute.js";
+import forgotPasswordRoute from "./Routes/forgotPasswordRoute.js";
 
 const app = e();
 
@@ -74,6 +75,7 @@ connectDB().then(() => {
 app.use("/api/auth", authRoute);
 app.use("/api/products", productRoute);
 app.use("/api/seller", userRoute);
+app.use("/api/password", forgotPasswordRoute);
 
 // app.use("/", e.json(), testing);
 

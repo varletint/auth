@@ -40,7 +40,7 @@ export default function ForgotPassword() {
     document.title = "Forgot Password | Reset Your Password";
     const navigate = useNavigate();
 
-    const [step, setStep] = useState(3); // 1: Email, 2: OTP, 3: New Password
+    const [step, setStep] = useState(1); // 1: Email, 2: OTP, 3: New Password
     const [email, setEmail] = useState("");
     const [otp, setOtp] = useState("");
     const [loading, setLoading] = useState(false);
@@ -97,7 +97,7 @@ export default function ForgotPassword() {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch("/api/auth/forgot-password", {
+            const res = await fetch("/api/password/forgot-password", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: data.email }),
@@ -128,7 +128,7 @@ export default function ForgotPassword() {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch("/api/auth/verify-otp", {
+            const res = await fetch("/api/password/verify-otp", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, otp: data.otp }),
@@ -157,7 +157,7 @@ export default function ForgotPassword() {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch("/api/auth/reset-password", {
+            const res = await fetch("/api/password/reset-password", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -188,7 +188,7 @@ export default function ForgotPassword() {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch("/api/auth/forgot-password", {
+            const res = await fetch("/api/password/forgot-password", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email }),

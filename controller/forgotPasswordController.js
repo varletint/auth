@@ -1,7 +1,7 @@
 import U from "../Models/user.js";
 import { errorHandler } from "../Utilis/errorHandler.js";
 import { sendOTPEmail, generateOTP } from "../Utilis/emailService.js";
-import bcryptjs from "bcryptjs";
+import argon2 from "argon2";
 
 // Request OTP for password reset
 export const requestOTP = async (req, res, next) => {
@@ -20,6 +20,7 @@ export const requestOTP = async (req, res, next) => {
 
         // Generate OTP and set expiry (4 minutes)
         const otp = generateOTP();
+        console.log("TESTING OTP:", otp); // Temporary log for testing
         const expiryTime = new Date(Date.now() + 4 * 60 * 1000); // 4 minutes from now
 
         // Save OTP to user
@@ -122,7 +123,7 @@ export const resetPassword = async (req, res, next) => {
         }
 
         // Hash new password
-        const hashedPassword = bcryptjs.hashSync(newPassword, 10);
+        const hashedPassword = await argon2.hash(newPassword);
 
         // Update password and clear OTP
         user.password = hashedPassword;

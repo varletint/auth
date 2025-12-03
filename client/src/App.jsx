@@ -13,6 +13,7 @@ import UserPage from "./Pages/UserPage";
 import ForgotPassword from "./Pages/ForgotPassword";
 import AddProduct from "./Pages/AddProduct";
 import ProtectedRoute from "./Components/ProtectedRoute";
+import File from "./Pages/File";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path='/register' element={<Register />} />
           <Route path='/login' element={<Login />} />
+          <Route path='/file' element={<File />} />
           <Route
             path='/profile'
             element={
