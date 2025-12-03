@@ -3,12 +3,12 @@
         {
             "source": "/api/(.*)",
             "destination": "https://back.com/$1"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
         }
     ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "/index.html"
-        }
-    ]
+    "cleanUrls": true,
+    "trailingSlash": false
 }
