@@ -6,43 +6,67 @@ import argon2 from "argon2";
 // Request OTP for password reset
 export const requestOTP = async (req, res, next) => {
     try {
+        console.log("=== REQUEST OTP STARTED ===");
+        console.log("Request body:", req.body);
+
         const { email } = req.body;
 
         if (!email || !email.trim()) {
+            console.log("ERROR: Email is missing");
             return next(errorHandler(400, "Email is required"));
         }
 
         // Find user by email
         const user = await U.findOne({ email: email.trim() });
         if (!user) {
+            console.log("ERROR: User not found for email:", email);
             return next(errorHandler(404, "No account found with this email address"));
         }
 
+        console.log("User found:", user.username || user.email);
+
         // Generate OTP and set expiry (4 minutes)
         const otp = generateOTP();
-        console.log("TESTING OTP:", otp); // Temporary log for testing
+        console.log("Generated OTP:", otp); // Temporary log for testing
         const expiryTime = new Date(Date.now() + 4 * 60 * 1000); // 4 minutes from now
 
         // Save OTP to user
         user.resetOTP = otp;
         user.resetOTPExpiry = expiryTime;
         await user.save();
+        console.log("OTP saved to database");
 
         // Send OTP via email
         try {
+            console.log("Attempting to send email to:", email);
+            console.log("EMAIL_USER:", process.env.EMAIL_USER ? "Set" : "NOT SET");
+            console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "Set" : "NOT SET");
+
             await sendOTPEmail(email, otp, user.username || user.fullname);
+            console.log("Email sent successfully");
+
             res.status(200).json({
                 success: true,
                 message: "OTP sent to your email. Please check your inbox.",
             });
+            console.log("=== REQUEST OTP COMPLETED ===");
         } catch (emailError) {
+            console.error("EMAIL ERROR:", emailError);
+            console.error("Email error message:", emailError.message);
+            console.error("Email error stack:", emailError.stack);
+
             // Clear OTP if email fails
             user.resetOTP = null;
             user.resetOTPExpiry = null;
             await user.save();
-            return next(errorHandler(500, emailError.message));
+
+            // Return a specific error message
+            return next(errorHandler(500, `Failed to send email: ${emailError.message}`));
         }
     } catch (error) {
+        console.error("CONTROLLER ERROR:", error);
+        console.error("Error message:", error.message);
+        console.error("Error stack:", error.stack);
         next(error);
     }
 };
@@ -57,7 +81,7 @@ export const verifyOTP = async (req, res, next) => {
         }
 
         // Find user
-        const user = await U.findOne({ email: email.trim() });
+        const user = await U.findOne({ email: email.trim() }).select('+resetOTP +resetOTPExpiry')
         if (!user) {
             return next(errorHandler(404, "User not found"));
         }
@@ -104,7 +128,7 @@ export const resetPassword = async (req, res, next) => {
         }
 
         // Find user
-        const user = await U.findOne({ email: email.trim() });
+        const user = await U.findOne({ email: email.trim() }).select('+resetOTP +resetOTPExpiry');
         if (!user) {
             return next(errorHandler(404, "User not found"));
         }
