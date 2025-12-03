@@ -49,6 +49,10 @@ export default function ForgotPassword() {
     const [timeLeft, setTimeLeft] = useState(240); // 4 minutes in seconds
     const [isTimerActive, setIsTimerActive] = useState(false);
 
+    // basedUrl
+
+    const BASE_URL = 'https://lookupsbackend.vercel.app';
+
     // Form for current step
     const getSchema = () => {
         if (step === 1) return emailSchema;
@@ -97,13 +101,13 @@ export default function ForgotPassword() {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch("https://lookupsbackend.vercel.app/api/password/forgot-password", {
+            const res = await fetch(`${BASE_URL}/api/password/forgot-password`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: data.email }),
             });
 
-            // Parse JSON safely
+
             let result;
             try {
                 result = await res.json();
@@ -137,7 +141,7 @@ export default function ForgotPassword() {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch("/api/password/verify-otp", {
+            const res = await fetch(`${BASE_URL}/api/password/verify-otp`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, otp: data.otp }),
@@ -175,7 +179,7 @@ export default function ForgotPassword() {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch("/api/password/reset-password", {
+            const res = await fetch(`${BASE_URL}/api/password/reset-password`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
