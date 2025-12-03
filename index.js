@@ -49,6 +49,7 @@ app.use(
 app.options(/(.*)/, cors());
 
 app.use(e.json());
+app.use(cookieParser());
 const PORT = process.env.PORT || 3000;
 
 const connectDB = async () => {

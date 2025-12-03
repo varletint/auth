@@ -103,10 +103,18 @@ export default function ForgotPassword() {
                 body: JSON.stringify({ email: data.email }),
             });
 
-            const result = await res.json();
+            // Parse JSON safely
+            let result;
+            try {
+                result = await res.json();
+            } catch (jsonError) {
+                console.error("JSON parse error:", jsonError);
+                setError("Server error: Invalid response format");
+                return;
+            }
 
             if (!res.ok) {
-                setError(result.message || "Failed to send OTP");
+                setError(result?.message || "Failed to send OTP");
                 return;
             }
 
@@ -117,7 +125,8 @@ export default function ForgotPassword() {
             setIsTimerActive(true);
             reset();
         } catch (err) {
-            setError(err.message || "Something went wrong");
+            console.error("Request error:", err);
+            setError(err.message || "Network error. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -134,10 +143,18 @@ export default function ForgotPassword() {
                 body: JSON.stringify({ email, otp: data.otp }),
             });
 
-            const result = await res.json();
+            // Parse JSON safely
+            let result;
+            try {
+                result = await res.json();
+            } catch (jsonError) {
+                console.error("JSON parse error:", jsonError);
+                setError("Server error: Invalid response format");
+                return;
+            }
 
             if (!res.ok) {
-                setError(result.message || "Invalid OTP");
+                setError(result?.message || "Invalid OTP");
                 return;
             }
 
@@ -146,7 +163,8 @@ export default function ForgotPassword() {
             setStep(3);
             reset();
         } catch (err) {
-            setError(err.message || "Something went wrong");
+            console.error("Request error:", err);
+            setError(err.message || "Network error. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -167,17 +185,26 @@ export default function ForgotPassword() {
                 }),
             });
 
-            const result = await res.json();
+            // Parse JSON safely
+            let result;
+            try {
+                result = await res.json();
+            } catch (jsonError) {
+                console.error("JSON parse error:", jsonError);
+                setError("Server error: Invalid response format");
+                return;
+            }
 
             if (!res.ok) {
-                setError(result.message || "Failed to reset password");
+                setError(result?.message || "Failed to reset password");
                 return;
             }
 
             setSuccess("Password reset successfully!");
             setTimeout(() => navigate("/login"), 2000);
         } catch (err) {
-            setError(err.message || "Something went wrong");
+            console.error("Request error:", err);
+            setError(err.message || "Network error. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -194,10 +221,18 @@ export default function ForgotPassword() {
                 body: JSON.stringify({ email }),
             });
 
-            const result = await res.json();
+            // Parse JSON safely
+            let result;
+            try {
+                result = await res.json();
+            } catch (jsonError) {
+                console.error("JSON parse error:", jsonError);
+                setError("Server error: Invalid response format");
+                return;
+            }
 
             if (!res.ok) {
-                setError(result.message || "Failed to resend OTP");
+                setError(result?.message || "Failed to resend OTP");
                 return;
             }
 
@@ -205,7 +240,8 @@ export default function ForgotPassword() {
             setTimeLeft(240);
             setIsTimerActive(true);
         } catch (err) {
-            setError(err.message || "Something went wrong");
+            console.error("Request error:", err);
+            setError(err.message || "Network error. Please try again.");
         } finally {
             setLoading(false);
         }
