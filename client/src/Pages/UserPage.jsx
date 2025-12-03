@@ -24,6 +24,8 @@ export default function UserPage() {
     const [error, setError] = useState(null);
     const [productsLoading, setProductsLoading] = useState(true);
 
+    const BASE_URL = 'https://lookupsbackend.vercel.app';
+
     useEffect(() => {
         fetchUserData();
     }, [id]);
@@ -33,7 +35,7 @@ export default function UserPage() {
         setError(null);
         try {
             // Fetch user information
-            const userRes = await fetch(`/api/seller/${id}`);
+            const userRes = await fetch(`${BASE_URL}/api/seller/${id}`);
             if (!userRes.ok) throw new Error("User not found");
             const userData = await userRes.json();
             setUser(userData);
