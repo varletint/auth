@@ -25,8 +25,7 @@ export default function ProductPage() {
     const [selectedImage, setSelectedImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
 
-    console.log(`seller ${seller}`);
-
+    const BASE_URL = 'https://lookupsbackend.vercel.app'
     useEffect(() => {
         fetchProductDetails();
     }, [id]);
@@ -48,7 +47,7 @@ export default function ProductPage() {
             // Fetch seller information
             if (productData.userId) {
                 try {
-                    const sellerRes = await fetch(`/api/seller/${productData.userId}`);
+                    const sellerRes = await fetch(`${BASE_URL}/api/seller/${productData.userId}`);
                     if (sellerRes.ok) {
                         const sellerData = await sellerRes.json();
                         setSeller(sellerData);
