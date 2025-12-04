@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { Helmet } from "react-helmet-async";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import { productApi } from "../api/productApi";
@@ -128,6 +129,26 @@ export default function Home() {
 
   return (
     <>
+      <Helmet>
+        <title>Lookups - Discover Amazing Products</title>
+        <meta name="description" content="Discover and shop the latest trending products on Lookups. Find electronics, food, tech gadgets, and more from trusted sellers." />
+        <meta name="keywords" content="lookups, online shopping, marketplace, products, tech, gadgets, food" />
+
+        {/* Open Graph */}
+        <meta property="og:title" content="Lookups - Discover Amazing Products" />
+        <meta property="og:description" content="Discover and shop the latest trending products on Lookups." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://auth-fawn-eight.vercel.app" />
+        <meta property="og:site_name" content="Lookups" />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Lookups - Discover Amazing Products" />
+        <meta name="twitter:description" content="Discover and shop the latest trending products on Lookups." />
+
+        <link rel="canonical" href="https://auth-fawn-eight.vercel.app" />
+      </Helmet>
+
       <Header />
       <div className="min-h-screen scroll-smooth mt-10 pb-8">
         <div className="container mx-auto px-2">

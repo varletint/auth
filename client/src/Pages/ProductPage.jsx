@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import Button from "../Components/Button";
 import { productApi } from "../api/productApi";
@@ -155,6 +156,31 @@ export default function ProductPage() {
 
     return (
         <div className="min-h-screen bg-off-white">
+            {/* SEO Meta Tags */}
+            <Helmet>
+                <title>{product.name} | Lookups</title>
+                <meta name="description" content={product.description?.substring(0, 160) || `Buy ${product.name} at the best price on Lookups.`} />
+                <meta name="keywords" content={`${product.name}, ${product.category}, ${product.brand || ''}, buy online, lookups`} />
+
+                {/* Open Graph */}
+                <meta property="og:title" content={`${product.name} | Lookups`} />
+                <meta property="og:description" content={product.description?.substring(0, 160) || `Buy ${product.name} on Lookups`} />
+                <meta property="og:type" content="product" />
+                <meta property="og:url" content={`https://auth-fawn-eight.vercel.app/product/${product._id}`} />
+                <meta property="og:image" content={product.images?.[0] || ''} />
+                <meta property="og:site_name" content="Lookups" />
+                <meta property="product:price:amount" content={product.price} />
+                <meta property="product:price:currency" content="NGN" />
+
+                {/* Twitter Card */}
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={`${product.name} | Lookups`} />
+                <meta name="twitter:description" content={product.description?.substring(0, 160) || `Buy ${product.name} on Lookups`} />
+                <meta name="twitter:image" content={product.images?.[0] || ''} />
+
+                <link rel="canonical" href={`https://auth-fawn-eight.vercel.app/product/${product._id}`} />
+            </Helmet>
+
             {/* Header */}
             <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">

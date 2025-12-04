@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import Button from "../Components/Button";
 import { productApi } from "../api/productApi";
@@ -115,6 +116,28 @@ export default function UserPage() {
 
     return (
         <div className="min-h-screen bg-off-white">
+            {/* SEO Meta Tags */}
+            {user && (
+                <Helmet>
+                    <title>{user.fullName || user.username} | Lookups Seller</title>
+                    <meta name="description" content={user.bio || `Check out ${user.username}'s products on Lookups. ${products.length} products available.`} />
+
+                    {/* Open Graph */}
+                    <meta property="og:title" content={`${user.fullName || user.username} | Lookups Seller`} />
+                    <meta property="og:description" content={user.bio || `Shop ${products.length} products from ${user.username}`} />
+                    <meta property="og:type" content="profile" />
+                    <meta property="og:url" content={`https://auth-fawn-eight.vercel.app/seller/${id}`} />
+                    <meta property="og:site_name" content="Lookups" />
+
+                    {/* Twitter Card */}
+                    <meta name="twitter:card" content="summary" />
+                    <meta name="twitter:title" content={`${user.fullName || user.username} | Lookups`} />
+                    <meta name="twitter:description" content={user.bio || `Shop products from ${user.username}`} />
+
+                    <link rel="canonical" href={`https://auth-fawn-eight.vercel.app/seller/${id}`} />
+                </Helmet>
+            )}
+
             {/* Header */}
             <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
