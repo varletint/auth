@@ -52,7 +52,7 @@ function showInstallBanner() {
       font-family: system-ui, -apple-system, sans-serif;
     "> 
     
-      <span>Install Lookups for a better experience!</span>
+      <span style=" white-space: nowrap;">Install Lookups for a better experience!</span>
       <div style="
         display: flex;
         gap: 10px;
