@@ -70,7 +70,7 @@ function App() {
             }
           />
 
-          {/* New Routes ok */}
+          {/* New Routes oks */}
           <Route path='/cart' element={<Cart />} />
           <Route
             path='/checkout'
