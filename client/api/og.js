@@ -21,7 +21,7 @@ const BOT_AGENTS = [
 const SITE_URL = 'https://auth-fawn-eight.vercel.app';
 const BACKEND_URL = 'https://lookupsbackend.vercel.app';
 const SITE_NAME = 'Lookups';
-const DEFAULT_IMAGE = `${SITE_URL}/logo.png`;
+const DEFAULT_IMAGE = `${SITE_URL}/og-image.png`;
 
 // Static page metadata with ~35 word descriptions
 const PAGE_META = {
@@ -64,6 +64,8 @@ function generateHTML(meta) {
   <meta property="og:title" content="${meta.title}">
   <meta property="og:description" content="${meta.description}">
   <meta property="og:image" content="${meta.image}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:site_name" content="${SITE_NAME}">
   
   <!-- Twitter Card -->
