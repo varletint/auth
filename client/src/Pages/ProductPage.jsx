@@ -122,7 +122,7 @@ export default function ProductPage() {
         if (navigator.share) {
             navigator.share({
                 title: product.name,
-                text: product.description,
+                text: product.description.substring(0, 100),
                 url: window.location.href,
             });
         } else {
