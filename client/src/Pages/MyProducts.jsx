@@ -17,9 +17,12 @@ import { productApi } from "../api/productApi";
 export default function MyProducts() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [deleteConfirm, setDeleteConfirm] = useState(null);
     const [activeDropdown, setActiveDropdown] = useState(null);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
     const dropdownRef = useRef(null);
 
     // Close dropdown when clicking outside
@@ -37,16 +40,36 @@ export default function MyProducts() {
         fetchProducts();
     }, []);
 
-    const fetchProducts = async () => {
+    const fetchProducts = async (pageNum = 1, append = false) => {
         try {
-            setLoading(true);
-            const data = await productApi.getProducts({ limit: 50 });
-            setProducts(data.products || []);
+            if (append) {
+                setLoadingMore(true);
+            } else {
+                setLoading(true);
+            }
+            const data = await productApi.getProducts({ limit: 10, page: pageNum });
+            const newProducts = data.products || [];
+
+            if (append) {
+                setProducts((prev) => [...prev, ...newProducts]);
+            } else {
+                setProducts(newProducts);
+            }
+
+            // Check if there are more products to load
+            setHasMore(newProducts.length === 10);
         } catch (error) {
             console.error("Error fetching products:", error);
         } finally {
             setLoading(false);
+            setLoadingMore(false);
         }
+    };
+
+    const loadMore = () => {
+        const nextPage = page + 1;
+        setPage(nextPage);
+        fetchProducts(nextPage, true);
     };
 
     const handleDelete = async (id) => {
@@ -100,7 +123,7 @@ export default function MyProducts() {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Search your products..."
-                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
+                            className="w-full pl-12 pr-4 py-2 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
                         />
                     </div>
 
@@ -115,76 +138,102 @@ export default function MyProducts() {
                             ))}
                         </div>
                     ) : filteredProducts.length > 0 ? (
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                            {filteredProducts.map((product) => (
-                                <div
-                                    key={product._id || product.id}
-                                    className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
-                                >
-                                    <div className="aspect-square bg-gray-100 relative">
-                                        <img
-                                            src={product.images?.[0] || "https://via.placeholder.com/300x200"}
-                                            alt={product.name}
-                                            className="w-full h-full object-cover"
-                                        />
-                                        <span
-                                            className={`absolute top-3 right-3 px-2 py-1 rounded-lg text-xs font-semibold ${product.stock > 0
-                                                ? "bg-emerald-100 text-emerald-700"
-                                                : "bg-red-100 text-red-700"
-                                                }`}
-                                        >
-                                            {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
-                                        </span>
-                                    </div>
-                                    <div className="p-1.5">
-                                        <Link to={`/product/${product._id || product.id}`}>
-                                            <h3 className="font-semibold text-xs text-gray-900 hover:text-emerald-600 transition-colors truncate">
-                                                {product.name}
-                                            </h3>
-                                        </Link>
-                                        <p className="text-emerald-600 font-bold text-xs mt-0">
-                                            ₦{product.price?.toLocaleString()}
-                                        </p>
-                                        <p className="text-xs text-gray-500 mt-0">{product.category}</p>
-
-                                        {/* 3-dot Menu */}
-                                        <div className="relative mt-0" ref={activeDropdown === (product._id || product.id) ? dropdownRef : null}>
-                                            <button
-                                                onClick={() => setActiveDropdown(
-                                                    activeDropdown === (product._id || product.id) ? null : (product._id || product.id)
-                                                )}
-                                                className="p-2 hover:bg-gray-100 rounded-full transition-colors ml-auto block"
+                        <>
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                                {filteredProducts.map((product) => (
+                                    <div
+                                        key={product._id || product.id}
+                                        className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+                                    >
+                                        <div className="aspect-square bg-gray-100 relative">
+                                            <img
+                                                src={product.images?.[0] || "https://via.placeholder.com/300x200"}
+                                                alt={product.name}
+                                                className="w-full h-full object-cover"
+                                            />
+                                            <span
+                                                className={`absolute top-3 right-3 px-2 py-1 rounded-lg text-xs font-semibold ${product.stock > 0
+                                                    ? "bg-emerald-100 text-emerald-700"
+                                                    : "bg-red-100 text-red-700"
+                                                    }`}
                                             >
-                                                <MoreVerticalIcon size={35} className=" font-semibold text-gray-600" />
-                                            </button>
+                                                {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
+                                            </span>
+                                        </div>
+                                        <div className="p-2 flex justify-between w-full">
+                                            <div className="">
+                                                <Link to={`/product/${product._id || product.id}`}>
+                                                    <h3 className="font-semibold text-xs text-gray-900 hover:text-emerald-600 transition-colors truncate">
+                                                        {product.name}
+                                                    </h3>
+                                                </Link>
+                                                <p className="text-emerald-600 font-bold text-xs mt-0">
+                                                    ₦{product.price?.toLocaleString()}
+                                                </p>
+                                                <p className="text-xs text-gray-500 mt-0">{product.category}</p>
+                                            </div>
+                                            {/* 3-dot Menu */}
+                                            <div className="relative mt-0" ref={activeDropdown === (product._id || product.id) ? dropdownRef : null}>
+                                                <button
+                                                    onClick={() => setActiveDropdown(
+                                                        activeDropdown === (product._id || product.id) ? null : (product._id || product.id)
+                                                    )}
+                                                    className="p-2 hover:bg-gray-100 rounded-full transition-colors ml-auto block"
+                                                >
+                                                    <MoreVerticalIcon size={25} className=" font-bold text-gray-600" />
+                                                </button>
 
-                                            {activeDropdown === (product._id || product.id) && (
-                                                <div className="absolute right-0 top-[-13px] bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-10 min-w-[120px]">
-                                                    <Link
-                                                        to={`/edit-product/${product._id || product.id}`}
-                                                        className="flex items-center gap-2 px-4 py- text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                                                        onClick={() => setActiveDropdown(null)}
-                                                    >
-                                                        <Edit02Icon size={16} className="text-blue-600" />
-                                                        Edit
-                                                    </Link>
-                                                    <button
-                                                        onClick={() => {
-                                                            setDeleteConfirm(product._id || product.id);
-                                                            setActiveDropdown(null);
-                                                        }}
-                                                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors w-full"
-                                                    >
-                                                        <Delete02Icon size={16} className="text-red-600" />
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            )}
+                                                {activeDropdown === (product._id || product.id) && (
+                                                    <div className="absolute right-0 top-[-13px] bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-10 min-w-[120px]">
+                                                        <Link
+                                                            to={`/edit-product/${product._id || product.id}`}
+                                                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                                            onClick={() => setActiveDropdown(null)}
+                                                        >
+                                                            <Edit02Icon size={16} className="text-blue-600" />
+                                                            Edit
+                                                        </Link>
+                                                        <button
+                                                            onClick={() => {
+                                                                setDeleteConfirm(product._id || product.id);
+                                                                setActiveDropdown(null);
+                                                            }}
+                                                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors w-full"
+                                                        >
+                                                            <Delete02Icon size={16} className="text-red-600" />
+                                                            Delete
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
+                                ))}
+                            </div>
+
+                            {/* Load More Button */}
+                            {hasMore && !searchQuery && (
+                                <div className="flex justify-center mt-8">
+                                    <button
+                                        onClick={loadMore}
+                                        disabled={loadingMore}
+                                        className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                    >
+                                        {loadingMore ? (
+                                            <>
+                                                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                                </svg>
+                                                Loading...
+                                            </>
+                                        ) : (
+                                            "Load More"
+                                        )}
+                                    </button>
                                 </div>
-                            ))}
-                        </div>
+                            )}
+                        </>
                     ) : (
                         <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
                             <ShoppingBag01Icon size={80} className="text-gray-300 mx-auto mb-4" />
