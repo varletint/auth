@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu01Icon, MultiplicationSignIcon, Logout01Icon } from "hugeicons-react";
 import useAuthStore from "../store/useAuthStore";
-import lookups from "../assets/lookups.svg";
+import lookups from "../assets/logo.png";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -35,11 +35,11 @@ export default function Header() {
     <>
       <div
         className='header sticky top-0 w-[1500px] max-w-[95%] m-auto border-b border-gray-200 
-      flex justify-between items-center z-[100] px-[10px] py-[15px] bg-white'>
-        <Link to='/' className='font-bold text-[25px] text-nowrap
-      flex items-center gap-[px] text-emerald-600 '>
-          <img src={lookups} alt="Lookups" className="h-[45px] w-[45px]" />
-          <span className="text-[20px] ml-[-5px]">Lookups</span>
+      flex justify-between items-center z-[100] px-[0px] py-[0px] bg-white'>
+        <Link to='/' className='font-bold  text-nowrap
+      flex items-center gap-[0px] text-emerald-600 '>
+          <img src={lookups} alt="Lookups" className="h-[60px] w-[60px]" />
+          <span className="text-[20px] ml-[-12px]">Lookups</span>
         </Link>
 
         {/* Desktop Navigation */}
