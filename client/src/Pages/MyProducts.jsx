@@ -1,0 +1,207 @@
+import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
+import { Link } from "react-router-dom";
+import Header from "../Components/Header";
+import Footer from "../Components/Footer";
+import Button from "../Components/Button";
+import {
+    ShoppingBag01Icon,
+    Add01Icon,
+    Edit02Icon,
+    Delete02Icon,
+    Search01Icon,
+    FilterIcon
+} from "hugeicons-react";
+import { productApi } from "../api/productApi";
+
+export default function MyProducts() {
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [deleteConfirm, setDeleteConfirm] = useState(null);
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
+
+    const fetchProducts = async () => {
+        try {
+            setLoading(true);
+            const data = await productApi.getProducts({ limit: 50 });
+            setProducts(data.products || []);
+        } catch (error) {
+            console.error("Error fetching products:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDelete = async (id) => {
+        try {
+            await productApi.deleteProduct(id);
+            setProducts((prev) => prev.filter((p) => (p._id || p.id) !== id));
+            setDeleteConfirm(null);
+        } catch (error) {
+            console.error("Error deleting product:", error);
+        }
+    };
+
+    const filteredProducts = products.filter((product) =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    return (
+        <>
+            <Helmet>
+                <title>My Products | Lookups</title>
+                <meta name="description" content="Manage your product listings." />
+            </Helmet>
+
+            <Header />
+            <div className="min-h-screen bg-gray-50 py-8 mt-10">
+                <div className="container mx-auto px-4 max-w-6xl">
+                    {/* Header */}
+                    <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+                        <div className="flex items-center gap-3">
+                            <ShoppingBag01Icon size={32} className="text-emerald-600" />
+                            <h1 className="text-3xl font-bold text-gray-900">My Products</h1>
+                            <span className="bg-emerald-100 text-emerald-700 text-sm font-semibold px-3 py-1 rounded-full">
+                                {products.length} items
+                            </span>
+                        </div>
+                        <Link to="/add-product">
+                            <Button text="Add Product" className="flex items-center gap-2">
+                                <Add01Icon size={18} />
+                            </Button>
+                        </Link>
+                    </div>
+
+                    {/* Search Bar */}
+                    <div className="relative mb-6">
+                        <Search01Icon
+                            size={20}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                        />
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="Search your products..."
+                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
+                        />
+                    </div>
+
+                    {loading ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {[1, 2, 3, 4, 5, 6].map((i) => (
+                                <div key={i} className="bg-white rounded-xl p-4 animate-pulse">
+                                    <div className="aspect-video bg-gray-200 rounded-lg mb-4"></div>
+                                    <div className="h-5 bg-gray-200 rounded mb-2"></div>
+                                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : filteredProducts.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {filteredProducts.map((product) => (
+                                <div
+                                    key={product._id || product.id}
+                                    className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+                                >
+                                    <div className="aspect-video bg-gray-100 relative">
+                                        <img
+                                            src={product.images?.[0] || "https://via.placeholder.com/300x200"}
+                                            alt={product.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                        <span
+                                            className={`absolute top-3 right-3 px-2 py-1 rounded-lg text-xs font-semibold ${product.stock > 0
+                                                    ? "bg-emerald-100 text-emerald-700"
+                                                    : "bg-red-100 text-red-700"
+                                                }`}
+                                        >
+                                            {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
+                                        </span>
+                                    </div>
+                                    <div className="p-4">
+                                        <Link to={`/product/${product._id || product.id}`}>
+                                            <h3 className="font-semibold text-gray-900 hover:text-emerald-600 transition-colors truncate">
+                                                {product.name}
+                                            </h3>
+                                        </Link>
+                                        <p className="text-emerald-600 font-bold text-lg mt-1">
+                                            ₦{product.price?.toLocaleString()}
+                                        </p>
+                                        <p className="text-sm text-gray-500 mt-1">{product.category}</p>
+
+                                        <div className="flex gap-2 mt-4">
+                                            <Link
+                                                to={`/edit-product/${product._id || product.id}`}
+                                                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 text-blue-600 rounded-lg font-semibold hover:bg-blue-100 transition-colors"
+                                            >
+                                                <Edit02Icon size={16} />
+                                                Edit
+                                            </Link>
+                                            <button
+                                                onClick={() => setDeleteConfirm(product._id || product.id)}
+                                                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-red-50 text-red-600 rounded-lg font-semibold hover:bg-red-100 transition-colors"
+                                            >
+                                                <Delete02Icon size={16} />
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
+                            <ShoppingBag01Icon size={80} className="text-gray-300 mx-auto mb-4" />
+                            <h2 className="text-2xl font-bold text-gray-700 mb-2">
+                                {searchQuery ? "No products found" : "No products yet"}
+                            </h2>
+                            <p className="text-gray-500 mb-6">
+                                {searchQuery
+                                    ? "Try a different search term"
+                                    : "Start selling by adding your first product!"}
+                            </p>
+                            {!searchQuery && (
+                                <Link to="/add-product">
+                                    <Button text="Add Your First Product" />
+                                </Link>
+                            )}
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Delete Confirmation Modal */}
+            {deleteConfirm && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-xl p-6 max-w-md w-full">
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">Delete Product?</h3>
+                        <p className="text-gray-500 mb-6">
+                            This action cannot be undone. The product will be permanently removed.
+                        </p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setDeleteConfirm(null)}
+                                className="flex-1 px-4 py-2 border border-gray-200 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={() => handleDelete(deleteConfirm)}
+                                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <Footer />
+        </>
+    );
+}
