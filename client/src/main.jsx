@@ -39,21 +39,27 @@ function showInstallBanner() {
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background: linear-gradient(135deg, #059669, #10b981);
-      color: white;
+      background: white;
+      color: #059669;
       padding: 12px 24px;
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.2);
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       z-index: 9999;
       font-family: system-ui, -apple-system, sans-serif;
-    ">
-      <span>📱 Install Lookups for a better experience!</span>
+    "> 
+    
+      <span>Install Lookups for a better experience!</span>
+      <div style="
+        display: flex;
+        gap: 10px;
+      ">
       <button id="pwa-install-btn" style="
-        background: white;
-        color: #059669;
+        background: #059669;
+        color: white;
         border: none;
         padding: 8px 16px;
         border-radius: 8px;
@@ -62,12 +68,13 @@ function showInstallBanner() {
       ">Install</button>
       <button id="pwa-dismiss-btn" style="
         background: transparent;
-        color: white;
-        border: 1px solid white;
+        color: #059669;
+        border: 1px solid #059669;
         padding: 8px 12px;
         border-radius: 8px;
         cursor: pointer;
       ">✕</button>
+      </div>
     </div>
   `;
 
