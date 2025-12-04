@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
-import { Package01Icon, DeliveryTruck01Icon, CheckmarkCircle02Icon, Clock01Icon } from "hugeicons-react";
+import { PackageIcon, DeliveryTruck01Icon, CheckmarkCircle02Icon, Clock01Icon } from "hugeicons-react";
 
 export default function Orders() {
     // Mock orders data
@@ -66,13 +66,13 @@ export default function Orders() {
             <div className="min-h-screen bg-gray-50 py-8 mt-10">
                 <div className="container mx-auto px-4 max-w-4xl">
                     <div className="flex items-center gap-3 mb-8">
-                        <Package01Icon size={32} className="text-emerald-600" />
+                        <PackageIcon size={32} className="text-emerald-600" />
                         <h1 className="text-3xl font-bold text-gray-900">My Orders</h1>
                     </div>
 
                     {orders.length === 0 ? (
                         <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
-                            <Package01Icon size={80} className="text-gray-300 mx-auto mb-4" />
+                            <PackageIcon size={80} className="text-gray-300 mx-auto mb-4" />
                             <h2 className="text-2xl font-bold text-gray-700 mb-2">No orders yet</h2>
                             <p className="text-gray-500 mb-6">Start shopping to see your orders here.</p>
                             <Link to="/">

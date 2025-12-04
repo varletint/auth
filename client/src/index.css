@@ -48,31 +48,5 @@
   display: none;
 }
 
-.carousel::scroll-button(right),
-.carousel::scroll-button(left) {
-  /* content: "+"; */
-  border: none;
-  font-size: 2rem;
-  color: #064127;
-  background-color: #c8e2d7;
-  border-radius: 50%;
-  padding-bottom: 0.1em;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-  position: fixed;
-  position-anchor: --carousel;
-  position-area: right center;
-  translate: -50%;
-}
-
-.carousel::scroll-button(left) {
-  /* content: "-"; */
-  position-area: left center;
-  translate: 50%;
-}
-
-.carousel::scroll-button(right):disabled,
-.carousel::scroll-button(left):disabled {
-  opacity: 0.5;
-}
+/* Note: ::scroll-button is experimental and not supported by the build minifier.
+   If you need carousel navigation buttons, implement them with JavaScript instead. */
