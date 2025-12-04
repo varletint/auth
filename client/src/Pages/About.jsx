@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
-import { InformationCircleIcon, Target01Icon, UserMultiple02Icon, ShieldCheckIcon } from "hugeicons-react";
+import { InformationCircleIcon, Target01Icon, UserMultiple02Icon, SecurityCheckIcon } from "hugeicons-react";
 
 export default function About() {
     const stats = [
@@ -25,7 +25,7 @@ export default function About() {
             description: "We believe in building a community where both buyers and sellers can thrive together through fair practices and transparent transactions.",
         },
         {
-            icon: ShieldCheckIcon,
+            icon: SecurityCheckIcon,
             title: "Trust & Safety",
             description: "Your security is our priority. We implement robust verification systems and buyer protection policies to ensure safe transactions.",
         },
