@@ -21,7 +21,8 @@ const BOT_AGENTS = [
 const SITE_URL = 'https://auth-fawn-eight.vercel.app';
 const BACKEND_URL = 'https://lookupsbackend.vercel.app';
 const SITE_NAME = 'Lookups';
-const DEFAULT_IMAGE = `${SITE_URL}/og-image.png`;
+const DEFAULT_IMAGE = `${SITE_URL}/logo.png`;
+// const DEFAULT_IMAGE = `${SITE_URL}/og-image.png`;
 
 // Static page metadata with ~35 word descriptions
 const PAGE_META = {
