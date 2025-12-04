@@ -279,7 +279,7 @@ export default function UserPage() {
                     </h2>
 
                     {productsLoading ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-6">
                             {[...Array(4)].map((_, i) => (
                                 <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden animate-pulse">
                                     <div className="aspect-square bg-gray-200"></div>
@@ -292,36 +292,38 @@ export default function UserPage() {
                             ))}
                         </div>
                     ) : products.length > 0 ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {products.map((product) => (
-                                <Link
-                                    key={product._id}
-                                    to={`/product/${product._id}`}
-                                    className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden group hover:shadow-md transition-all"
-                                >
-                                    <div className="aspect-square bg-gray-200 overflow-hidden">
-                                        <img
-                                            src={product.images?.[0] || "https://via.placeholder.com/400"}
-                                            alt={product.name}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                        />
-                                    </div>
-                                    <div className="p-4">
-                                        <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">
-                                            {product.name}
-                                        </h3>
-                                        <p className="text-sm text-gray-500 mb-2">{product.category}</p>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-xl font-bold text-emerald-600">
-                                                {new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(product.price)}
-                                            </span>
-                                            {product.stock > 0 && (
-                                                <span className="text-xs text-green-600 font-medium">In Stock</span>
-                                            )}
+                        <div className=" flex flex-col items-center justify-center w-full">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                {products.map((product) => (
+                                    <Link
+                                        key={product._id}
+                                        to={`/product/${product._id}`}
+                                        className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden group hover:shadow-md transition-all"
+                                    >
+                                        <div className="aspect-[1.1/1] bg-gray-200 overflow-hidden">
+                                            <img
+                                                src={product.images?.[0] || "https://via.placeholder.com/400"}
+                                                alt={product.name}
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                            />
                                         </div>
-                                    </div>
-                                </Link>
-                            ))}
+                                        <div className="p-1.5">
+                                            <h3 className="font-semibold text-xs  text-gray-900 mb- line-clamp-2">
+                                                {product.name}
+                                            </h3>
+                                            <p className="text-sm text-gray-500 font-semibold">{product.category}</p>
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm font-bold text-emerald-600">
+                                                    {new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(product.price)}
+                                                </span>
+                                                {product.stock > 0 && (
+                                                    <span className="text-xs text-green-600 font-medium">In Stock</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
                         </div>
                     ) : (
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">

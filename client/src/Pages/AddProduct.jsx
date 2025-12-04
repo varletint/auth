@@ -93,6 +93,9 @@ export default function AddProduct() {
     const [quickSearchTerm, setQuickSearchTerm] = useState("");
     const [selectedQuickProduct, setSelectedQuickProduct] = useState(null);
 
+    // Price formatting state
+    const [displayPrice, setDisplayPrice] = useState("");
+
     const {
         register,
         handleSubmit,
@@ -138,6 +141,45 @@ export default function AddProduct() {
 
         setImages(newImages);
         setImagePreviews(newPreviews);
+    };
+
+    // Format price for display
+    const formatPrice = (value) => {
+        if (!value) return "";
+        // Remove all non-digit and non-decimal characters
+        const numericValue = value.toString().replace(/[^0-9.]/g, "");
+
+        // Split into integer and decimal parts
+        const parts = numericValue.split(".");
+        let integerPart = parts[0];
+        const decimalPart = parts[1];
+
+        // Add commas to integer part
+        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+        // Combine with decimal part (limit to 2 decimal places)
+        if (decimalPart !== undefined) {
+            return `${integerPart}.${decimalPart.slice(0, 2)}`;
+        }
+        return integerPart;
+    };
+
+    // Handle price input change
+    const handlePriceChange = (e) => {
+        const inputValue = e.target.value;
+
+        // Remove all non-digit and non-decimal characters for the actual value
+        const numericValue = inputValue.replace(/[^0-9.]/g, "");
+
+        // Prevent multiple decimal points
+        const decimalCount = (numericValue.match(/\./g) || []).length;
+        if (decimalCount > 1) return;
+
+        // Update the form value with numeric string
+        setValue("price", numericValue, { shouldValidate: true });
+
+        // Update display value with formatting
+        setDisplayPrice(formatPrice(numericValue));
     };
 
     const handleQuickProductSelect = (product) => {
@@ -525,14 +567,19 @@ export default function AddProduct() {
                                         <label htmlFor="price" className="block text-sm font-semibold text-gray-700 mb-2">
                                             Price (₦) *
                                         </label>
-                                        <Input
-                                            type="number"
-                                            placeholder="0.00"
-                                            id="price"
-                                            step="0.01"
-                                            {...register("price")}
-                                            className={errors.price ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""}
-                                        />
+                                        <div className="relative">
+                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">
+                                                ₦
+                                            </span>
+                                            <Input
+                                                type="text"
+                                                placeholder="0.00"
+                                                id="price"
+                                                value={displayPrice}
+                                                onChange={handlePriceChange}
+                                                className={`pl-8 ${errors.price ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""}`}
+                                            />
+                                        </div>
                                         {errors.price && (
                                             <p className="text-red-500 text-xs mt-1 ml-1">{errors.price.message}</p>
                                         )}
