@@ -105,7 +105,7 @@ export default function MyProducts() {
                     </div>
 
                     {loading ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                             {[1, 2, 3, 4, 5, 6].map((i) => (
                                 <div key={i} className="bg-white rounded-xl p-4 animate-pulse">
                                     <div className="aspect-video bg-gray-200 rounded-lg mb-4"></div>
@@ -119,9 +119,9 @@ export default function MyProducts() {
                             {filteredProducts.map((product) => (
                                 <div
                                     key={product._id || product.id}
-                                    className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+                                    className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
                                 >
-                                    <div className="aspect-video bg-gray-100 relative">
+                                    <div className="aspect-square bg-gray-100 relative">
                                         <img
                                             src={product.images?.[0] || "https://via.placeholder.com/300x200"}
                                             alt={product.name}
@@ -136,7 +136,7 @@ export default function MyProducts() {
                                             {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
                                         </span>
                                     </div>
-                                    <div className="p-4">
+                                    <div className="p-1.5">
                                         <Link to={`/product/${product._id || product.id}`}>
                                             <h3 className="font-semibold text-xs text-gray-900 hover:text-emerald-600 transition-colors truncate">
                                                 {product.name}
@@ -148,21 +148,21 @@ export default function MyProducts() {
                                         <p className="text-xs text-gray-500 mt-0">{product.category}</p>
 
                                         {/* 3-dot Menu */}
-                                        <div className="relative mt-3" ref={activeDropdown === (product._id || product.id) ? dropdownRef : null}>
+                                        <div className="relative mt-0" ref={activeDropdown === (product._id || product.id) ? dropdownRef : null}>
                                             <button
                                                 onClick={() => setActiveDropdown(
                                                     activeDropdown === (product._id || product.id) ? null : (product._id || product.id)
                                                 )}
                                                 className="p-2 hover:bg-gray-100 rounded-full transition-colors ml-auto block"
                                             >
-                                                <MoreVerticalIcon size={18} className="text-gray-600" />
+                                                <MoreVerticalIcon size={35} className=" font-semibold text-gray-600" />
                                             </button>
 
                                             {activeDropdown === (product._id || product.id) && (
-                                                <div className="absolute right-0 top-10 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-10 min-w-[120px]">
+                                                <div className="absolute right-0 top-[-13px] bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-10 min-w-[120px]">
                                                     <Link
                                                         to={`/edit-product/${product._id || product.id}`}
-                                                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                                        className="flex items-center gap-2 px-4 py- text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                                                         onClick={() => setActiveDropdown(null)}
                                                     >
                                                         <Edit02Icon size={16} className="text-blue-600" />
