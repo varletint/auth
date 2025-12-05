@@ -14,6 +14,7 @@ import authRoute from "./Routes/authRoute.js";
 import productRoute from "./Routes/productRoute.js";
 import userRoute from "./Routes/userRoute.js";
 import forgotPasswordRoute from "./Routes/forgotPasswordRoute.js";
+import wishlistRoute from "./Routes/wishlistRoute.js";
 
 const app = e();
 
@@ -77,6 +78,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/products", productRoute);
 app.use("/api/seller", userRoute);
 app.use("/api/password", forgotPasswordRoute);
+app.use("/api/wishlist", wishlistRoute);
 
 // app.use("/", e.json(), testing);
 

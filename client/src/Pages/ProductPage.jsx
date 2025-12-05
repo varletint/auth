@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Button from "../Components/Button";
 import { productApi } from "../api/productApi";
+import { wishlistApi } from "../api/wishlistApi";
 import {
     ShoppingCart01Icon,
     Mail01Icon,
@@ -13,6 +15,7 @@ import {
     ArrowLeft01Icon,
     PackageIcon,
     CheckmarkCircle02Icon,
+    FavouriteIcon,
 } from "hugeicons-react";
 
 export default function ProductPage() {
@@ -25,11 +28,31 @@ export default function ProductPage() {
     const [error, setError] = useState(null);
     const [selectedImage, setSelectedImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
+    const [inWishlist, setInWishlist] = useState(false);
+    const [wishlistLoading, setWishlistLoading] = useState(false);
+
+    const { currentUser } = useSelector((state) => state.user);
 
     const BASE_URL = 'https://lookupsbackend.vercel.app'
+
     useEffect(() => {
         fetchProductDetails();
     }, [id]);
+
+    // Check if product is in wishlist
+    useEffect(() => {
+        const checkWishlist = async () => {
+            if (currentUser && id) {
+                try {
+                    const response = await wishlistApi.checkWishlistItem(id);
+                    setInWishlist(response.inWishlist);
+                } catch (err) {
+                    console.log("Could not check wishlist status:", err);
+                }
+            }
+        };
+        checkWishlist();
+    }, [currentUser, id]);
 
     const fetchProductDetails = async () => {
         setLoading(true);
@@ -128,6 +151,28 @@ export default function ProductPage() {
         } else {
             navigator.clipboard.writeText(window.location.href);
             alert("Product link copied to clipboard!");
+        }
+    };
+
+    const handleWishlistToggle = async () => {
+        if (!currentUser) {
+            navigate("/login", { state: { from: `/product/${id}` } });
+            return;
+        }
+
+        try {
+            setWishlistLoading(true);
+            if (inWishlist) {
+                await wishlistApi.removeFromWishlist(id);
+                setInWishlist(false);
+            } else {
+                await wishlistApi.addToWishlist(id);
+                setInWishlist(true);
+            }
+        } catch (err) {
+            console.error("Wishlist error:", err);
+        } finally {
+            setWishlistLoading(false);
         }
     };
 
@@ -344,6 +389,20 @@ export default function ProductPage() {
                                 onClick={handleContactSeller}
                                 className="flex-1 bg-white !text-gray-700 border border-gray-200 hover:bg-off-white !shadow-sm justify-center"
                             />
+                            <button
+                                onClick={handleWishlistToggle}
+                                disabled={wishlistLoading}
+                                className={`w-12 h-12 rounded-lg border flex items-center justify-center transition-all ${inWishlist
+                                    ? "bg-red-50 border-red-200 text-red-500"
+                                    : "bg-white border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200"
+                                    } ${wishlistLoading ? "opacity-50" : ""}`}
+                                title={inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+                            >
+                                <FavouriteIcon
+                                    size={24}
+                                    className={inWishlist ? "fill-red-500" : ""}
+                                />
+                            </button>
                         </div>
                     </div>
                 </div>

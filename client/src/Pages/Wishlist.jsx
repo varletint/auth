@@ -1,46 +1,74 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import Button from "../Components/Button";
-import { FavouriteIcon, ShoppingCart01Icon, Delete02Icon } from "hugeicons-react";
+import { FavouriteIcon, ShoppingCart01Icon, Delete02Icon, Loading03Icon } from "hugeicons-react";
+import { wishlistApi } from "../api/wishlistApi";
 
 export default function Wishlist() {
-    // Mock wishlist data
-    const [wishlistItems, setWishlistItems] = useState([
-        {
-            id: 1,
-            name: "iPhone 15 Pro Max",
-            price: 1899000,
-            image: "https://via.placeholder.com/200x200?text=iPhone",
-            inStock: true,
-        },
-        {
-            id: 2,
-            name: "Samsung Galaxy S24 Ultra",
-            price: 1450000,
-            image: "https://via.placeholder.com/200x200?text=Samsung",
-            inStock: true,
-        },
-        {
-            id: 3,
-            name: "Sony WH-1000XM5",
-            price: 450000,
-            image: "https://via.placeholder.com/200x200?text=Sony",
-            inStock: false,
-        },
-    ]);
+    const [wishlistItems, setWishlistItems] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [removingId, setRemovingId] = useState(null);
 
-    const removeItem = (id) => {
-        setWishlistItems((items) => items.filter((item) => item.id !== id));
+    const { currentUser } = useSelector((state) => state.user);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Redirect if not logged in
+        if (!currentUser) {
+            navigate("/login", { state: { from: "/wishlist" } });
+            return;
+        }
+
+        fetchWishlist();
+    }, [currentUser, navigate]);
+
+    const fetchWishlist = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await wishlistApi.getWishlist();
+            setWishlistItems(response.items || []);
+        } catch (err) {
+            setError(err.message || "Failed to load wishlist");
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const moveToCart = (id) => {
-        // In real app, add to cart and remove from wishlist
-        console.log("Moving to cart:", id);
-        removeItem(id);
+    const removeItem = async (productId) => {
+        try {
+            setRemovingId(productId);
+            await wishlistApi.removeFromWishlist(productId);
+            setWishlistItems((items) => items.filter((item) => item.productId !== productId));
+        } catch (err) {
+            setError(err.message || "Failed to remove item");
+        } finally {
+            setRemovingId(null);
+        }
     };
+
+    const moveToCart = (productId) => {
+        // TODO: Integrate with cart functionality when available
+        console.log("Moving to cart:", productId);
+        removeItem(productId);
+    };
+
+    if (loading) {
+        return (
+            <>
+                <Header />
+                <div className="min-h-screen bg-gray-50 py-8 mt-10 flex items-center justify-center">
+                    <Loading03Icon size={48} className="text-emerald-600 animate-spin" />
+                </div>
+                <Footer />
+            </>
+        );
+    }
 
     return (
         <>
@@ -60,6 +88,18 @@ export default function Wishlist() {
                         </span>
                     </div>
 
+                    {error && (
+                        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+                            {error}
+                            <button
+                                onClick={fetchWishlist}
+                                className="ml-4 text-red-600 font-semibold hover:underline"
+                            >
+                                Try again
+                            </button>
+                        </div>
+                    )}
+
                     {wishlistItems.length === 0 ? (
                         <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
                             <FavouriteIcon size={80} className="text-gray-300 mx-auto mb-4" />
@@ -73,20 +113,25 @@ export default function Wishlist() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {wishlistItems.map((item) => (
                                 <div
-                                    key={item.id}
+                                    key={item.productId}
                                     className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow group"
                                 >
                                     <div className="relative aspect-square bg-gray-100">
                                         <img
-                                            src={item.image}
+                                            src={item.image || "https://via.placeholder.com/200x200?text=No+Image"}
                                             alt={item.name}
                                             className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                                         />
                                         <button
-                                            onClick={() => removeItem(item.id)}
-                                            className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md text-red-500 hover:bg-red-50 transition-colors"
+                                            onClick={() => removeItem(item.productId)}
+                                            disabled={removingId === item.productId}
+                                            className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50"
                                         >
-                                            <Delete02Icon size={18} />
+                                            {removingId === item.productId ? (
+                                                <Loading03Icon size={18} className="animate-spin" />
+                                            ) : (
+                                                <Delete02Icon size={18} />
+                                            )}
                                         </button>
                                         {!item.inStock && (
                                             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -97,20 +142,20 @@ export default function Wishlist() {
                                         )}
                                     </div>
                                     <div className="p-4">
-                                        <Link to={`/product/${item.id}`}>
+                                        <Link to={`/product/${item.productId}`}>
                                             <h3 className="font-semibold text-gray-900 hover:text-emerald-600 transition-colors truncate">
                                                 {item.name}
                                             </h3>
                                         </Link>
                                         <p className="text-emerald-600 font-bold text-lg mt-1">
-                                            ₦{item.price.toLocaleString()}
+                                            ₦{item.price?.toLocaleString()}
                                         </p>
                                         <button
-                                            onClick={() => moveToCart(item.id)}
+                                            onClick={() => moveToCart(item.productId)}
                                             disabled={!item.inStock}
                                             className={`w-full mt-4 flex items-center justify-center gap-2 py-2 rounded-lg font-semibold transition-colors ${item.inStock
-                                                    ? "bg-emerald-600 text-white hover:bg-emerald-700"
-                                                    : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                                                ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                                                : "bg-gray-200 text-gray-500 cursor-not-allowed"
                                                 }`}
                                         >
                                             <ShoppingCart01Icon size={18} />
