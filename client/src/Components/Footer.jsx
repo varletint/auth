@@ -49,63 +49,70 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to='/register' className='hover:text-white transition-colors'>
-                  Register
+                <Link to='/categories' className='hover:text-white transition-colors'>
+                  Categories
                 </Link>
               </li>
               <li>
-                <Link to='/login' className='hover:text-white transition-colors'>
-                  Login
+                <Link to='/search' className='hover:text-white transition-colors'>
+                  Search
                 </Link>
               </li>
               <li>
-                <Link to='/profile' className='hover:text-white transition-colors'>
-                  Profile
+                <Link to='/about' className='hover:text-white transition-colors'>
+                  About Us
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Categories */}
+          {/* Account & Support */}
           <div>
-            <h3 className='text-white font-semibold text-lg mb-4'>Categories</h3>
+            <h3 className='text-white font-semibold text-lg mb-4'>Account</h3>
             <ul className='space-y-3'>
               <li>
-                <a href='#' className='hover:text-white transition-colors'>
-                  Trending
-                </a>
+                <Link to='/profile' className='hover:text-white transition-colors'>
+                  My Profile
+                </Link>
               </li>
               <li>
-                <a href='#' className='hover:text-white transition-colors'>
-                  Latest Lookups
-                </a>
+                <Link to='/my-products' className='hover:text-white transition-colors'>
+                  My Products
+                </Link>
               </li>
               <li>
-                <a href='#' className='hover:text-white transition-colors'>
-                  Food & Dining
-                </a>
+                <Link to='/wishlist' className='hover:text-white transition-colors'>
+                  Wishlist
+                </Link>
               </li>
               <li>
-                <a href='#' className='hover:text-white transition-colors'>
-                  Technology
-                </a>
+                <Link to='/orders' className='hover:text-white transition-colors'>
+                  Orders
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* Contact Info */}
+          {/* Support & Legal */}
           <div>
-            <h3 className='text-white font-semibold text-lg mb-4'>Contact Us</h3>
-            <ul className='space-y-4'>
-              <li className='flex items-start gap-3'>
-                <Location01Icon size={20} className='mt-1 shrink-0' />
-                <span>123 Innovation Drive, Tech City, TC 90210</span>
+            <h3 className='text-white font-semibold text-lg mb-4'>Support</h3>
+            <ul className='space-y-3'>
+              <li>
+                <Link to='/contact' className='hover:text-white transition-colors'>
+                  Contact Us
+                </Link>
               </li>
-              <li className='flex items-center gap-3'>
-                <Call02Icon size={20} className='shrink-0' />
-                <span>+1 (555) 123-4567</span>
+              <li>
+                <Link to='/terms' className='hover:text-white transition-colors'>
+                  Terms of Service
+                </Link>
               </li>
-              <li className='flex items-center gap-3'>
+              <li>
+                <Link to='/privacy' className='hover:text-white transition-colors'>
+                  Privacy Policy
+                </Link>
+              </li>
+              <li className='flex items-center gap-3 pt-4'>
                 <Mail01Icon size={20} className='shrink-0' />
                 <span>support@lookups.com</span>
               </li>

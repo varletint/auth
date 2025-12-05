@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Menu01Icon, MultiplicationSignIcon, Logout01Icon } from "hugeicons-react";
+import {
+  Menu01Icon,
+  MultiplicationSignIcon,
+  Logout01Icon,
+  Search01Icon,
+  ShoppingCart01Icon,
+  FavouriteIcon,
+  ShoppingBag01Icon
+} from "hugeicons-react";
 import useAuthStore from "../store/useAuthStore";
 import lookups from "../assets/logo.png";
 
@@ -46,11 +54,32 @@ export default function Header() {
         <ul className='hidden sm:flex gap-[20px] justify-end items-center font-bold'>
           {currentUser ? (
             <>
+              {/* Quick Access Icons */}
               <li>
-                <Link to={"/profile"}>Profile</Link>
+                <Link to={"/search"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Search">
+                  <Search01Icon size={22} className="text-gray-600 hover:text-emerald-600" />
+                </Link>
               </li>
               <li>
-                <Link to={"/add-product"} className="text-emerald-600">Add Product</Link>
+                <Link to={"/wishlist"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Wishlist">
+                  <FavouriteIcon size={22} className="text-gray-600 hover:text-red-500" />
+                </Link>
+              </li>
+              <li>
+                <Link to={"/cart"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Cart">
+                  <ShoppingCart01Icon size={22} className="text-gray-600 hover:text-emerald-600" />
+                </Link>
+              </li>
+              <li>
+                <Link to={"/my-products"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="My Products">
+                  <ShoppingBag01Icon size={22} className="text-gray-600 hover:text-emerald-600" />
+                </Link>
+              </li>
+              <li className="border-l border-gray-200 pl-4 ml-2">
+                <Link to={"/profile"} className="hover:text-emerald-600 transition-colors">Profile</Link>
+              </li>
+              <li>
+                <Link to={"/add-product"} className="text-emerald-600 hover:text-emerald-700 transition-colors">Add Product</Link>
               </li>
               <li>
                 <button
@@ -64,6 +93,11 @@ export default function Header() {
             </>
           ) : (
             <>
+              <li>
+                <Link to={"/search"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Search">
+                  <Search01Icon size={22} className="text-gray-600 hover:text-emerald-600" />
+                </Link>
+              </li>
               <li>
                 <Link to={"/login"}>Login</Link>
               </li>
@@ -99,6 +133,30 @@ export default function Header() {
             {currentUser ? (
               <>
                 <li>
+                  <Link to={"/search"} onClick={toggleMenu} className="flex items-center gap-2">
+                    <Search01Icon size={20} />
+                    Search
+                  </Link>
+                </li>
+                <li>
+                  <Link to={"/cart"} onClick={toggleMenu} className="flex items-center gap-2">
+                    <ShoppingCart01Icon size={20} />
+                    Cart
+                  </Link>
+                </li>
+                <li>
+                  <Link to={"/wishlist"} onClick={toggleMenu} className="flex items-center gap-2">
+                    <FavouriteIcon size={20} />
+                    Wishlist
+                  </Link>
+                </li>
+                <li>
+                  <Link to={"/my-products"} onClick={toggleMenu} className="flex items-center gap-2">
+                    <ShoppingBag01Icon size={20} />
+                    My Products
+                  </Link>
+                </li>
+                <li className="border-t border-gray-200 pt-4 w-full text-center">
                   <Link to={"/profile"} onClick={toggleMenu}>
                     Profile
                   </Link>

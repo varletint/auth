@@ -34,10 +34,11 @@ export default function Profile() {
   };
 
   const sidebarItems = [
-    { id: "overview", label: "Overview", icon: <GridViewIcon size={20} /> },
-    { id: "profile", label: "My Profile", icon: <UserIcon size={20} /> },
-    { id: "products", label: "My Products", icon: <ShoppingBag02Icon size={20} /> },
-    { id: "settings", label: "Settings", icon: <Settings02Icon size={20} /> },
+    { id: "overview", label: "Overview", icon: <GridViewIcon size={20} />, path: null },
+    { id: "profile", label: "Edit Profile", icon: <UserIcon size={20} />, path: "/edit-profile" },
+    { id: "products", label: "My Products", icon: <ShoppingBag02Icon size={20} />, path: "/my-products" },
+    { id: "orders", label: "Orders", icon: <ShoppingBag02Icon size={20} />, path: "/orders" },
+    { id: "settings", label: "Settings", icon: <Settings02Icon size={20} />, path: "/settings" },
   ];
 
   return (
@@ -70,20 +71,32 @@ export default function Profile() {
             </div>
             <nav className='space-y-1 flex-grow'>
               {sidebarItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setActiveTab(item.id);
-                    setIsSidebarOpen(false); // Close sidebar on item click for mobile
-                  }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors ${activeTab === item.id
-                    ? "bg-indigo-50 text-indigo-600"
-                    : "text-gray-600 hover:bg-off-white hover:text-gray-900"
-                    }`}
-                >
-                  {item.icon}
-                  {item.label}
-                </button>
+                item.path ? (
+                  <Link
+                    key={item.id}
+                    to={item.path}
+                    onClick={() => setIsSidebarOpen(false)}
+                    className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors text-gray-600 hover:bg-off-white hover:text-gray-900`}
+                  >
+                    {item.icon}
+                    {item.label}
+                  </Link>
+                ) : (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActiveTab(item.id);
+                      setIsSidebarOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors ${activeTab === item.id
+                      ? "bg-indigo-50 text-indigo-600"
+                      : "text-gray-600 hover:bg-off-white hover:text-gray-900"
+                      }`}
+                  >
+                    {item.icon}
+                    {item.label}
+                  </button>
+                )
               ))}
             </nav>
           </div>
