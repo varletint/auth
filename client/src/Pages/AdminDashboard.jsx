@@ -15,7 +15,7 @@ import {
     UserIcon,
     CheckmarkCircle02Icon,
     Cancel01Icon,
-    TimeQuarter01Icon,
+    Clock01Icon,
 } from "hugeicons-react";
 
 export default function AdminDashboard() {
@@ -118,7 +118,7 @@ export default function AdminDashboard() {
 
     const applicationBreakdown = [
         { label: "Approved", count: stats?.sellerApplications?.approved || 0, icon: CheckmarkCircle02Icon, color: "text-emerald-600" },
-        { label: "Pending", count: stats?.sellerApplications?.pending || 0, icon: TimeQuarter01Icon, color: "text-amber-600" },
+        { label: "Pending", count: stats?.sellerApplications?.pending || 0, icon: Clock01Icon, color: "text-amber-600" },
         { label: "Rejected", count: stats?.sellerApplications?.rejected || 0, icon: Cancel01Icon, color: "text-red-600" },
     ];
 
