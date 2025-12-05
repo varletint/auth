@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import Button from "../Components/Button";
+import useAuthStore from "../store/useAuthStore";
 import {
     ShoppingBag01Icon,
     Add01Icon,
@@ -16,6 +17,7 @@ import {
 import { productApi } from "../api/productApi";
 
 export default function MyProducts() {
+    const { currentUser } = useAuthStore();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
@@ -38,8 +40,10 @@ export default function MyProducts() {
     }, []);
 
     useEffect(() => {
-        fetchProducts();
-    }, []);
+        if (currentUser) {
+            fetchProducts();
+        }
+    }, [currentUser]);
 
     const fetchProducts = async (pageNum = 1, append = false) => {
         try {
@@ -48,7 +52,12 @@ export default function MyProducts() {
             } else {
                 setLoading(true);
             }
-            const data = await productApi.getProducts({ limit: 10, page: pageNum });
+            // Fetch only the current user's products
+            const data = await productApi.getProducts({
+                limit: 10,
+                page: pageNum,
+                userId: currentUser._id || currentUser.id
+            });
             const newProducts = data.products || [];
 
             if (append) {
