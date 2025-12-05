@@ -119,3 +119,160 @@ export const getAllProducts = async (req, res, next) => {
         next(error);
     }
 };
+
+/**
+ * Update user role (add/remove roles)
+ */
+export const updateUserRole = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+        const { role, action } = req.body; // action: 'add' or 'remove'
+
+        if (!role || !action) {
+            return res.status(400).json({
+                success: false,
+                message: "Role and action are required",
+            });
+        }
+
+        const validRoles = ["admin", "seller", "buyer"];
+        if (!validRoles.includes(role)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid role",
+            });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        // Prevent removing the last admin
+        if (role === "admin" && action === "remove") {
+            const adminCount = await User.countDocuments({ role: "admin" });
+            if (adminCount <= 1 && user.role.includes("admin")) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Cannot remove the last admin",
+                });
+            }
+        }
+
+        if (action === "add") {
+            if (!user.role.includes(role)) {
+                user.role.push(role);
+            }
+        } else if (action === "remove") {
+            user.role = user.role.filter((r) => r !== role);
+            // Ensure user has at least buyer role
+            if (user.role.length === 0) {
+                user.role = ["buyer"];
+            }
+        }
+
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: `Role ${action === "add" ? "added" : "removed"} successfully`,
+            user: {
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+                role: user.role,
+            },
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Toggle user status (active/suspended/banned)
+ */
+export const toggleUserStatus = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+        const { status } = req.body; // 'active', 'suspended', 'deactivated'
+
+        if (!status || !["active", "suspended", "deactivated"].includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: "Valid status is required (active, suspended, deactivated)",
+            });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        // Prevent banning admins
+        if (user.role.includes("admin") && status !== "active") {
+            return res.status(400).json({
+                success: false,
+                message: "Cannot suspend or deactivate admin users",
+            });
+        }
+
+        user.accountStatus = status;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: `User ${status === "active" ? "activated" : status}`,
+            user: {
+                _id: user._id,
+                username: user.username,
+                accountStatus: user.accountStatus,
+            },
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Delete user (admin only)
+ */
+export const deleteUser = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        // Prevent deleting admins
+        if (user.role.includes("admin")) {
+            return res.status(400).json({
+                success: false,
+                message: "Cannot delete admin users",
+            });
+        }
+
+        // Delete user's products
+        await Product.deleteMany({ userId: userId });
+
+        // Delete the user
+        await User.findByIdAndDelete(userId);
+
+        res.status(200).json({
+            success: true,
+            message: "User and their products deleted successfully",
+        });
+    } catch (error) {
+        next(error);
+    }
+};

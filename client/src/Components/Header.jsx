@@ -182,6 +182,13 @@ export default function Header() {
                     Profile
                   </Link>
                 </li>
+                {isAdmin && (
+                  <li>
+                    <Link to="/admin" onClick={toggleMenu} className="text-red-600 font-semibold">
+                      Admin Panel
+                    </Link>
+                  </li>
+                )}
                 <li>
                   <Link to={"/add-product"} onClick={toggleMenu} className="text-emerald-600">
                     Add Product

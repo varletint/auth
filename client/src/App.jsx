@@ -33,6 +33,7 @@ import MyProducts from "./Pages/MyProducts";
 import EditProduct from "./Pages/EditProduct";
 import BecomeSeller from "./Pages/BecomeSeller";
 import AdminDashboard from "./Pages/AdminDashboard";
+import AdminUsers from "./Pages/AdminUsers";
 
 function App() {
   return (
@@ -149,6 +150,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/admin/users'
+            element={
+              <ProtectedRoute>
+                <AdminUsers />
               </ProtectedRoute>
             }
           />
