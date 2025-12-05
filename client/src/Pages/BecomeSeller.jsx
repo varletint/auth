@@ -5,8 +5,8 @@ import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import Button from "../Components/Button";
 import Input from "../Components/Input";
-import { useUserStore } from "../Store/userStore";
-import { apiCall } from "../Utilis/api";
+import useAuthStore from "../store/useAuthStore";
+import { apiCall } from "../api/api";
 import {
     Store04Icon,
     CheckmarkCircle02Icon,
@@ -16,7 +16,7 @@ import {
 
 export default function BecomeSeller() {
     const navigate = useNavigate();
-    const { currentUser, setCurrentUser } = useUserStore();
+    const { currentUser, updateUser } = useAuthStore();
     const [formData, setFormData] = useState({
         reason: "",
         businessName: "",
@@ -86,7 +86,7 @@ export default function BecomeSeller() {
                         ...currentUser,
                         role: currentUser.role ? [...currentUser.role, "seller"] : ["buyer", "seller"],
                     };
-                    setCurrentUser(updatedUser);
+                    updateUser(updatedUser);
                 }
             }
         } catch (err) {

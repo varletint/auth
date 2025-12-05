@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
-import { useUserStore } from "../Store/userStore";
+import useAuthStore from "../store/useAuthStore";
 import {
     DashboardSquare01Icon,
     ShoppingBag01Icon,
@@ -22,7 +22,7 @@ import { productApi } from "../api/productApi";
 import { wishlistApi } from "../api/wishlistApi";
 
 export default function Dashboard() {
-    const { currentUser } = useUserStore();
+    const { currentUser } = useAuthStore();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [productCount, setProductCount] = useState(0);
