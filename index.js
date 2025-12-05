@@ -16,6 +16,7 @@ import userRoute from "./Routes/userRoute.js";
 import forgotPasswordRoute from "./Routes/forgotPasswordRoute.js";
 import wishlistRoute from "./Routes/wishlistRoute.js";
 import sellerApplicationRoute from "./Routes/sellerApplicationRoute.js";
+import adminRoute from "./Routes/adminRoute.js";
 
 const app = e();
 
@@ -81,6 +82,7 @@ app.use("/api/seller", userRoute);
 app.use("/api/password", forgotPasswordRoute);
 app.use("/api/wishlist", wishlistRoute);
 app.use("/api/seller-application", sellerApplicationRoute);
+app.use("/api/admin", adminRoute);
 
 // app.use("/", e.json(), testing);
 
