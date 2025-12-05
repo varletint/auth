@@ -16,6 +16,7 @@ import {
     PackageIcon,
     CheckmarkCircle02Icon,
     FavouriteIcon,
+    Loading03Icon,
 } from "hugeicons-react";
 
 export default function ProductPage() {
@@ -172,10 +173,7 @@ export default function ProductPage() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-off-white">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Loading product details...</p>
-                </div>
+                <Loading03Icon size={48} className="text-emerald-600 animate-spin" />
             </div>
         );
     }

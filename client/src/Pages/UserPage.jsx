@@ -14,6 +14,7 @@ import {
     CallIcon,
     Link01Icon,
     Store01Icon,
+    Loading03Icon,
 } from "hugeicons-react";
 
 export default function UserPage() {
@@ -94,10 +95,7 @@ export default function UserPage() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-off-white">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Loading profile...</p>
-                </div>
+                <Loading03Icon size={48} className="text-emerald-600 animate-spin" />
             </div>
         );
     }
