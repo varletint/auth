@@ -26,7 +26,7 @@ export const signup = async (req, res, next) => {
       // email, // Optional field
       password: hashedPassword,
       phone_no,
-      role: ["buyer"], // Array format for new schema
+      role: ["buyer"],
       accountStatus: "active",
     });
 
