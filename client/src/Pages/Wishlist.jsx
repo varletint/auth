@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import useAuthStore from "../store/useAuthStore";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import Button from "../Components/Button";
@@ -14,7 +14,7 @@ export default function Wishlist() {
     const [error, setError] = useState(null);
     const [removingId, setRemovingId] = useState(null);
 
-    const { currentUser } = useSelector((state) => state.user);
+    const { currentUser } = useAuthStore();
     const navigate = useNavigate();
 
     useEffect(() => {
