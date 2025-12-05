@@ -83,7 +83,7 @@ export default function Search() {
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
                                 placeholder="Search for products, brands, categories..."
-                                className="w-full pl-12 pr-4 py-4 text-lg rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
+                                className="w-full pl-12 pr-4 py-2 text-lg rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
                             />
                         </div>
                     </form>
