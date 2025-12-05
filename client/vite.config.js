@@ -44,12 +44,12 @@ export default defineConfig({
             sizes: "512x512",
             type: "image/png",
           },
-          {
-            src: "/logo.png",
-            sizes: "512x512",
-            type: "image/png",
-            purpose: "maskable",
-          },
+          // {
+          //   src: "/logo.png",
+          //   sizes: "512x512",
+          //   type: "image/png",
+          //   purpose: "maskable",
+          // },
         ],
       },
       workbox: {
@@ -87,4 +87,18 @@ export default defineConfig({
       },
     }),
   ],
+  // build: {
+  //   rollupOptions: {
+  //     output: {
+  //       manualChunks: {
+  //         // Split vendor chunks
+  //         'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+  //         'vendor-icons': ['hugeicons-react'],
+  //         'vendor-utils': ['zustand', 'react-helmet-async'],
+  //       },
+  //     },
+  //   },
+  //   // Increase warning threshold if you want to suppress warning
+  //   chunkSizeWarningLimit: 600,
+  // },
 });
