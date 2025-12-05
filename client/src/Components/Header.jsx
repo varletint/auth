@@ -7,7 +7,8 @@ import {
   Search01Icon,
   ShoppingCart01Icon,
   FavouriteIcon,
-  ShoppingBag01Icon
+  ShoppingBag01Icon,
+  DashboardSquare01Icon
 } from "hugeicons-react";
 import useAuthStore from "../store/useAuthStore";
 import lookups from "../assets/logo.png";
@@ -73,6 +74,11 @@ export default function Header() {
               <li>
                 <Link to={"/my-products"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="My Products">
                   <ShoppingBag01Icon size={22} className="text-gray-600 hover:text-emerald-600" />
+                </Link>
+              </li>
+              <li>
+                <Link to={"/dashboard"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Dashboard">
+                  <DashboardSquare01Icon size={22} className="text-gray-600 hover:text-emerald-600" />
                 </Link>
               </li>
               <li className="border-l border-gray-200 pl-4 ml-2">
@@ -154,6 +160,12 @@ export default function Header() {
                   <Link to={"/my-products"} onClick={toggleMenu} className="flex items-center gap-2">
                     <ShoppingBag01Icon size={20} />
                     My Products
+                  </Link>
+                </li>
+                <li>
+                  <Link to={"/dashboard"} onClick={toggleMenu} className="flex items-center gap-2">
+                    <DashboardSquare01Icon size={20} />
+                    Dashboard
                   </Link>
                 </li>
                 <li className="border-t border-gray-200 pt-4 w-full text-center">

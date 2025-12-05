@@ -31,6 +31,7 @@ import Privacy from "./Pages/Privacy";
 import NotFound from "./Pages/NotFound";
 import MyProducts from "./Pages/MyProducts";
 import EditProduct from "./Pages/EditProduct";
+import BecomeSeller from "./Pages/BecomeSeller";
 
 function App() {
   return (
@@ -131,6 +132,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <EditProduct />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/become-seller'
+            element={
+              <ProtectedRoute>
+                <BecomeSeller />
               </ProtectedRoute>
             }
           />

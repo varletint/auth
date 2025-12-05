@@ -3,54 +3,80 @@ import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
+import { useUserStore } from "../Store/userStore";
 import {
     DashboardSquare01Icon,
     ShoppingBag01Icon,
     MoneyReceiveSquareIcon,
-    UserMultiple02Icon,
     ArrowUp01Icon,
     ArrowDown01Icon,
     Add01Icon,
+    Store04Icon,
+    FavouriteIcon,
+    Settings02Icon,
+    UserIcon,
+    ShoppingCart01Icon,
+    Search01Icon,
 } from "hugeicons-react";
 import { productApi } from "../api/productApi";
+import { wishlistApi } from "../api/wishlistApi";
 
 export default function Dashboard() {
+    const { currentUser } = useUserStore();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [productCount, setProductCount] = useState(0);
+    const [wishlistCount, setWishlistCount] = useState(0);
 
-    // Mock stats data
+    // Check if user is a seller
+    const isSeller = currentUser?.role?.includes("seller");
+
+    // Quick links for easy navigation
+    const quickLinks = [
+        { title: "My Wishlist", icon: FavouriteIcon, path: "/wishlist", color: "bg-pink-500", count: wishlistCount },
+        { title: "My Cart", icon: ShoppingCart01Icon, path: "/cart", color: "bg-blue-500" },
+        { title: "My Orders", icon: ShoppingBag01Icon, path: "/orders", color: "bg-purple-500" },
+        { title: "Search", icon: Search01Icon, path: "/search", color: "bg-amber-500" },
+        { title: "Settings", icon: Settings02Icon, path: "/settings", color: "bg-gray-500" },
+        { title: "Profile", icon: UserIcon, path: "/profile", color: "bg-teal-500" },
+    ];
+
+    // Stats data with real counts
     const stats = [
         {
             title: "Total Sales",
-            value: "₦2,450,000",
-            change: "+12.5%",
+            value: "₦0",
+            change: "Coming soon",
             isPositive: true,
             icon: MoneyReceiveSquareIcon,
             color: "bg-emerald-500",
         },
         {
-            title: "Products",
-            value: "24",
-            change: "+3",
+            title: "My Products",
+            value: productCount.toString(),
+            change: isSeller ? "Active" : "N/A",
             isPositive: true,
             icon: ShoppingBag01Icon,
             color: "bg-blue-500",
+            link: "/my-products",
         },
         {
-            title: "Customers",
-            value: "156",
-            change: "+8.2%",
+            title: "Wishlist",
+            value: wishlistCount.toString(),
+            change: "Items saved",
             isPositive: true,
-            icon: UserMultiple02Icon,
-            color: "bg-purple-500",
+            icon: FavouriteIcon,
+            color: "bg-pink-500",
+            link: "/wishlist",
         },
         {
             title: "Orders",
-            value: "48",
-            change: "-2.4%",
-            isPositive: false,
+            value: "0",
+            change: "Coming soon",
+            isPositive: true,
             icon: DashboardSquare01Icon,
             color: "bg-orange-500",
+            link: "/orders",
         },
     ];
 
@@ -62,18 +88,34 @@ export default function Dashboard() {
     ];
 
     useEffect(() => {
-        const fetchProducts = async () => {
+        const fetchData = async () => {
+            if (!currentUser) {
+                setLoading(false);
+                return;
+            }
+
             try {
-                const data = await productApi.getProducts({ limit: 5 });
-                setProducts(data.products || []);
+                // Fetch wishlist count for all users
+                const wishlistData = await wishlistApi.getWishlist();
+                setWishlistCount(wishlistData.wishlist?.products?.length || wishlistData.products?.length || 0);
+
+                // Fetch products only for sellers
+                if (isSeller) {
+                    const productsData = await productApi.getProducts({
+                        userId: currentUser._id || currentUser.id,
+                        limit: 5
+                    });
+                    setProducts(productsData.products || []);
+                    setProductCount(productsData.totalProducts || productsData.products?.length || 0);
+                }
             } catch (error) {
-                console.error("Error fetching products:", error);
+                console.error("Error fetching dashboard data:", error);
             } finally {
                 setLoading(false);
             }
         };
-        fetchProducts();
-    }, []);
+        fetchData();
+    }, [currentUser, isSeller]);
 
     return (
         <>
@@ -91,37 +133,94 @@ export default function Dashboard() {
                             <DashboardSquare01Icon size={32} className="text-emerald-600" />
                             <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
                         </div>
-                        <Link to="/add-product">
-                            <button className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-emerald-700 transition-colors">
-                                <Add01Icon size={20} />
-                                Add Product
-                            </button>
-                        </Link>
+                        {isSeller && (
+                            <Link to="/add-product">
+                                <button className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-emerald-700 transition-colors">
+                                    <Add01Icon size={20} />
+                                    Add Product
+                                </button>
+                            </Link>
+                        )}
                     </div>
+
+                    {/* Become a Seller Banner - Show only for non-sellers */}
+                    {!isSeller && (
+                        <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-6 mb-8 text-white shadow-lg shadow-emerald-200">
+                            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                                        <Store04Icon size={28} className="text-white" />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-xl font-bold mb-1">Start Selling Today!</h2>
+                                        <p className="text-emerald-100">
+                                            Apply to become a seller and list your products on Lookups
+                                        </p>
+                                    </div>
+                                </div>
+                                <Link to="/become-seller">
+                                    <button className="bg-white text-emerald-600 px-6 py-3 rounded-xl font-semibold hover:bg-emerald-50 transition-colors whitespace-nowrap">
+                                        Become a Seller →
+                                    </button>
+                                </Link>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Stats Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                        {stats.map((stat) => (
-                            <div
-                                key={stat.title}
-                                className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow"
-                            >
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className={`${stat.color} p-3 rounded-lg`}>
-                                        <stat.icon size={24} className="text-white" />
+                        {stats.map((stat) => {
+                            const StatCard = (
+                                <div
+                                    className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow cursor-pointer"
+                                >
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className={`${stat.color} p-3 rounded-lg`}>
+                                            <stat.icon size={24} className="text-white" />
+                                        </div>
+                                        <div
+                                            className={`flex items-center text-sm font-semibold ${stat.isPositive ? "text-emerald-600" : "text-red-500"
+                                                }`}
+                                        >
+                                            {stat.isPositive ? <ArrowUp01Icon size={16} /> : <ArrowDown01Icon size={16} />}
+                                            {stat.change}
+                                        </div>
                                     </div>
-                                    <div
-                                        className={`flex items-center text-sm font-semibold ${stat.isPositive ? "text-emerald-600" : "text-red-500"
-                                            }`}
-                                    >
-                                        {stat.isPositive ? <ArrowUp01Icon size={16} /> : <ArrowDown01Icon size={16} />}
-                                        {stat.change}
-                                    </div>
+                                    <h3 className="text-2xl font-bold text-gray-900">{stat.value}</h3>
+                                    <p className="text-sm text-gray-500">{stat.title}</p>
                                 </div>
-                                <h3 className="text-2xl font-bold text-gray-900">{stat.value}</h3>
-                                <p className="text-sm text-gray-500">{stat.title}</p>
-                            </div>
-                        ))}
+                            );
+
+                            return stat.link ? (
+                                <Link key={stat.title} to={stat.link}>
+                                    {StatCard}
+                                </Link>
+                            ) : (
+                                <div key={stat.title}>{StatCard}</div>
+                            );
+                        })}
+                    </div>
+
+                    {/* Quick Links */}
+                    <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
+                        <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Links</h2>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                            {quickLinks.map((link) => (
+                                <Link
+                                    key={link.title}
+                                    to={link.path}
+                                    className="flex flex-col items-center p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group"
+                                >
+                                    <div className={`${link.color} p-3 rounded-xl mb-3 group-hover:scale-110 transition-transform`}>
+                                        <link.icon size={24} className="text-white" />
+                                    </div>
+                                    <span className="text-sm font-medium text-gray-700">{link.title}</span>
+                                    {link.count !== undefined && link.count > 0 && (
+                                        <span className="text-xs text-gray-500 mt-1">{link.count} items</span>
+                                    )}
+                                </Link>
+                            ))}
+                        </div>
                     </div>
 
                     <div className="grid lg:grid-cols-2 gap-8">
@@ -147,10 +246,10 @@ export default function Dashboard() {
                                             <p className="font-bold text-emerald-600">₦{order.amount.toLocaleString()}</p>
                                             <span
                                                 className={`text-xs px-2 py-1 rounded-full ${order.status === "completed"
-                                                        ? "bg-emerald-100 text-emerald-700"
-                                                        : order.status === "pending"
-                                                            ? "bg-yellow-100 text-yellow-700"
-                                                            : "bg-blue-100 text-blue-700"
+                                                    ? "bg-emerald-100 text-emerald-700"
+                                                    : order.status === "pending"
+                                                        ? "bg-yellow-100 text-yellow-700"
+                                                        : "bg-blue-100 text-blue-700"
                                                     }`}
                                             >
                                                 {order.status}

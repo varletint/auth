@@ -65,15 +65,20 @@ export const createProduct = async (req, res, next) => {
             return next(errorHandler(404, "User not found"));
         }
 
-        // Check 1: Verify profile is complete
-        // const missingFields = [];
-        // if (!user.fullname || user.fullname.trim() === '') missingFields.push('fullname');
-        // if (!user.email || user.email.trim() === '') missingFields.push('email');
-        // if (!user.business_name || user.business_name.trim() === '') missingFields.push('business_name');
+        // Check 0: Verify user has seller role
+        if (!user.role || !user.role.includes('seller')) {
+            return next(errorHandler(403, "You must be an approved seller to create products. Apply at /become-seller"));
+        }
 
-        // if (missingFields.length > 0) {
-        //     return next(errorHandler(400, `Please complete your profile. Missing: ${missingFields.join(', ')}`));
-        // }
+        // Check 1: Verify profile is complete
+        const missingFields = [];
+        if (!user.fullname || user.fullname.trim() === '') missingFields.push('fullname');
+        if (!user.email || user.email.trim() === '') missingFields.push('email');
+        if (!user.business_name || user.business_name.trim() === '') missingFields.push('business_name');
+
+        if (missingFields.length > 0) {
+            return next(errorHandler(400, `Please complete your profile. Missing: ${missingFields.join(', ')}`));
+        }
 
         // Check 2: Verify post count limits
         const now = dayjs();
