@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import useAuthStore from "../store/useAuthStore";
 import Button from "../Components/Button";
 import { productApi } from "../api/productApi";
 import { wishlistApi } from "../api/wishlistApi";
@@ -31,7 +31,7 @@ export default function ProductPage() {
     const [inWishlist, setInWishlist] = useState(false);
     const [wishlistLoading, setWishlistLoading] = useState(false);
 
-    const { currentUser } = useSelector((state) => state.user);
+    const { currentUser } = useAuthStore();
 
     const BASE_URL = 'https://lookupsbackend.vercel.app'
 
@@ -58,8 +58,6 @@ export default function ProductPage() {
         setLoading(true);
         setError(null);
         try {
-            // Fetch product details using productApi
-            // Backend returns the product directly, not wrapped in { success, product }
             const productData = await productApi.getProduct(id);
 
             if (!productData) {
@@ -68,7 +66,6 @@ export default function ProductPage() {
 
             setProduct(productData);
 
-            // Fetch seller information
             if (productData.userId) {
                 try {
                     const sellerRes = await fetch(`${BASE_URL}/api/seller/${productData.userId}`);
@@ -81,17 +78,14 @@ export default function ProductPage() {
                 }
             }
 
-            // Fetch related products (same category)
             if (productData.category) {
                 try {
-                    // Backend returns { products, totalPages, currentPage, totalProducts }
                     const relatedResponse = await productApi.getProducts({
                         category: productData.category,
                         limit: 4
                     });
 
                     if (relatedResponse && relatedResponse.products) {
-                        // Filter out current product
                         const filtered = relatedResponse.products.filter(
                             (p) => p._id !== productData._id
                         );
@@ -133,7 +127,6 @@ export default function ProductPage() {
     };
 
     const handleContactSeller = () => {
-        // TODO: Implement contact seller functionality
         if (seller?.email) {
             window.location.href = `mailto:${seller.email}?subject=Inquiry about ${product.name}`;
         } else {
@@ -201,13 +194,10 @@ export default function ProductPage() {
 
     return (
         <div className="min-h-screen bg-off-white">
-            {/* SEO Meta Tags */}
             <Helmet>
                 <title>{product.name} | Lookups</title>
                 <meta name="description" content={product.description?.substring(0, 160) || `Buy ${product.name} at the best price on Lookups.`} />
                 <meta name="keywords" content={`${product.name}, ${product.category}, ${product.brand || ''}, buy online, lookups`} />
-
-                {/* Open Graph */}
                 <meta property="og:title" content={`${product.name} | Lookups`} />
                 <meta property="og:description" content={product.description?.substring(0, 160) || `Buy ${product.name} on Lookups`} />
                 <meta property="og:type" content="product" />
@@ -216,13 +206,10 @@ export default function ProductPage() {
                 <meta property="og:site_name" content="Lookups" />
                 <meta property="product:price:amount" content={product.price} />
                 <meta property="product:price:currency" content="NGN" />
-
-                {/* Twitter Card */}
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:title" content={`${product.name} | Lookups`} />
                 <meta name="twitter:description" content={product.description?.substring(0, 160) || `Buy ${product.name} on Lookups`} />
                 <meta name="twitter:image" content={product.images?.[0] || ''} />
-
                 <link rel="canonical" href={`https://auth-fawn-eight.vercel.app/product/${product._id}`} />
             </Helmet>
 
@@ -253,7 +240,6 @@ export default function ProductPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
                     {/* Product Images */}
                     <div className="space-y-4">
-                        {/* Main Image */}
                         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden aspect-square">
                             <img
                                 src={product.images?.[selectedImage] || "https://via.placeholder.com/600"}
@@ -262,7 +248,6 @@ export default function ProductPage() {
                             />
                         </div>
 
-                        {/* Thumbnail Images */}
                         {product.images && product.images.length > 1 && (
                             <div className="grid grid-cols-4 gap-3">
                                 {product.images.map((image, index) => (
@@ -483,5 +468,3 @@ export default function ProductPage() {
         </div>
     );
 }
-
-
