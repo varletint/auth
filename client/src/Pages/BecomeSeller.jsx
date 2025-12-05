@@ -31,7 +31,7 @@ export default function BecomeSeller() {
     useEffect(() => {
         const checkSellerStatus = async () => {
             try {
-                const response = await apiCall("/seller-application/status", "GET");
+                const response = await apiCall("/seller-application/status", { method: "GET" });
                 if (response.isSeller) {
                     setIsSeller(true);
                 }
@@ -73,9 +73,12 @@ export default function BecomeSeller() {
         setLoading(true);
 
         try {
-            const response = await apiCall("/seller-application/apply", "POST", {
-                reason: formData.reason.trim(),
-                businessName: formData.businessName.trim() || undefined,
+            const response = await apiCall("/seller-application/apply", {
+                method: "POST",
+                body: JSON.stringify({
+                    reason: formData.reason.trim(),
+                    businessName: formData.businessName.trim() || undefined,
+                }),
             });
 
             if (response.success) {

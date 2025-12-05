@@ -42,7 +42,7 @@ export default function AdminUsers() {
     const fetchUsers = async () => {
         try {
             setLoading(true);
-            const response = await apiCall(`/admin/users?page=${page}&limit=20`, "GET");
+            const response = await apiCall(`/admin/users?page=${page}&limit=20`, { method: "GET" });
             if (response.success) {
                 setUsers(response.users);
                 setPagination(response.pagination);
@@ -57,7 +57,7 @@ export default function AdminUsers() {
     const handleRoleChange = async (userId, role, action) => {
         try {
             setActionLoading(`${userId}-${role}`);
-            const response = await apiCall(`/admin/users/${userId}/role`, "PATCH", { role, action });
+            const response = await apiCall(`/admin/users/${userId}/role`, { method: "PATCH", body: JSON.stringify({ role, action }) });
             if (response.success) {
                 setUsers(users.map(u =>
                     u._id === userId ? { ...u, role: response.user.role } : u
@@ -73,7 +73,7 @@ export default function AdminUsers() {
     const handleStatusChange = async (userId, status) => {
         try {
             setActionLoading(`${userId}-status`);
-            const response = await apiCall(`/admin/users/${userId}/status`, "PATCH", { status });
+            const response = await apiCall(`/admin/users/${userId}/status`, { method: "PATCH", body: JSON.stringify({ status }) });
             if (response.success) {
                 setUsers(users.map(u =>
                     u._id === userId ? { ...u, accountStatus: response.user.accountStatus } : u
@@ -89,7 +89,7 @@ export default function AdminUsers() {
     const handleDelete = async (userId) => {
         try {
             setActionLoading(`${userId}-delete`);
-            const response = await apiCall(`/admin/users/${userId}`, "DELETE");
+            const response = await apiCall(`/admin/users/${userId}`, { method: "DELETE" });
             if (response.success) {
                 setUsers(users.filter(u => u._id !== userId));
                 setDeleteConfirm(null);
@@ -212,8 +212,8 @@ export default function AdminUsers() {
                                                                     )}
                                                                     disabled={actionLoading === `${user._id}-seller`}
                                                                     className={`text-xs px-2 py-1 rounded ${user.role.includes("seller")
-                                                                            ? "bg-purple-600 text-white"
-                                                                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                                                        ? "bg-purple-600 text-white"
+                                                                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                                                                         }`}
                                                                 >
                                                                     {user.role.includes("seller") ? "- Seller" : "+ Seller"}
@@ -272,8 +272,8 @@ export default function AdminUsers() {
                                             key={i}
                                             onClick={() => setPage(i + 1)}
                                             className={`px-4 py-2 rounded-lg ${page === i + 1
-                                                    ? "bg-blue-600 text-white"
-                                                    : "bg-gray-100 hover:bg-gray-200"
+                                                ? "bg-blue-600 text-white"
+                                                : "bg-gray-100 hover:bg-gray-200"
                                                 }`}
                                         >
                                             {i + 1}
