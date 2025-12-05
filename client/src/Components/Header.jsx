@@ -8,7 +8,8 @@ import {
   ShoppingCart01Icon,
   FavouriteIcon,
   ShoppingBag01Icon,
-  DashboardSquare01Icon
+  DashboardSquare01Icon,
+  Settings02Icon
 } from "hugeicons-react";
 import useAuthStore from "../store/useAuthStore";
 import lookups from "../assets/logo.png";
@@ -17,6 +18,9 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { currentUser, signOut } = useAuthStore();
   const navigate = useNavigate();
+
+  // Check if user is admin
+  const isAdmin = currentUser?.role?.includes("admin");
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -84,6 +88,11 @@ export default function Header() {
               <li className="border-l border-gray-200 pl-4 ml-2">
                 <Link to={"/profile"} className="hover:text-emerald-600 transition-colors">Profile</Link>
               </li>
+              {isAdmin && (
+                <li>
+                  <Link to="/admin" className="text-red-600 hover:text-red-700 font-semibold transition-colors">Admin</Link>
+                </li>
+              )}
               <li>
                 <Link to={"/add-product"} className="text-emerald-600 hover:text-emerald-700 transition-colors">Add Product</Link>
               </li>

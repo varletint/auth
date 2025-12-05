@@ -73,3 +73,11 @@ export const verifySeller = (req, res, next) => {
         return next(errorHandler(403, "Require Seller Role!"));
     }
 };
+
+export const verifyAdmin = (req, res, next) => {
+    if (req.user && req.user.role && req.user.role.includes("admin")) {
+        next();
+    } else {
+        return next(errorHandler(403, "Admin access required"));
+    }
+};
