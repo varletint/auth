@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../Components/Header";
 import Input from "../Components/Input";
 import Button from "../Components/Button";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../store/useAuthStore";
+import { apiCall } from "../api/authApi.js";
 import {
   GridViewIcon,
   UserIcon,
@@ -14,14 +15,43 @@ import {
   Edit02Icon,
   PlusSignIcon,
   Menu01Icon,
-  MultiplicationSignIcon
+  MultiplicationSignIcon,
+  Loading03Icon
 } from "hugeicons-react";
 
 export default function Profile() {
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [profileStats, setProfileStats] = useState({
+    totalProducts: 0,
+    postsRemaining: 7,
+    postsUsed: 0,
+    weeklyLimit: 7,
+    daysUntilReset: 7,
+    isSeller: false
+  });
   const { currentUser, signOut } = useAuthStore();
   const navigate = useNavigate();
+
+  // Fetch profile stats on mount
+  useEffect(() => {
+    const fetchProfileStats = async () => {
+      if (!currentUser) return;
+      try {
+        setStatsLoading(true);
+        const data = await apiCall("/user/profile-stats", "GET");
+        if (data.success) {
+          setProfileStats(data.stats);
+        }
+      } catch (error) {
+        console.error("Error fetching profile stats:", error);
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+    fetchProfileStats();
+  }, [currentUser]);
 
   const handleSignOut = async () => {
     try {
@@ -155,62 +185,70 @@ export default function Profile() {
 
             {/* Content Area */}
             <div className='grid grid-cols-1 gap-2.5'>
-              <div className='grid grid-cols-1 lg:grid-cols-2 gap-2.5'>
+              <div className='grid grid-cols-1 md:grid-2 lg:grid-cols-2 gap-2.5'>
                 {/* Left Column - Stats/Info */}
                 <div className='space-y-6'>
                   <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
                     <h3 className='font-semibold text-gray-900 mb-4'>Profile Stats</h3>
-                    <div className='space-y-4'>
-                      <div className='flex justify-between items-center'>
-                        <span className='text-gray-600'>Profile Views</span>
-                        <span className='font-semibold text-gray-900'>1,234</span>
+                    {statsLoading ? (
+                      <div className='flex justify-center py-4'>
+                        <Loading03Icon size={24} className='animate-spin text-indigo-600' />
                       </div>
-                      <div className='flex justify-between items-center'>
-                        <span className='text-gray-600'>Products</span>
-                        <span className='font-semibold text-gray-900'>45</span>
+                    ) : (
+                      <div className='space-y-4'>
+                        <div className='flex justify-between items-center'>
+                          <span className='text-gray-600'>Total Products</span>
+                          <span className='font-semibold text-gray-900'>{profileStats.totalProducts}</span>
+                        </div>
+                        {profileStats.isSeller && (
+                          <>
+                            <div className='flex justify-between items-center'>
+                              <span className='text-gray-600'>Posts This Week</span>
+                              <span className='font-semibold text-gray-900'>
+                                {profileStats.postsUsed} / {profileStats.weeklyLimit}
+                              </span>
+                            </div>
+                            <div className='flex justify-between items-center'>
+                              <span className='text-gray-600'>Posts Remaining</span>
+                              <span className={`font-semibold ${profileStats.postsRemaining > 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                                {profileStats.postsRemaining}
+                              </span>
+                            </div>
+                            <div className='flex justify-between items-center'>
+                              <span className='text-gray-600'>Days Until Reset</span>
+                              <span className='font-semibold text-blue-600'>{profileStats.daysUntilReset} days</span>
+                            </div>
+                            {/* Progress bar for weekly posts */}
+                            <div className='pt-2'>
+                              <div className='flex justify-between text-xs text-gray-500 mb-1'>
+                                <span>Weekly Post Usage</span>
+                                <span>{Math.round((profileStats.postsUsed / profileStats.weeklyLimit) * 100)}%</span>
+                              </div>
+                              <div className='w-full bg-gray-200 rounded-full h-2'>
+                                <div
+                                  className={`h-2 rounded-full transition-all ${profileStats.postsRemaining > 3 ? 'bg-emerald-500' :
+                                      profileStats.postsRemaining > 0 ? 'bg-amber-500' : 'bg-red-500'
+                                    }`}
+                                  style={{ width: `${(profileStats.postsUsed / profileStats.weeklyLimit) * 100}%` }}
+                                ></div>
+                              </div>
+                            </div>
+                          </>
+                        )}
+                        {!profileStats.isSeller && (
+                          <div className='text-sm text-gray-500 pt-2'>
+                            <Link to="/become-seller" className='text-indigo-600 hover:underline'>
+                              Become a seller
+                            </Link> to start listing products.
+                          </div>
+                        )}
                       </div>
-                      <div className='flex justify-between items-center'>
-                        <span className='text-gray-600'>Followers</span>
-                        <span className='font-semibold text-gray-900'>892</span>
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </div>
 
                 {/* Right Column - Main Content */}
-                <div className='lg:col-span-1 md: space-y-6'>
-                  {/* Edit Form */}
-                  {/* <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
-                    <div className='flex justify-between items-center mb-6'>
-                      <h3 className='font-semibold text-gray-900'>Personal Information</h3>
-                      <button className='text-indigo-600 hover:text-indigo-700 text-sm font-medium'>Save Changes</button>
-                    </div>
-                    <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                      <div className='space-y-2'>
-                        <label className='text-sm font-medium text-gray-700'>First Name</label>
-                        <Input placeholder='John' type='text' />
-                      </div>
-                      <div className='space-y-2'>
-                        <label className='text-sm font-medium text-gray-700'>Last Name</label>
-                        <Input placeholder='Doe' type='text' />
-                      </div>
-                      <div className='space-y-2 md:col-span-2'>
-                        <label className='text-sm font-medium text-gray-700'>Email Address</label>
-                        <Input placeholder='john.doe@example.com' type='email' />
-                      </div>
-                      <div className='space-y-2 md:col-span-2'>
-                        <label className='text-sm font-medium text-gray-700'>Bio</label>
-                        <textarea
-                          className='w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all duration-200 bg-off-white text-gray-800 placeholder-gray-400 min-h-[100px]'
-                          placeholder='Tell us about yourself...'
-                        ></textarea>
-                      </div>
-                    </div>
-                  </div> */}
 
-                  {/* Products Grid */}
-
-                </div>
               </div>
               <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
                 <div className='flex justify-between items-center mb-6'>
