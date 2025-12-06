@@ -18,6 +18,7 @@ import {
 } from "hugeicons-react";
 import { Link } from "react-router-dom";
 import Button from "../Components/Button";
+import logo from "../assets/logo.png";
 
 // Skeleton Components
 const HeroSkeleton = () => (
@@ -237,7 +238,7 @@ export default function Home() {
                     <div className=" w-full h-[139px] ">
 
                       <img
-                        src={product.images[0]}
+                        src={product.images[0] || logo}
                         className="w-full h-full object-cover "
                         alt={product.name}
                         loading="lazy"
@@ -254,7 +255,7 @@ export default function Home() {
                     flex items-center justify-center font-semibold gap-1 rounded-sm">
                       <EyeIcon size={17} className=" text-orange-600 " /> <span>{product.viewCount}</span>
                     </div>
-                    <div className=" flex flex-col gap-0.5 py-1">
+                    <div className=" flex flex-col gap- py-1">
                       <h3 className="font-semibold text-xs truncate">{product.name}</h3>
                       <p className="text-sm opacity-90 font-semibold text-orange-500">₦{product.price.toLocaleString()}</p>
                     </div>
