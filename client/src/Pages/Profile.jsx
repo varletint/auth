@@ -4,7 +4,7 @@ import Input from "../Components/Input";
 import Button from "../Components/Button";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../store/useAuthStore";
-import { apiCall } from "../api/authApi.js";
+import { apiCall } from "../api/api.js";
 import {
   GridViewIcon,
   UserIcon,
@@ -227,7 +227,7 @@ export default function Profile() {
                               <div className='w-full bg-gray-200 rounded-full h-2'>
                                 <div
                                   className={`h-2 rounded-full transition-all ${profileStats.postsRemaining > 3 ? 'bg-emerald-500' :
-                                      profileStats.postsRemaining > 0 ? 'bg-amber-500' : 'bg-red-500'
+                                    profileStats.postsRemaining > 0 ? 'bg-amber-500' : 'bg-red-500'
                                     }`}
                                   style={{ width: `${(profileStats.postsUsed / profileStats.weeklyLimit) * 100}%` }}
                                 ></div>
