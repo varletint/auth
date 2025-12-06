@@ -1,11 +1,11 @@
+// Load environment variables FIRST, before any other imports
+import dotenv from "dotenv";
+dotenv.config();
+
 import e from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-
-import dotenv from "dotenv";
 import mongoose from "mongoose";
-// import testing from "./Routes/webhook.js";
-// import Test from "./Models/testingModel.js";
 import cookieParser from "cookie-parser";
 
 
@@ -27,8 +27,6 @@ const app = e();
 //     },
 //   })
 // );
-
-dotenv.config();
 
 // allow preflight requests
 

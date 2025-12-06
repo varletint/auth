@@ -7,8 +7,7 @@ const userDetailsSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: [true, "User ID is required"],
-            unique: true,
-            index: true,
+            unique: true, // This automatically creates an index
         },
 
         // ==================== Personal Information ====================

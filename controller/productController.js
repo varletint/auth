@@ -1,9 +1,10 @@
 import Product from "../Models/product.js";
 import U from "../Models/user.js";
+import UserDetails from "../Models/userDetails.js";
 // import redisClient, { isRedisAvailable } from "../config/redis.js";
 import { errorHandler } from "../Utilis/errorHandler.js";
 import { validateProductInput } from "../Utilis/validation.js";
-// import { deleteMultipleFilesFromStorage } from "../config/firebaseAdmin.js";
+import { deleteMultipleFilesFromStorage } from "../config/firebaseAdmin.js";
 import dayjs from "dayjs";
 
 
@@ -26,37 +27,37 @@ import dayjs from "dayjs";
 //     }
 // };
 
-export const testCreate = async (req, res, next) => {
-    try {
-        const { name, price, category, stock, images, description, sku, isActive } = req.body;
+// export const testCreate = async (req, res, next) => {
+//     try {
+//         const { name, price, category, stock, images, description, sku, isActive } = req.body;
 
-        const newProduct = new Product({
-            name: name.trim(),
-            price: Number(price),
-            category: category.trim(),
-            stock: stock ? Number(stock) : 0,
-            images: images || [],
-            description: description ? description.trim() : undefined,
-            // sku: sku ? sku.trim() : undefined,
-            brand: brand ? brand.trim() : undefined,
-            isActive: isActive !== undefined ? isActive : true,
-            userId: '1'
-        });
+//         const newProduct = new Product({
+//             name: name.trim(),
+//             price: Number(price),
+//             category: category.trim(),
+//             stock: stock ? Number(stock) : 0,
+//             images: images || [],
+//             description: description ? description.trim() : undefined,
+//             // sku: sku ? sku.trim() : undefined,
+//             brand: brand ? brand.trim() : undefined,
+//             isActive: isActive !== undefined ? isActive : true,
+//             userId: '1'
+//         });
 
-        const savedProduct = await newProduct.save();
+//         const savedProduct = await newProduct.save();
 
-        // await clearProductCache();
+//         // await clearProductCache();
 
-        res.status(201).json(savedProduct);
-
-
+//         res.status(201).json(savedProduct);
 
 
-    } catch (error) {
-        next(error);
 
-    }
-}
+
+//     } catch (error) {
+//         next(error);
+
+//     }
+// }
 
 export const createProduct = async (req, res, next) => {
     try {
@@ -73,9 +74,13 @@ export const createProduct = async (req, res, next) => {
 
         // Check 1: Verify profile is complete
         const missingFields = [];
-        if (!user.fullname || user.fullname.trim() === '') missingFields.push('fullname');
         if (!user.email || user.email.trim() === '') missingFields.push('email');
-        if (!user.business_name || user.business_name.trim() === '') missingFields.push('business_name');
+
+        // Fetch userDetails to check business_name (stored in UserDetails, not User)
+        const userDetails = await UserDetails.findOne({ user_id: req.user.id }).setOptions({ skipPopulate: true });
+
+        if (!userDetails?.fullName || userDetails.fullName.trim() === '') missingFields.push('fullname');
+        if (!userDetails?.businessInfo?.businessName || userDetails.businessInfo.businessName.trim() === '') missingFields.push('business_name');
 
         if (missingFields.length > 0) {
             return next(errorHandler(400, `Please complete your profile. Missing: ${missingFields.join(', ')}`));
@@ -201,10 +206,10 @@ export const deleteProduct = async (req, res, next) => {
         }
 
         // Delete images from Firebase Storage
-        // if (product.images && product.images.length > 0) {
-        //     const deleteResult = await deleteMultipleFilesFromStorage(product.images);
-        //     console.log(`Deleted ${deleteResult.success} images, ${deleteResult.failed} failed`);
-        // }
+        if (product.images && product.images.length > 0) {
+            const deleteResult = await deleteMultipleFilesFromStorage(product.images);
+            console.log(`Deleted ${deleteResult.success} images, ${deleteResult.failed} failed`);
+        }
 
         await Product.findByIdAndDelete(req.params.id);
 

@@ -5,7 +5,6 @@ import {
     deleteProduct,
     getProduct,
     getProducts,
-    testCreate,
     productGet
 } from "../controller/productController.js";
 import { apiLimiter, createProductLimiter } from "../middleware/rateLimiter.js";

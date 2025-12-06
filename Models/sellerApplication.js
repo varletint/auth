@@ -47,7 +47,7 @@ const sellerApplicationSchema = new mongoose.Schema(
 );
 
 // Index for quick lookups
-sellerApplicationSchema.index({ userId: 1 });
+// Note: userId already has an index from unique: true
 sellerApplicationSchema.index({ status: 1 });
 
 const SellerApplication = mongoose.model("SellerApplication", sellerApplicationSchema);

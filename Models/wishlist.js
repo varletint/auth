@@ -6,7 +6,7 @@ const wishlistSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: [true, "User ID is required"],
-            index: true,
+            // Note: userId is indexed via compound index below
         },
         productId: {
             type: mongoose.Schema.Types.ObjectId,

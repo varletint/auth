@@ -1,5 +1,33 @@
 import { Image01Icon } from "hugeicons-react";
 import { useState } from "react";
+import ProductCard from "../Components/ProductCard";
+
+// Mock Product Data for Testing
+const MOCK_PRODUCT = {
+  _id: "test-id-123",
+  name: "Premium Wireless Headphones with Noise Cancellation",
+  price: 45000,
+  images: [
+    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1000&auto=format&fit=crop",
+  ],
+  category: "Electronics",
+  rating: 4.8,
+  viewCount: 1250,
+  stock: 15,
+};
+
+const MOCK_PRODUCT_2 = {
+  _id: "test-id-456",
+  name: "Minimalist Smart Watch",
+  price: 85000,
+  images: [
+    "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1000&auto=format&fit=crop"
+  ],
+  category: "Accessories",
+  rating: 4.5,
+  viewCount: 856,
+  stock: 0
+}
 
 export default function File() {
   const [images, setImages] = useState([]);
@@ -34,52 +62,53 @@ export default function File() {
   };
 
   return (
-    <div>
-      <label className='block text-sm font-semibold text-gray-700 mb-2'>
-        Product Images (Max 5) *
-      </label>
-      <div className='border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-indigo-500 transition-colors duration-200 bg-gray-50'>
-        <input
-          type='file'
-          id='images'
-          multiple
-          accept='image/*'
-          onChange={handleImageChange}
-          //   className='hidden'
-        />
-        {/* <label
-          htmlFor='images'
-          className='cursor-pointer flex flex-col items-center gap-3'>
-          <div className='w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600'>
-            <Image01Icon size={24} />
-          </div>
-          <div>
-            <span className='text-indigo-600 font-semibold hover:text-indigo-700'>
-              Click to upload
-            </span>
-            <span className='text-gray-500'> or drag and drop</span>
-          </div>
-          <p className='text-xs text-gray-400'>PNG, JPG, GIF up to 10MB</p>
-        </label> */}
+    <div className="p-10 space-y-12">
+      <div className="border-b pb-12">
+        <h2 className="text-2xl font-bold mb-6">Component Test: ProductCard</h2>
+        <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-6 bg-gray-50 p-8 rounded-3xl">
+          <ProductCard
+            product={MOCK_PRODUCT}
+            onAddToCart={() => alert("Added to cart!")}
+            onToggleWishlist={() => alert("Toggled wishlist!")}
+            isInWishlist={false}
+          />
+          <ProductCard
+            product={MOCK_PRODUCT_2}
+            onAddToCart={() => alert("Added to cart!")}
+            onToggleWishlist={() => alert("Toggled wishlist!")}
+            isInWishlist={true}
+          />
+        </div>
       </div>
-      <div className='  flex gap-2.5'>
-        {imgP &&
-          imgP.map((img, iindex) => (
-            <div className=' w-[100px] h-[100px]'>
-              <img
-                src={img}
-                key={iindex}
-                alt=''
-                className='w-full object-cover'
-                onDoubleClick={() => handleImgDel(iindex)}
-              />
-              {/* <button
-                className=' bg-red-600/60 text-center'
-                onClick={() => handleImgDel(iindex)}>
-                delete
-              </button> */}
-            </div>
-          ))}
+
+      <div>
+        <h2 className="text-2xl font-bold mb-6">Original File Upload Test</h2>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          Product Images (Max 5) *
+        </label>
+        <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-indigo-500 transition-colors duration-200 bg-gray-50">
+          <input
+            type="file"
+            id="images"
+            multiple
+            accept="image/*"
+            onChange={handleImageChange}
+          //   className='hidden'
+          />
+        </div>
+        <div className="  flex gap-2.5 mt-4">
+          {imgP &&
+            imgP.map((img, iindex) => (
+              <div key={iindex} className=" w-[100px] h-[100px]">
+                <img
+                  src={img}
+                  alt=""
+                  className="w-full object-cover rounded-lg border border-gray-200"
+                  onDoubleClick={() => handleImgDel(iindex)}
+                />
+              </div>
+            ))}
+        </div>
       </div>
     </div>
   );
