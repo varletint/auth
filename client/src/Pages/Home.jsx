@@ -153,12 +153,12 @@ export default function Home() {
       <div className="min-h-screen scroll-smooth mt-10 pb-8">
         <div className="container mx-auto px-2">
           {/* Trending Lookups Section with Auto-Sliding */}
-          <div className="mb-12 animate-fade-in">
-            <h1 className="font-bold text-2xl md:text-3xl flex items-center gap-2 mb-4 text-gray-900">
+          <div className=" animate-fade-in">
+            <h1 className="font-bold text-2xl md:text-3xl flex items-center gap-2 mb-0 text-gray-900">
               Trending Lookups
               <FireIcon size={24} className="text-gray-900 animate-pulse" />
             </h1>
-            {/* <h1 className="font-bold text-2xl md:text-3xl flex items-center gap-2 mb-4 bg-gradient-to-r from-blue-600 to-amber-400 bg-clip-text text-transparent">
+            {/* <h1 className="font-bold text-2xl md:text-3xl flex items-center gap-2 mb-0 bg-gradient-to-r from-blue-600 to-amber-400 bg-clip-text text-transparent">
               Trending Lookups
               <FireIcon size={24} className="text-blue-500 animate-pulse" />
             </h1> */}
@@ -168,7 +168,7 @@ export default function Home() {
             ) : (
               <div className="relative">
                 {/* Slides Container */}
-                <div className="relative w-full lg:h-[500px] md:h-[350px] h-60 mt-3 rounded-lg  overflow-hidden">
+                <div className="relative w-full lg:h-[500px] md:h-[350px] h-60 mt-2 rounded-lg  overflow-hidden">
                   {trendingSlides.map((slide, index) => (
                     <div
                       key={slide.id}
@@ -187,14 +187,14 @@ export default function Home() {
                 </div>
 
                 {/* Navigation Dots */}
-                <div className="flex justify-center gap-2 mt-4">
+                <div className="flex justify-center gap-2 mt-2">
                   {trendingSlides.map((slide, index) => (
                     <button
                       key={slide.id}
                       onClick={() => goToSlide(index)}
                       className={`h-2 rounded-full transition-all duration-300 ${index === currentSlide
-                        ? 'w-3 bg-blue-600'
-                        : 'w-2 bg-gray-300 hover:bg-gray-900'
+                        ? 'w-3 bg-emerald-600'
+                        : 'w-2 bg-gray-300 hover:bg-emerald-700'
                         }`}
                       aria-label={`Go to slide ${index + 1}`}
                     />
@@ -205,8 +205,8 @@ export default function Home() {
           </div>
 
           {/* Latest Lookups Section */}
-          <div className="mb-12 animate-fade-in-up">
-            <div className="flex justify-between items-center mb-4">
+          <div className="mb- animate-fade-in-up">
+            <div className="flex justify-between items-center mb-0">
               {/* <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 rounded-lg shadow-lg transform transition-all hover:scale-105"> */}
               <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 text-gray-900 transform transition-all hover:scale-105">
                 Latest Lookups
@@ -214,7 +214,7 @@ export default function Home() {
               </h1>
               <Link
                 to="/products"
-                className="text-blue-500 hover:text-blue-600 font-semibold text-sm md:text-base transition-colors duration-200 hover:underline"
+                className="text-blue-500 hover:text-blue-600 font-semibold text-sm md:text-base hover:scale-50"
               >
                 View All →
               </Link>
@@ -228,14 +228,14 @@ export default function Home() {
                   <div
                     key={product.id}
                     onClick={() => setPreviewProduct(product)}
-                    className="card group relative overflow-hidden  rounded shadow-sm hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
+                    className="card group relative overflow-hidden   hover:shadow cursor-pointer"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
                     <div className=" w-full h-[139px] ">
 
                       <img
                         src={product.images[0]}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        className="w-full h-full object-cover "
                         alt={product.name}
                         loading="lazy"
                       />
@@ -247,9 +247,9 @@ export default function Home() {
                         <p className="text-sm opacity-90 text-orange-500">${product.price}</p>
                       </div>
                     </div> */}
-                    <div className=" flex flex-col gap-[-.5px]">
-                      <h3 className="font-semibold text-sm truncate">{product.name}</h3>
-                      <p className="text-xs opacity-90 text-orange-500">₦{product.price.toLocaleString()}</p>
+                    <div className=" flex flex-col gap-.5 py-1">
+                      <h3 className="font-semibold text-xs truncate">{product.name}</h3>
+                      <p className="text-xs opacity-90 font-semibold text-orange-500">₦{product.price.toLocaleString()}</p>
                     </div>
                   </div>
                 ))}
@@ -262,8 +262,8 @@ export default function Home() {
           </div>
 
           {/* Food to Order Section */}
-          <div className="mb-12 animate-fade-in-up">
-            <div className="flex justify-between items-center mb-4">
+          <div className="mb animate-fade-in-up">
+            <div className="flex justify-between items-center mb-0">
               {/* <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 bg-gradient-to-r from-blue-600 to-amber-400 text-white px-4 rounded-lg shadow-lg transform transition-all hover:scale-105"> */}
               <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 text-gray-900 transform transition-all hover:scale-105">
                 Food to Order
@@ -291,7 +291,7 @@ export default function Home() {
 
           {/* Marketing Section */}
           <div className="mb-12 animate-fade-in-up">
-            <h1 className="font-bold text-2xl md:text-3xl flex items-center gap-2 mb-4 bg-gradient-to-r from-slate-700 to-slate-800 bg-clip-text text-transparent">
+            <h1 className="font-bold text-2xl md:text-3xl flex items-center gap-2 mb-0 bg-gradient-to-r from-slate-700 to-slate-800 bg-clip-text text-transparent">
               Marketing
               <AdvertisimentIcon size={24} className="text-slate-600" />
             </h1>
@@ -309,7 +309,7 @@ export default function Home() {
 
           {/* Tech & Gadgets Section */}
           <div className="mb-12 animate-fade-in-up">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mb-0">
               {/* <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 bg-gradient-to-r from-slate-700 to-slate-800 text-white px-4 rounded-lg shadow-lg transform transition-all hover:scale-105"> */}
               <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 text-gray-900 transform transition-all hover:scale-105">
                 Tech & Gadgets
