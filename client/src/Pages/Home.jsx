@@ -270,7 +270,7 @@ export default function Home() {
           </div>
 
           {/* Food to Order Section */}
-          <div className=" animate-fade-in-up -mt-3">
+          <div className=" animate-fade-in-up -mt-1">
             <div className="flex justify-between items-center mb-0">
               {/* <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 bg-gradient-to-r from-blue-600 to-amber-400 text-white px-4 rounded-lg shadow-lg transform transition-all hover:scale-105"> */}
               <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py- text-gray-900 transform transition-all hover:scale-105">
