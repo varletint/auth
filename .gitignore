@@ -24,4 +24,8 @@ dist-ssr
 *.sw?
 .env
 
+# Firebase
+serviceAccountKey.json
+*serviceAccount*.json
+
 .vercel
