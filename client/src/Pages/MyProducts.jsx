@@ -12,7 +12,8 @@ import {
     Delete02Icon,
     Search01Icon,
     MoreVerticalIcon,
-    Loading03Icon
+    Loading03Icon,
+    ViewIcon
 } from "hugeicons-react";
 import { productApi } from "../api/productApi";
 
@@ -181,6 +182,10 @@ export default function MyProducts() {
                                                     ₦{product.price?.toLocaleString()}
                                                 </p>
                                                 <p className="text-xs text-gray-500 mt-0">{product.category}</p>
+                                                <div className="flex items-center gap-1 text-gray-400 text-[10px] mt-1">
+                                                    <ViewIcon size={12} />
+                                                    <span>{product.viewCount || 0}</span>
+                                                </div>
                                             </div>
                                             {/* 3-dot Menu */}
                                             <div className="relative mt-0" ref={activeDropdown === (product._id || product.id) ? dropdownRef : null}>

@@ -17,6 +17,7 @@ import {
     CheckmarkCircle02Icon,
     FavouriteIcon,
     Loading03Icon,
+    ViewIcon,
 } from "hugeicons-react";
 
 export default function ProductPage() {
@@ -287,7 +288,7 @@ export default function ProductPage() {
                                 )}
                             </div>
                             <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name} </h1>
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-4 mb-4">
                                 <div className="flex items-center gap-1">
                                     {[...Array(5)].map((_, i) => (
                                         <StarIcon
@@ -297,6 +298,10 @@ export default function ProductPage() {
                                         />
                                     ))}
                                     <span className="text-sm text-gray-600 ml-1">(4.0)</span>
+                                </div>
+                                <div className="flex items-center gap-1 text-gray-500 text-sm">
+                                    <ViewIcon size={18} />
+                                    <span>{product.viewCount || 0} views</span>
                                 </div>
                             </div>
                         </div>

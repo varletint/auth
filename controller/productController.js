@@ -3,6 +3,7 @@ import U from "../Models/user.js";
 // import redisClient, { isRedisAvailable } from "../config/redis.js";
 import { errorHandler } from "../Utilis/errorHandler.js";
 import { validateProductInput } from "../Utilis/validation.js";
+// import { deleteMultipleFilesFromStorage } from "../config/firebaseAdmin.js";
 import dayjs from "dayjs";
 
 
@@ -199,6 +200,12 @@ export const deleteProduct = async (req, res, next) => {
             return next(errorHandler(403, "You are not authorized to delete this product"));
         }
 
+        // Delete images from Firebase Storage
+        // if (product.images && product.images.length > 0) {
+        //     const deleteResult = await deleteMultipleFilesFromStorage(product.images);
+        //     console.log(`Deleted ${deleteResult.success} images, ${deleteResult.failed} failed`);
+        // }
+
         await Product.findByIdAndDelete(req.params.id);
 
         // await clearProductCache(req.params.id);
@@ -235,6 +242,9 @@ export const getProduct = async (req, res, next) => {
 
         const product = await Product.findById(id);
         if (!product) return next(errorHandler(404, "Product not found"));
+
+        // Increment view count
+        await product.incrementView();
 
         // Set cache
         // if (redisClient.isOpen) {
