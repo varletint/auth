@@ -5,6 +5,7 @@ import Footer from "../Components/Footer";
 import { productApi } from "../api/productApi";
 import {
   AdvertisimentIcon,
+  EyeIcon,
   FireIcon,
   GoogleLensIcon,
   HotPriceIcon,
@@ -150,11 +151,11 @@ export default function Home() {
       </Helmet>
 
       <Header />
-      <div className="min-h-screen scroll-smooth mt-10 pb-8">
+      <div className="min-h-screen scroll-smooth mt-2  pb-8">
         <div className="container mx-auto px-2">
           {/* Trending Lookups Section with Auto-Sliding */}
           <div className=" animate-fade-in">
-            <h1 className="font-bold text-2xl md:text-3xl flex items-center gap-2 mb-0 text-gray-900">
+            <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 mb-0 text-gray-900">
               Trending Lookups
               <FireIcon size={24} className="text-gray-900 animate-pulse" />
             </h1>
@@ -205,7 +206,7 @@ export default function Home() {
           </div>
 
           {/* Latest Lookups Section */}
-          <div className="mb- animate-fade-in-up">
+          <div className=" animate-fade-in-up">
             <div className="flex justify-between items-center mb-0">
               {/* <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 rounded-lg shadow-lg transform transition-all hover:scale-105"> */}
               <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 text-gray-900 transform transition-all hover:scale-105">
@@ -225,10 +226,12 @@ export default function Home() {
             ) : apiData && apiData.length > 0 ? (
               <div className="carousel">
                 {apiData.map((product, index) => (
-                  <div
+                  <Link
+                    to={`/product/${product.id}`}
                     key={product.id}
-                    onClick={() => setPreviewProduct(product)}
-                    className="card group relative overflow-hidden   hover:shadow cursor-pointer"
+                    // onClick={() => setPreviewProduct(product)}
+                    className="card group relative overflow-hidden    
+                   hover:scale-105 hover:shadow cursor-pointer"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
                     <div className=" w-full h-[139px] ">
@@ -247,11 +250,15 @@ export default function Home() {
                         <p className="text-sm opacity-90 text-orange-500">${product.price}</p>
                       </div>
                     </div> */}
-                    <div className=" flex flex-col gap-.5 py-1">
-                      <h3 className="font-semibold text-xs truncate">{product.name}</h3>
-                      <p className="text-xs opacity-90 font-semibold text-orange-500">₦{product.price.toLocaleString()}</p>
+                    <div className=" bg-amber-300/40 px-1.5 py-0.5 absolute top-2 right-2 text-xs 
+                    flex items-center justify-center font-semibold gap-1 rounded-sm">
+                      <EyeIcon size={17} className=" text-orange-600 " /> <span>{product.viewCount}</span>
                     </div>
-                  </div>
+                    <div className=" flex flex-col gap-0.5 py-1">
+                      <h3 className="font-semibold text-xs truncate">{product.name}</h3>
+                      <p className="text-sm opacity-90 font-semibold text-orange-500">₦{product.price.toLocaleString()}</p>
+                    </div>
+                  </Link>
                 ))}
               </div>
             ) : (
@@ -291,7 +298,7 @@ export default function Home() {
           </div>
 
           {/* Marketing Section */}
-          <div className="mb-12 animate-fade-in-up">
+          <div className="animate-fade-in-up">
             <h1 className="font-bold text-2xl md:text-3xl flex items-center gap-2 mb-0 bg-gradient-to-r from-slate-700 to-slate-800 bg-clip-text text-transparent">
               Marketing
               <AdvertisimentIcon size={24} className="text-slate-600" />
@@ -300,7 +307,7 @@ export default function Home() {
             {heroLoading ? (
               <HeroSkeleton />
             ) : (
-              <div className="w-full lg:h-[500px] md:h-[350px] h-60 mt-3 bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800 rounded-lg shadow-2xl overflow-hidden transform transition-all duration-300 hover:scale-[1.02] hover:shadow-3xl">
+              <div className="w-full lg:h-[500px] md:h-[350px] h-60  bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800 rounded-lg shadow-2xl overflow-hidden transform transition-all duration-300 hover:scale-[1.02] hover:shadow-3xl">
                 <div className="w-full h-full flex items-center justify-center text-white text-2xl font-bold">
                   Advertisement Space
                 </div>
@@ -309,7 +316,7 @@ export default function Home() {
           </div>
 
           {/* Tech & Gadgets Section */}
-          <div className="mb-12 animate-fade-in-up">
+          <div className="animate-fade-in-up">
             <div className="flex justify-between items-center mb-0">
               {/* <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 bg-gradient-to-r from-slate-700 to-slate-800 text-white px-4 rounded-lg shadow-lg transform transition-all hover:scale-105"> */}
               <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 text-gray-900 transform transition-all hover:scale-105">
@@ -335,87 +342,86 @@ export default function Home() {
             )}
           </div>
         </div>
-      </div>
+      </div >
 
       {/* Preview Modal */}
-      {previewProduct && (
-        <div
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-2 animate-fade-out"
-          onClick={() => setPreviewProduct(null)}
-        >
+      {
+        previewProduct && (
           <div
-            className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl transform transition-all duration-00 animate-scale-in"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-2 animate-fade-out"
+            onClick={() => setPreviewProduct(null)}
           >
-            {/* Modal Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-800 truncate flex-1 pr-4">
-                {previewProduct.name}
-              </h2>
-              <button
-                onClick={() => setPreviewProduct(null)}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors duration-00 text-gray-600 hover:text-gray-800"
-                aria-label="Close preview"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <div className="p-2">
-              {/* Product Image */}
-              <div className="w-full aspect-video mb-6 rounded-xl overflow-hidden bg-gray-100">
-                <img
-                  src={previewProduct.images[0]}
-                  alt={previewProduct.name}
-                  className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
-                />
+            <div
+              className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl transform transition-all duration-00 animate-scale-in"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                <h2 className="text-xl font-bold text-gray-800 truncate flex-1 pr-4">
+                  {previewProduct.name}
+                </h2>
+                <button
+                  onClick={() => setPreviewProduct(null)}
+                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors duration-00 text-gray-600 hover:text-gray-800"
+                  aria-label="Close preview"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
 
-              {/* Product Info */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold text-emerald-600">
-                    ₦{previewProduct.price.toLocaleString()}
-                  </span>
-                  {previewProduct.averageRating && (
-                    <div className="flex items-center gap-1 text-sm text-gray-600">
-                      <svg className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
-                        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                      </svg>
-                      <span className="font-semibold">{previewProduct.averageRating}</span>
-                    </div>
+              {/* Modal Body */}
+              {/* <div className="p-2">
+
+                <div className="w-full aspect-video mb-6 rounded-xl overflow-hidden bg-gray-100">
+                  <img
+                    src={previewProduct.images[0]}
+                    alt={previewProduct.name}
+                    className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-3xl font-bold text-emerald-600">
+                      ₦{previewProduct.price.toLocaleString()}
+                    </span>
+                    {previewProduct.averageRating && (
+                      <div className="flex items-center gap-1 text-sm text-gray-600">
+                        <svg className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                          <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                        </svg>
+                        <span className="font-semibold">{previewProduct.averageRating}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {previewProduct.description && (
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      {previewProduct.description.split(' ').length > 40
+                        ? previewProduct.description.split(' ').slice(0, 40).join(' ') + '.....'
+                        : previewProduct.description}
+                    </p>
                   )}
-                </div>
 
-                {previewProduct.description && (
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    {previewProduct.description.split(' ').length > 40
-                      ? previewProduct.description.split(' ').slice(0, 40).join(' ') + '.....'
-                      : previewProduct.description}
-                  </p>
-                )}
 
-                {/* View Full Product Button */}
-                <div className="flex w-full justify-end mb-2.5">
-                  <Link
-                    to={`/product/${previewProduct.id}`}
-                    className="flex items-end "
-                  >
-                    {/* <button className="w-full bg-gradient-to-r from-blue-600 to-amber-400 text-nowrap
-                  hover:from-blue-600-dark hover:to-blue-700 text-white font-bold py-2 px-2 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl">
-                      View
-                    </button> */}
-                    <Button text="View" />
-                  </Link>
+                  <div className="flex w-full justify-end mb-2.5">
+                    <Link
+                      to={`/product/${previewProduct.id}`}
+                      className="flex items-end "
+                    >
+
+                      <Button text="View" />
+                    </Link>
+                  </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       <Footer />
 
