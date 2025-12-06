@@ -40,7 +40,7 @@ export default function Profile() {
       if (!currentUser) return;
       try {
         setStatsLoading(true);
-        const data = await apiCall("/user/profile-stats", "GET");
+        const data = await apiCall("/seller/profile-stats", "GET");
         if (data.success) {
           setProfileStats(data.stats);
         }
@@ -151,7 +151,7 @@ export default function Profile() {
 
         {/* Main Content */}
         <main className='flex-1 md:ml- pt-   '>
-          <div className='sticky  top-0 z-10 bg-white py-4 px-6 border-b border-gray-200 mb-3 flex items-center justify-between'>
+          <div className='sticky  top-0 z-10 bg-white py-4 px-6 border-b border-gray-200  flex items-center justify-between'>
             <button
               className='md:hidden fixed top-4 left-4 z-50 p-2 py-2 rounded-md bg-white  text-gray-700'
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -162,12 +162,15 @@ export default function Profile() {
           </div>
           <div className='max-w- mx-auto p-2'>
             {/* Header Section */}
-            <div className='relative mb-2.5 rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-200'>
-              <div className='h-32 bg-gradient-to-r from-blue-600 to-amber-400'></div>
+            {/* <div className='relative mb-2.5 rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-200'>
+              <div className='h-32 bg-gradient-to-r from-blue-600 to-blue-400'></div>
               <div className='px-8 pb-8'>
                 <div className='relative flex justify-between items-end -mt-12 mb-6'>
                   <div className='relative'>
-                    <div className='w-24 h-24 rounded-full border-4 border-white overflow-hidden shadow-md flex items-center justify-center text-3xl font-bold text-gray-400 bg-gray-100 uppercase'>
+                    <div className='w-24 h-24 rounded-full border-4 
+                    border-white overflow-hidden shadow-md flex 
+                    items-center justify-center text-3xl font-bold 
+                    text-gray-400 bg-gray-100 uppercase'>
                       {currentUser?.username?.[0] || "U"}
                     </div>
                     <button className='absolute bottom-0 right-0 p-1.5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full  shadow-sm border-2 border-white'>
@@ -181,11 +184,36 @@ export default function Profile() {
                   <p className='text-gray-500'>{currentUser?.email || "user@example.com"}</p>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Content Area */}
             <div className='grid grid-cols-1 gap-2.5'>
               <div className='grid grid-cols-1 md:grid-2 lg:grid-cols-2 gap-2.5'>
+
+                <div className='relative mb-2.5 rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-200'>
+                  <div className='h-[75px] bg-gradient-to-r from-blue-600 to-blue-400'></div>
+                  <div className='px-8 pb-8'>
+                    <div className='relative flex justify-between items-end -mt-12 mb-6'>
+                      <div className='relative'>
+                        <div className='w-24 h-24 rounded-full border-4 
+                    border-white overflow-hidden shadow-md flex 
+                    items-center justify-center text-3xl font-bold 
+                    text-gray-400 bg-gray-100 uppercase'>
+                          {currentUser?.username?.[0] || "U"}
+                        </div>
+                        <button className='absolute bottom-0 right-0 p-1.5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full  shadow-sm border-2 border-white'>
+                          <Camera01Icon size={14} />
+                        </button>
+                      </div>
+                      <Button text='Edit Profile' onClick={() => navigate('/edit-profile')} className='!py-2 !px-4 !text-sm bg-white !text-gray-700 border border-gray-200 hover:bg-off-white !shadow-sm' />
+                    </div>
+                    <div>
+                      <h1 className='text-2xl font-bold text-gray-900'>{currentUser?.username || "User"}</h1>
+                      <p className='text-gray-500'>{currentUser?.email || "user@example.com"}</p>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Left Column - Stats/Info */}
                 <div className='space-y-6'>
                   <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
@@ -195,7 +223,7 @@ export default function Profile() {
                         <Loading03Icon size={24} className='animate-spin text-emerald-600' />
                       </div>
                     ) : (
-                      <div className='space-y-4'>
+                      <div className='space-y-1'>
                         <div className='flex justify-between items-center'>
                           <span className='text-gray-600'>Total Products</span>
                           <span className='font-semibold text-gray-900'>{profileStats.totalProducts}</span>
@@ -251,7 +279,7 @@ export default function Profile() {
                 {/* Right Column - Main Content */}
 
               </div>
-              <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
+              {/* <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
                 <div className='flex justify-between items-center mb-6'>
                   <h3 className='font-semibold text-gray-900'>My Products</h3>
                   <Link to='/add-product'>
@@ -275,7 +303,7 @@ export default function Profile() {
                     </div>
                   ))}
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </main>
