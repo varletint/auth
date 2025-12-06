@@ -125,7 +125,7 @@ export default function Contact() {
                                                 setSubmitted(false);
                                                 setFormData({ name: "", email: "", subject: "", message: "" });
                                             }}
-                                            className="text-emerald-600 font-semibold hover:underline"
+                                            className="text-emerald-600 font-semibold hover:underline py-2"
                                         >
                                             Send Another Message
                                         </button>

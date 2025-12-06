@@ -41,7 +41,7 @@ export default function Settings() {
             </div>
             <button
                 onClick={onChange}
-                className={`relative w-12 h-6 rounded-full transition-colors ${checked ? "bg-emerald-600" : "bg-gray-300"
+                className={`relative w-12 h-6 py-2 rounded-full transition-colors ${checked ? "bg-emerald-600" : "bg-gray-300"
                     }`}
             >
                 <span
@@ -117,7 +117,7 @@ export default function Settings() {
                                     <p className="font-semibold text-gray-900">Change Password</p>
                                     <p className="text-sm text-gray-500">Update your password</p>
                                 </div>
-                                <button className="text-emerald-600 font-semibold hover:text-emerald-700">
+                                <button className="text-emerald-600 font-semibold hover:text-emerald-700 py-2">
                                     Change →
                                 </button>
                             </div>

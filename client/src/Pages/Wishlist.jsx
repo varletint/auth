@@ -93,7 +93,7 @@ export default function Wishlist() {
                             {error}
                             <button
                                 onClick={fetchWishlist}
-                                className="ml-4 text-red-600 font-semibold hover:underline"
+                                className="ml-4 text-red-600 font-semibold hover:underline py-2"
                             >
                                 Try again
                             </button>
@@ -125,7 +125,7 @@ export default function Wishlist() {
                                         <button
                                             onClick={() => removeItem(item.productId)}
                                             disabled={removingId === item.productId}
-                                            className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50"
+                                            className="absolute top-3 right-3 p-2 py-2 bg-white rounded-full shadow-md text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50"
                                         >
                                             {removingId === item.productId ? (
                                                 <Loading03Icon size={18} className="animate-spin" />

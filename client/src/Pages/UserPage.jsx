@@ -142,14 +142,14 @@ export default function UserPage() {
                     <div className="flex items-center justify-between">
                         <button
                             onClick={() => navigate(-1)}
-                            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+                            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors py-2"
                         >
                             <ArrowLeft01Icon size={20} />
                             <span className="font-medium">Back</span>
                         </button>
                         <button
                             onClick={handleShare}
-                            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+                            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors py-2"
                         >
                             <Share08Icon size={20} />
                             <span className="font-medium">Share</span>

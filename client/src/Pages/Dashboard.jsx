@@ -159,7 +159,7 @@ export default function Dashboard() {
                                     </div>
                                 </div>
                                 <Link to="/become-seller">
-                                    <button className="bg-white text-emerald-600 px-6 py-3 rounded-xl font-semibold hover:bg-emerald-50 transition-colors whitespace-nowrap">
+                                    <button className="bg-white text-emerald-600 px-6 py-2 rounded-xl font-semibold hover:bg-emerald-50 transition-colors whitespace-nowrap">
                                         Become a Seller →
                                     </button>
                                 </Link>

@@ -47,7 +47,7 @@ export default function Profile() {
       <div className='min-h-screen bg-off-white flex border border-gray-900'>
         {/* Mobile menu button */}
         <button
-          className='md:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-white shadow-md text-gray-700'
+          className='md:hidden fixed top-4 left-4 z-50 p-2 py-2 rounded-md bg-white shadow-md text-gray-700'
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
           {isSidebarOpen ? <MultiplicationSignIcon size={24} /> : <Menu01Icon size={24} />}
@@ -76,7 +76,7 @@ export default function Profile() {
                     key={item.id}
                     to={item.path}
                     onClick={() => setIsSidebarOpen(false)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors text-gray-600 hover:bg-off-white hover:text-gray-900`}
+                    className={`w-full flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg transition-colors text-gray-600 hover:bg-off-white hover:text-gray-900`}
                   >
                     {item.icon}
                     {item.label}
@@ -88,7 +88,7 @@ export default function Profile() {
                       setActiveTab(item.id);
                       setIsSidebarOpen(false);
                     }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors ${activeTab === item.id
+                    className={`w-full flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === item.id
                       ? "bg-indigo-50 text-indigo-600"
                       : "text-gray-600 hover:bg-off-white hover:text-gray-900"
                       }`}
@@ -103,7 +103,7 @@ export default function Profile() {
           <div className='p-6 pt-0'>
             <button
               onClick={handleSignOut}
-              className='w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors'
+              className='w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors'
             >
               <Logout01Icon size={20} />
               Sign Out
@@ -123,7 +123,7 @@ export default function Profile() {
         <main className='flex-1 md:ml- pt-   '>
           <div className='sticky  top-0 z-10 bg-white py-4 px-6 border-b border-gray-200 mb-3 flex items-center justify-between'>
             <button
-              className='md:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-white  text-gray-700'
+              className='md:hidden fixed top-4 left-4 z-50 p-2 py-2 rounded-md bg-white  text-gray-700'
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             >
               {isSidebarOpen ? <MultiplicationSignIcon size={24} /> : <Menu01Icon size={24} />}
@@ -140,7 +140,7 @@ export default function Profile() {
                     <div className='w-24 h-24 rounded-full border-4 border-white overflow-hidden shadow-md flex items-center justify-center text-3xl font-bold text-gray-400 bg-gray-100 uppercase'>
                       {currentUser?.username?.[0] || "U"}
                     </div>
-                    <button className='absolute bottom-0 right-0 p-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full  shadow-sm border-2 border-white'>
+                    <button className='absolute bottom-0 right-0 p-1.5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full  shadow-sm border-2 border-white'>
                       <Camera01Icon size={14} />
                     </button>
                   </div>

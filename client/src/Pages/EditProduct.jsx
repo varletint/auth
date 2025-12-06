@@ -436,7 +436,7 @@ export default function EditProduct() {
                                 <button
                                     type="button"
                                     onClick={() => navigate(-1)}
-                                    className="flex-1 py-3 border border-gray-200 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+                                    className="flex-1 py-2 border border-gray-200 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
                                 >
                                     Cancel
                                 </button>

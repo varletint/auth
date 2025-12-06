@@ -271,7 +271,7 @@ export default function ForgotPassword() {
                     <div className="mb-8">
                         <button
                             onClick={() => (step === 1 ? navigate("/login") : step > 1 ? setStep(step - 1) : null)}
-                            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors"
+                            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors py-2"
                         >
                             <ArrowLeft01Icon size={20} />
                             <span className="text-sm font-medium">Back</span>
@@ -364,7 +364,7 @@ export default function ForgotPassword() {
                                         type="button"
                                         onClick={handleResendOTP}
                                         disabled={loading || (isTimerActive && timeLeft > 210)}
-                                        className="text-sm font-medium text-blue-500 hover:text-blue-600 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                        className="text-sm font-medium text-blue-500 hover:text-blue-600 disabled:text-gray-400 disabled:cursor-not-allowed py-2"
                                     >
                                         Resend OTP
                                     </button>

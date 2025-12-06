@@ -470,14 +470,14 @@ export default function AddProduct() {
                             <button
                                 type="button"
                                 onClick={() => setAddMode('quick')}
-                                className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${addMode === 'quick' ? 'bg-white text-emerald-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                                className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${addMode === 'quick' ? 'bg-white text-emerald-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                             >
                                 ⚡ Quick Add
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setAddMode('manual')}
-                                className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${addMode === 'manual' ? 'bg-white text-emerald-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                                className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${addMode === 'manual' ? 'bg-white text-emerald-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                             >
                                 📝 Manual Entry
                             </button>
@@ -521,7 +521,7 @@ export default function AddProduct() {
                                 </div>
 
                                 <div className="text-center text-sm text-gray-500 mt-4">
-                                    Can't find what you're looking for? <button type="button" onClick={() => setAddMode('manual')} className="text-indigo-600 font-semibold hover:underline">Switch to Manual Entry</button>
+                                    Can't find what you're looking for? <button type="button" onClick={() => setAddMode('manual')} className="text-indigo-600 font-semibold hover:underline py-2">Switch to Manual Entry</button>
                                 </div>
                             </div>
                         ) : (

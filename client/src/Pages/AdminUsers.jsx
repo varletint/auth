@@ -153,7 +153,7 @@ export default function AdminUsers() {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Search users..."
-                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+                            className="w-full pl-12 pr-4 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
                         />
                     </div>
 
@@ -211,7 +211,7 @@ export default function AdminUsers() {
                                                                         user.role.includes("seller") ? "remove" : "add"
                                                                     )}
                                                                     disabled={actionLoading === `${user._id}-seller`}
-                                                                    className={`text-xs px-2 py-1 rounded ${user.role.includes("seller")
+                                                                    className={`text-xs px-2 py-2 rounded ${user.role.includes("seller")
                                                                         ? "bg-purple-600 text-white"
                                                                         : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                                                                         }`}
@@ -230,7 +230,7 @@ export default function AdminUsers() {
                                                                 <button
                                                                     onClick={() => handleStatusChange(user._id, "active")}
                                                                     disabled={actionLoading === `${user._id}-status`}
-                                                                    className={`p-1 rounded ${user.accountStatus === "active" ? "bg-emerald-100" : "hover:bg-gray-100"}`}
+                                                                    className={`p-2 rounded ${user.accountStatus === "active" ? "bg-emerald-100" : "hover:bg-gray-100"}`}
                                                                     title="Activate"
                                                                 >
                                                                     <CheckmarkCircle02Icon size={16} className="text-emerald-600" />
@@ -238,7 +238,7 @@ export default function AdminUsers() {
                                                                 <button
                                                                     onClick={() => handleStatusChange(user._id, "suspended")}
                                                                     disabled={actionLoading === `${user._id}-status`}
-                                                                    className={`p-1 rounded ${user.accountStatus === "suspended" ? "bg-yellow-100" : "hover:bg-gray-100"}`}
+                                                                    className={`p-2 rounded ${user.accountStatus === "suspended" ? "bg-yellow-100" : "hover:bg-gray-100"}`}
                                                                     title="Suspend"
                                                                 >
                                                                     <Cancel01Icon size={16} className="text-yellow-600" />

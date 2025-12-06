@@ -188,7 +188,7 @@ export default function MyProducts() {
                                                     onClick={() => setActiveDropdown(
                                                         activeDropdown === (product._id || product.id) ? null : (product._id || product.id)
                                                     )}
-                                                    className="p-2 hover:bg-gray-100 rounded-full transition-colors ml-auto block"
+                                                    className="p-2 py-2 hover:bg-gray-100 rounded-full transition-colors ml-auto block"
                                                 >
                                                     <MoreVerticalIcon size={25} className=" font-bold text-gray-600" />
                                                 </button>
@@ -227,7 +227,7 @@ export default function MyProducts() {
                                     <button
                                         onClick={loadMore}
                                         disabled={loadingMore}
-                                        className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                        className="px-6 py-2 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                                     >
                                         {loadingMore ? (
                                             <>

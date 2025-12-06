@@ -99,7 +99,7 @@ export default function Header() {
               <li>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-1 hover:text-red-500 transition-colors"
+                  className="flex items-center gap-1 hover:text-red-500 transition-colors py-2"
                 >
                   <Logout01Icon size={18} />
                   Logout
@@ -197,7 +197,7 @@ export default function Header() {
                 <li>
                   <button
                     onClick={handleLogout}
-                    className="flex items-center gap-2 hover:text-red-500 transition-colors"
+                    className="flex items-center gap-2 hover:text-red-500 transition-colors py-2"
                   >
                     <Logout01Icon size={20} />
                     Logout

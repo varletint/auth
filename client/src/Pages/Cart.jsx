@@ -105,14 +105,14 @@ export default function Cart() {
                                             <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
                                                 <button
                                                     onClick={() => updateQuantity(item.id, -1)}
-                                                    className="p-1 hover:bg-gray-200 rounded transition-colors"
+                                                    className="p-2 hover:bg-gray-200 rounded transition-colors"
                                                 >
                                                     <Remove01Icon size={18} />
                                                 </button>
                                                 <span className="w-8 text-center font-semibold">{item.quantity}</span>
                                                 <button
                                                     onClick={() => updateQuantity(item.id, 1)}
-                                                    className="p-1 hover:bg-gray-200 rounded transition-colors"
+                                                    className="p-2 hover:bg-gray-200 rounded transition-colors"
                                                 >
                                                     <Add01Icon size={18} />
                                                 </button>

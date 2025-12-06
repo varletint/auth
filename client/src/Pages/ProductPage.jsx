@@ -217,14 +217,14 @@ export default function ProductPage() {
                     <div className="flex items-center justify-between">
                         <button
                             onClick={() => navigate(-1)}
-                            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+                            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors py-2"
                         >
                             <ArrowLeft01Icon size={20} />
                             <span className="font-medium">Back</span>
                         </button>
                         <button
                             onClick={handleShare}
-                            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+                            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors py-2"
                         >
                             <Share08Icon size={20} />
                             <span className="font-medium">Share</span>
@@ -252,7 +252,7 @@ export default function ProductPage() {
                                     <button
                                         key={index}
                                         onClick={() => setSelectedImage(index)}
-                                        className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedImage === index
+                                        className={`aspect-square rounded-lg overflow-hidden border-2 transition-all py-2 ${selectedImage === index
                                             ? "border-blue-600 ring-2 ring-primary/20"
                                             : "border-gray-200 hover:border-gray-300"
                                             }`}
@@ -326,7 +326,7 @@ export default function ProductPage() {
                             <div className="flex items-center gap-3">
                                 <button
                                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                    className="w-10 h-10 rounded-lg border border-gray-300 hover:bg-off-white font-semibold"
+                                    className="w-10 h-10 rounded-lg border border-gray-300 hover:bg-off-white font-semibold py-2"
                                     disabled={quantity <= 1}
                                 >
                                     -
@@ -341,7 +341,7 @@ export default function ProductPage() {
                                 />
                                 <button
                                     onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                                    className="w-10 h-10 rounded-lg border border-gray-300 hover:bg-off-white font-semibold"
+                                    className="w-10 h-10 rounded-lg border border-gray-300 hover:bg-off-white font-semibold py-2"
                                     disabled={quantity >= product.stock}
                                 >
                                     +
@@ -375,7 +375,7 @@ export default function ProductPage() {
                             <button
                                 onClick={handleWishlistToggle}
                                 disabled={wishlistLoading}
-                                className={`w-12 h-12 rounded-lg border flex items-center justify-center transition-all ${inWishlist
+                                className={`w-12 h-12 rounded-lg border flex items-center justify-center transition-all py-2 ${inWishlist
                                     ? "bg-red-50 border-red-200 text-red-500"
                                     : "bg-white border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200"
                                     } ${wishlistLoading ? "opacity-50" : ""}`}
