@@ -278,6 +278,7 @@ export default function Home() {
             </div>
 
             {loading ? (
+              // 
               <CarouselSkeleton />
             ) : (
               <div className="carousel">
