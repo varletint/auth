@@ -208,7 +208,7 @@ export default function Home() {
 
           {/* Latest Lookups Section */}
           <div className=" animate-fade-in-up">
-            <div className="flex justify-between items-center mb-0">
+            <div className="flex justify-between items-center ">
               {/* <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 rounded-lg shadow-lg transform transition-all hover:scale-105"> */}
               <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 text-gray-900 transform transition-all hover:scale-105">
                 Latest Lookups
@@ -232,7 +232,7 @@ export default function Home() {
                     key={product.id}
                     // onClick={() => setPreviewProduct(product)}
                     className="card group relative overflow-hidden    
-                   hover:scale-105 hover:shadow cursor-pointer"
+                   hover:scale-101 hover:shadow cursor-pointer"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
                     <div className=" w-full h-[139px] ">
@@ -270,10 +270,10 @@ export default function Home() {
           </div>
 
           {/* Food to Order Section */}
-          <div className="mb animate-fade-in-up">
+          <div className=" animate-fade-in-up -mt-3">
             <div className="flex justify-between items-center mb-0">
               {/* <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 bg-gradient-to-r from-blue-600 to-amber-400 text-white px-4 rounded-lg shadow-lg transform transition-all hover:scale-105"> */}
-              <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py-2 text-gray-900 transform transition-all hover:scale-105">
+              <h1 className="font-bold text-lg md:text-xl flex items-center gap-2 py- text-gray-900 transform transition-all hover:scale-105">
                 Food to Order
                 <OrganicFoodIcon size={22} className="animate-pulse" />
               </h1>
@@ -291,7 +291,8 @@ export default function Home() {
             ) : (
               <div className="carousel">
                 {[1, 2, 3, 4, 5, 6].map((item) => (
-                  <div key={item} className="card bg-gradient-to-br from-emerald-100 to-teal-200 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105"></div>
+                  <div key={item} className="card bg-gradient-to-br from-emerald-100 to-teal-200 rounded-xl shadow-lg hover:shadow-2xl 
+                  transition-all duration-300 transform hover:scale-105"></div>
                 ))}
 
               </div>
@@ -300,7 +301,7 @@ export default function Home() {
 
           {/* Marketing Section */}
           <div className="animate-fade-in-up">
-            <h1 className="font-bold text-2xl md:text-3xl flex items-center gap-2 mb-0 bg-gradient-to-r from-slate-700 to-slate-800 bg-clip-text text-transparent">
+            <h1 className="font-bold text-2xl md:text-3xl flex items-center gap-2 mb-2 bg-gradient-to-r from-slate-700 to-slate-800 bg-clip-text text-transparent">
               Marketing
               <AdvertisimentIcon size={24} className="text-slate-600" />
             </h1>
