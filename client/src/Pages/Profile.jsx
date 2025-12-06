@@ -192,7 +192,7 @@ export default function Profile() {
                     <h3 className='font-semibold text-gray-900 mb-4'>Profile Stats</h3>
                     {statsLoading ? (
                       <div className='flex justify-center py-4'>
-                        <Loading03Icon size={24} className='animate-spin text-indigo-600' />
+                        <Loading03Icon size={24} className='animate-spin text-emerald-600' />
                       </div>
                     ) : (
                       <div className='space-y-4'>
@@ -236,7 +236,7 @@ export default function Profile() {
                           </>
                         )}
 
-                        {!profileStats.isSeller || !currentUser.role.includes("seller") && (
+                        {!profileStats.isSeller && (
                           <div className='text-sm text-gray-500 pt-2'>
                             <Link to="/become-seller" className='text-indigo-600 hover:underline'>
                               Become a seller
