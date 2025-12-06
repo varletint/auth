@@ -235,7 +235,8 @@ export default function Profile() {
                             </div>
                           </>
                         )}
-                        {!profileStats.isSeller && (
+
+                        {!profileStats.isSeller || !currentUser.role.includes("seller") && (
                           <div className='text-sm text-gray-500 pt-2'>
                             <Link to="/become-seller" className='text-indigo-600 hover:underline'>
                               Become a seller
