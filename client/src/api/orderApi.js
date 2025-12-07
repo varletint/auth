@@ -15,6 +15,17 @@ export const createOrder = async (productId, quantity = 1, buyerNotes = "") => {
 };
 
 /**
+ * Create bulk orders from cart items
+ * @param {Array} items - Array of { productId, quantity }
+ */
+export const createBulkOrders = async (items) => {
+    return apiCall("/orders/bulk", {
+        method: "POST",
+        body: JSON.stringify({ items }),
+    });
+};
+
+/**
  * Get buyer's orders (My Orders)
  */
 export const getMyOrders = async (status = null, page = 1, limit = 10) => {

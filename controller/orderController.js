@@ -68,6 +68,89 @@ export const createOrder = async (req, res, next) => {
 };
 
 /**
+ * Create bulk orders from cart
+ * POST /api/orders/bulk
+ * Body: { items: [{ productId, quantity }] }
+ */
+export const createBulkOrders = async (req, res, next) => {
+    try {
+        const { items } = req.body;
+        const buyerId = req.user.id;
+
+        // Validate input
+        if (!items || !Array.isArray(items) || items.length === 0) {
+            return next(errorHandler(400, "Items array is required"));
+        }
+
+        // Validate each item and gather product data
+        const orderData = [];
+        const errors = [];
+
+        for (const item of items) {
+            if (!item.productId) {
+                errors.push("Missing productId in one of the items");
+                continue;
+            }
+            if (!item.quantity || item.quantity < 1) {
+                errors.push(`Invalid quantity for product ${item.productId}`);
+                continue;
+            }
+
+            const product = await Product.findById(item.productId);
+            if (!product) {
+                errors.push(`Product not found: ${item.productId}`);
+                continue;
+            }
+
+            // Can't buy own products
+            if (product.userId.toString() === buyerId) {
+                errors.push(`Cannot order your own product: ${product.name}`);
+                continue;
+            }
+
+            // Check stock
+            if (product.trackInventory && product.stock < item.quantity) {
+                errors.push(`Insufficient stock for ${product.name}: only ${product.stock} available`);
+                continue;
+            }
+
+            const unitPrice = product.salePrice || product.price;
+            orderData.push({
+                buyerId,
+                sellerId: product.userId,
+                productId: item.productId,
+                quantity: item.quantity,
+                unitPrice,
+                totalPrice: unitPrice * item.quantity,
+            });
+        }
+
+        // If any validation errors, return them all
+        if (errors.length > 0) {
+            return next(errorHandler(400, errors.join("; ")));
+        }
+
+        // Create all orders
+        const createdOrders = await Order.insertMany(orderData);
+
+        res.status(201).json({
+            success: true,
+            message: `Successfully placed ${createdOrders.length} order(s)`,
+            count: createdOrders.length,
+            orders: createdOrders.map((order) => ({
+                id: order._id,
+                productId: order.productId,
+                quantity: order.quantity,
+                totalPrice: order.totalPrice,
+                status: order.status,
+            })),
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
  * Get buyer's orders (My Orders)
  * GET /api/orders/my-orders
  */

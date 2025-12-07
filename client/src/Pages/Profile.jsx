@@ -99,7 +99,7 @@ export default function Profile() {
         >
           <div className='p-6 pt-20 md:pt-6 flex flex-col flex-grow'>
             <div className='flex items-center gap-3 mb-8'>
-              <div className='w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold uppercase'>
+              <div className='w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-emerald-600 font-bold uppercase'>
                 {currentUser?.username?.[0] || "U"}
               </div>
               <div>
@@ -127,7 +127,7 @@ export default function Profile() {
                       setIsSidebarOpen(false);
                     }}
                     className={`w-full flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === item.id
-                      ? "bg-indigo-50 text-indigo-600"
+                      ? "bg-emerald-50 text-emerald-600"
                       : "text-gray-600 hover:bg-off-white hover:text-gray-900"
                       }`}
                   >
@@ -199,7 +199,7 @@ export default function Profile() {
               <div className='grid grid-cols-1 md:grid-2 lg:grid-cols-2 gap-2.5'>
 
                 <div className='relative mb-2.5 rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-200'>
-                  <div className='h-[75px] bg-gradient-to-r from-blue-600 to-blue-400'></div>
+                  <div className='h-[75px] bg-gradient-to-r from-emerald-600 to-emerald-400'></div>
                   <div className='px-8 pb-8'>
                     <div className='relative flex justify-between items-end -mt-12 mb-6'>
                       <div className='relative'>

@@ -5,8 +5,9 @@ import useAuthStore from "../store/useAuthStore";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import Button from "../Components/Button";
-import { ShoppingCart01Icon, Delete02Icon, Add01Icon, Remove01Icon, Loading03Icon } from "hugeicons-react";
+import { ShoppingCart01Icon, Delete02Icon, Add01Icon, Remove01Icon, Loading03Icon, PackageIcon } from "hugeicons-react";
 import { cartApi } from "../api/cartApi";
+import { createBulkOrders } from "../api/orderApi";
 
 export default function Cart() {
     const [cartItems, setCartItems] = useState([]);
@@ -14,6 +15,8 @@ export default function Cart() {
     const [error, setError] = useState(null);
     const [updatingId, setUpdatingId] = useState(null);
     const [removingId, setRemovingId] = useState(null);
+    const [ordering, setOrdering] = useState(false);
+    const [orderSuccess, setOrderSuccess] = useState(false);
 
     const { currentUser } = useAuthStore();
     const navigate = useNavigate();
@@ -75,6 +78,34 @@ export default function Cart() {
         }
     };
 
+    // Place orders for all items in cart (bulk)
+    const placeOrders = async () => {
+        if (cartItems.length === 0) return;
+
+        try {
+            setOrdering(true);
+            setError(null);
+            setOrderSuccess(false);
+
+            // Create bulk orders in one API call
+            const items = cartItems.map((item) => ({
+                productId: item.productId,
+                quantity: item.quantity,
+            }));
+
+            await createBulkOrders(items);
+
+            // Clear cart after successful orders
+            await cartApi.clearCart();
+            setCartItems([]);
+            setOrderSuccess(true);
+        } catch (err) {
+            setError(err.message || "Failed to place orders");
+        } finally {
+            setOrdering(false);
+        }
+    };
+
     const subtotal = cartItems.reduce(
         (sum, item) => sum + item.price * item.quantity,
         0
@@ -122,6 +153,18 @@ export default function Cart() {
                             >
                                 Try again
                             </button>
+                        </div>
+                    )}
+
+                    {orderSuccess && (
+                        <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-lg mb-6 flex items-center justify-between">
+                            <span>🎉 Orders placed successfully! Waiting for seller approval.</span>
+                            <Link
+                                to="/my-orders"
+                                className="text-emerald-600 font-semibold hover:underline"
+                            >
+                                Track Orders →
+                            </Link>
                         </div>
                     )}
 
@@ -217,9 +260,24 @@ export default function Cart() {
                                             <span className="text-emerald-600">₦{total.toLocaleString()}</span>
                                         </div>
                                     </div>
-                                    <Link to="/checkout">
-                                        <Button text="Proceed to Checkout" className="w-full py-3" />
-                                    </Link>
+                                    {/*  */}
+                                    <button
+                                        onClick={placeOrders}
+                                        disabled={ordering || cartItems.length === 0}
+                                        className="w-full py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                                    >
+                                        {ordering ? (
+                                            <>
+                                                <Loading03Icon size={20} className="animate-spin" />
+                                                Placing Orders...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <PackageIcon size={20} />
+                                                Place Order
+                                            </>
+                                        )}
+                                    </button>
                                     <Link
                                         to="/"
                                         className="block text-center text-gray-500 hover:text-gray-700 mt-4 text-sm"
