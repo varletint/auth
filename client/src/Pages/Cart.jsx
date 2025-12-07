@@ -1,43 +1,78 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useAuthStore from "../store/useAuthStore";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import Button from "../Components/Button";
-import { ShoppingCart01Icon, Delete02Icon, Add01Icon, Remove01Icon } from "hugeicons-react";
+import { ShoppingCart01Icon, Delete02Icon, Add01Icon, Remove01Icon, Loading03Icon } from "hugeicons-react";
+import { cartApi } from "../api/cartApi";
 
 export default function Cart() {
-    // Mock cart data - replace with actual cart state/API
-    const [cartItems, setCartItems] = useState([
-        {
-            id: 1,
-            name: "iPhone 15 Pro Max",
-            price: 1899000,
-            quantity: 1,
-            image: "https://via.placeholder.com/100x100?text=iPhone",
-        },
-        {
-            id: 2,
-            name: "Samsung Galaxy S24 Ultra",
-            price: 1450000,
-            quantity: 2,
-            image: "https://via.placeholder.com/100x100?text=Samsung",
-        },
-    ]);
-    const [loading, setLoading] = useState(false);
+    const [cartItems, setCartItems] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [updatingId, setUpdatingId] = useState(null);
+    const [removingId, setRemovingId] = useState(null);
 
-    const updateQuantity = (id, delta) => {
-        setCartItems((items) =>
-            items.map((item) =>
-                item.id === id
-                    ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-                    : item
-            )
-        );
+    const { currentUser } = useAuthStore();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Redirect if not logged in
+        if (!currentUser) {
+            navigate("/login", { state: { from: "/cart" } });
+            return;
+        }
+
+        fetchCart();
+    }, [currentUser, navigate]);
+
+    const fetchCart = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await cartApi.getCart();
+            setCartItems(response.items || []);
+        } catch (err) {
+            setError(err.message || "Failed to load cart");
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const removeItem = (id) => {
-        setCartItems((items) => items.filter((item) => item.id !== id));
+    const updateQuantity = async (productId, delta) => {
+        const item = cartItems.find((i) => i.productId === productId);
+        if (!item) return;
+
+        const newQuantity = item.quantity + delta;
+        if (newQuantity < 1) return;
+
+        try {
+            setUpdatingId(productId);
+            await cartApi.updateQuantity(productId, newQuantity);
+            setCartItems((items) =>
+                items.map((i) =>
+                    i.productId === productId ? { ...i, quantity: newQuantity } : i
+                )
+            );
+        } catch (err) {
+            setError(err.message || "Failed to update quantity");
+        } finally {
+            setUpdatingId(null);
+        }
+    };
+
+    const removeItem = async (productId) => {
+        try {
+            setRemovingId(productId);
+            await cartApi.removeFromCart(productId);
+            setCartItems((items) => items.filter((item) => item.productId !== productId));
+        } catch (err) {
+            setError(err.message || "Failed to remove item");
+        } finally {
+            setRemovingId(null);
+        }
     };
 
     const subtotal = cartItems.reduce(
@@ -46,6 +81,18 @@ export default function Cart() {
     );
     const shipping = subtotal > 100000 ? 0 : 5000;
     const total = subtotal + shipping;
+
+    if (loading) {
+        return (
+            <>
+                <Header />
+                <div className="min-h-screen bg-gray-50 py-8 mt-10 flex items-center justify-center">
+                    <Loading03Icon size={48} className="text-emerald-600 animate-spin" />
+                </div>
+                <Footer />
+            </>
+        );
+    }
 
     return (
         <>
@@ -66,6 +113,18 @@ export default function Cart() {
                         </span>
                     </div>
 
+                    {error && (
+                        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+                            {error}
+                            <button
+                                onClick={fetchCart}
+                                className="ml-4 text-red-600 font-semibold hover:underline py-2"
+                            >
+                                Try again
+                            </button>
+                        </div>
+                    )}
+
                     {cartItems.length === 0 ? (
                         <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
                             <ShoppingCart01Icon size={80} className="text-gray-300 mx-auto mb-4" />
@@ -81,38 +140,55 @@ export default function Cart() {
                             <div className="lg:col-span-2 space-y-4">
                                 {cartItems.map((item) => (
                                     <div
-                                        key={item.id}
+                                        key={item.productId}
                                         className="bg-white rounded-xl shadow-sm p-4 flex gap-4 hover:shadow-md transition-shadow"
                                     >
-                                        <img
-                                            src={item.image}
-                                            alt={item.name}
-                                            className="w-24 h-24 object-cover rounded-lg bg-gray-100"
-                                        />
+                                        <Link to={`/product/${item.productId}`}>
+                                            <img
+                                                src={item.image || "https://via.placeholder.com/100x100?text=No+Image"}
+                                                alt={item.name}
+                                                className="w-24 h-24 object-cover rounded-lg bg-gray-100"
+                                            />
+                                        </Link>
                                         <div className="flex-1">
-                                            <h3 className="font-semibold text-gray-900 mb-1">{item.name}</h3>
+                                            <Link to={`/product/${item.productId}`}>
+                                                <h3 className="font-semibold text-gray-900 mb-1 hover:text-emerald-600 transition-colors">{item.name}</h3>
+                                            </Link>
                                             <p className="text-emerald-600 font-bold text-lg">
-                                                ₦{item.price.toLocaleString()}
+                                                ₦{item.price?.toLocaleString()}
                                             </p>
                                         </div>
                                         <div className="flex flex-col items-end justify-between">
                                             <button
-                                                onClick={() => removeItem(item.id)}
-                                                className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg transition-colors"
+                                                onClick={() => removeItem(item.productId)}
+                                                disabled={removingId === item.productId}
+                                                className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
                                             >
-                                                <Delete02Icon size={20} />
+                                                {removingId === item.productId ? (
+                                                    <Loading03Icon size={20} className="animate-spin" />
+                                                ) : (
+                                                    <Delete02Icon size={20} />
+                                                )}
                                             </button>
                                             <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
                                                 <button
-                                                    onClick={() => updateQuantity(item.id, -1)}
-                                                    className="p-2 hover:bg-gray-200 rounded transition-colors"
+                                                    onClick={() => updateQuantity(item.productId, -1)}
+                                                    disabled={updatingId === item.productId || item.quantity <= 1}
+                                                    className="p-2 hover:bg-gray-200 rounded transition-colors disabled:opacity-50"
                                                 >
                                                     <Remove01Icon size={18} />
                                                 </button>
-                                                <span className="w-8 text-center font-semibold">{item.quantity}</span>
+                                                <span className="w-8 text-center font-semibold">
+                                                    {updatingId === item.productId ? (
+                                                        <Loading03Icon size={16} className="animate-spin mx-auto" />
+                                                    ) : (
+                                                        item.quantity
+                                                    )}
+                                                </span>
                                                 <button
-                                                    onClick={() => updateQuantity(item.id, 1)}
-                                                    className="p-2 hover:bg-gray-200 rounded transition-colors"
+                                                    onClick={() => updateQuantity(item.productId, 1)}
+                                                    disabled={updatingId === item.productId}
+                                                    className="p-2 hover:bg-gray-200 rounded transition-colors disabled:opacity-50"
                                                 >
                                                     <Add01Icon size={18} />
                                                 </button>

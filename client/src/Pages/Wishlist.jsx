@@ -7,6 +7,7 @@ import Footer from "../Components/Footer";
 import Button from "../Components/Button";
 import { FavouriteIcon, ShoppingCart01Icon, Delete02Icon, Loading03Icon } from "hugeicons-react";
 import { wishlistApi } from "../api/wishlistApi";
+import { cartApi } from "../api/cartApi";
 
 export default function Wishlist() {
     const [wishlistItems, setWishlistItems] = useState([]);
@@ -52,10 +53,17 @@ export default function Wishlist() {
         }
     };
 
-    const moveToCart = (productId) => {
-        // TODO: Integrate with cart functionality when available
-        console.log("Moving to cart:", productId);
-        removeItem(productId);
+    const moveToCart = async (productId) => {
+        try {
+            setRemovingId(productId); // Reuse removing state for loading UI
+            await cartApi.addToCart(productId, 1);
+            await wishlistApi.removeFromWishlist(productId);
+            setWishlistItems((items) => items.filter((item) => item.productId !== productId));
+        } catch (err) {
+            setError(err.message || "Failed to move item to cart");
+        } finally {
+            setRemovingId(null);
+        }
     };
 
     if (loading) {
