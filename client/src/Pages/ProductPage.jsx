@@ -323,10 +323,10 @@ export default function ProductPage() {
                                 <PackageIcon size={20} className="text-gray-400" />
                                 <span className="text-sm text-gray-600">Stock Available: {product.stock} units</span>
                             </div>
-                            <div className="flex gap-2.5 items-center">
+                            <div className="flex flex-col gap-2.5 ">
                                 {/* Quantity Selector */}
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">Quantity</label>
+                                    <label className="text-sm font-medium text-gray-700 mb-2">Quantity</label>
                                     <div className="flex items-center gap-3">
                                         <button
                                             onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -354,7 +354,7 @@ export default function ProductPage() {
                                 </div>
 
                                 {/* Action Buttons */}
-                                <div className="flex gap-3">
+                                <div className="flex gap-2">
                                     <Button
                                         text={
                                             <span className="flex items-center gap-2">
@@ -402,18 +402,18 @@ export default function ProductPage() {
                     {/* Seller Information */}
                     {seller && (
                         <div className="bg-white rounded-2xl shadow-sm border 
-                    border-gray-200 p-2 py-2.5 mb-3 w-1/2">
+                    border-gray-200 px-3 py-2.5 mb-3 w-fit">
                             {/* <h2 className="text- font-bold text-gray-900 mb-6">Seller Information</h2> */}
                             <div className="flex flex-co sm:flex-row items-start gap-6">
                                 <Link to={`/seller/${seller._id}`}
                                     className="w-16 h-16 rounded-full bg-blue-600/10 flex items-center justify-center 
-                            text-2xl font-bold text-blue-500 flex-shrink-0 uppercase">
+                            text-2xl font-bold text-blue-500 flex-shrink-0 uppercase text-nowrap">
                                     {seller.username?.[0] || seller.fullname?.[0] || "S"}
                                 </Link>
                                 <div className="flex-1 w-full sm:w-auto">
-                                    <h3 className="text-sm font-semibold text-gray-900">{seller.fullName || seller.username || "Seller"}</h3>
+                                    <h3 className="text-sm font-semibold text-gray-900 text-nowrap">{seller.fullName || seller.username || "Seller"}</h3>
                                     {seller.businessInfo?.businessName && (
-                                        <p className="text-sm text-gray-600 mb-2">{seller.businessInfo.businessName}</p>
+                                        <p className="text-sm text-gray-600 mb-2 text-nowrap">{seller.businessInfo.businessName}</p>
                                     )}
                                     <div className="flex flex-wrap gap-4 mt-3">
                                         {seller.email && (
