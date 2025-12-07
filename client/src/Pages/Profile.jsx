@@ -17,7 +17,9 @@ import {
   Menu01Icon,
   MultiplicationSignIcon,
   Loading03Icon,
-  PackageIcon
+  PackageIcon,
+  // TrendingUp01Icon,
+  ArrowUp01Icon
 } from "hugeicons-react";
 
 export default function Profile() {
@@ -76,6 +78,10 @@ export default function Profile() {
     isSeller
       ? { id: "orders", label: "Manage Orders", icon: <PackageIcon size={20} />, path: "/orders" }
       : { id: "my-orders", label: "My Orders", icon: <PackageIcon size={20} />, path: "/my-orders" },
+    // Sales History for sellers, Purchase History for buyers
+    isSeller
+      ? { id: "sales", label: "Sales History", icon: <ArrowUp01Icon size={20} />, path: "/sales-history" }
+      : { id: "purchases", label: "Purchase History", icon: <ShoppingBag02Icon size={20} />, path: "/purchase-history" },
     { id: "settings", label: "Settings", icon: <Settings02Icon size={20} />, path: "/settings" },
   ];
 

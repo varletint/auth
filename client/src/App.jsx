@@ -32,6 +32,8 @@ import NotFound from "./Pages/NotFound";
 import MyProducts from "./Pages/MyProducts";
 import EditProduct from "./Pages/EditProduct";
 import MyOrders from "./Pages/MyOrders";
+import SalesHistory from "./Pages/SalesHistory";
+import PurchaseHistory from "./Pages/PurchaseHistory";
 import BecomeSeller from "./Pages/BecomeSeller";
 import AdminDashboard from "./Pages/AdminDashboard";
 import AdminUsers from "./Pages/AdminUsers";
@@ -143,6 +145,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <MyOrders />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/sales-history'
+            element={
+              <ProtectedRoute>
+                <SalesHistory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/purchase-history'
+            element={
+              <ProtectedRoute>
+                <PurchaseHistory />
               </ProtectedRoute>
             }
           />
