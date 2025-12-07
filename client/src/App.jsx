@@ -37,6 +37,7 @@ import PurchaseHistory from "./Pages/PurchaseHistory";
 import BecomeSeller from "./Pages/BecomeSeller";
 import AdminDashboard from "./Pages/AdminDashboard";
 import AdminUsers from "./Pages/AdminUsers";
+import ScrollToUp from "./Components/ScrollToUp";
 
 function App() {
   return (
@@ -193,6 +194,7 @@ function App() {
           <Route path='*' element={<NotFound />} />
         </Routes>
         {/* <Footer /> */}
+        <ScrollToUp />
       </BrowserRouter>
     </>
   );
