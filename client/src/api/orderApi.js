@@ -65,3 +65,12 @@ export const getOrderById = async (orderId) => {
         method: "GET",
     });
 };
+
+/**
+ * Cancel order (Buyer only - pending orders)
+ */
+export const cancelOrder = async (orderId) => {
+    return apiCall(`/orders/${orderId}/cancel`, {
+        method: "PATCH",
+    });
+};

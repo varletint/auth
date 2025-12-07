@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
-import { getMyOrders } from "../api/orderApi";
+import { getMyOrders, cancelOrder } from "../api/orderApi";
 import {
     PackageIcon,
     CheckmarkCircle02Icon,
@@ -20,6 +20,7 @@ export default function MyOrders() {
     const [statusFilter, setStatusFilter] = useState("");
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [cancellingId, setCancellingId] = useState(null);
 
     const statusConfig = {
         pending: {
@@ -39,6 +40,12 @@ export default function MyOrders() {
             color: "text-red-600 bg-red-100",
             label: "Declined",
             description: "Order was declined by seller",
+        },
+        cancelled: {
+            icon: Cancel01Icon,
+            color: "text-gray-600 bg-gray-100",
+            label: "Cancelled",
+            description: "Order was cancelled by you",
         },
     };
 
@@ -63,6 +70,22 @@ export default function MyOrders() {
         fetchOrders();
     }, [statusFilter, page]);
 
+    const handleCancelOrder = async (orderId) => {
+        if (!window.confirm("Are you sure you want to cancel this order?")) return;
+        try {
+            setCancellingId(orderId);
+            const result = await cancelOrder(orderId);
+            if (result.success) {
+                // Refresh orders list
+                fetchOrders();
+            }
+        } catch (err) {
+            alert(err.message || "Failed to cancel order");
+        } finally {
+            setCancellingId(null);
+        }
+    };
+
     return (
         <>
             <Helmet>
@@ -71,12 +94,12 @@ export default function MyOrders() {
             </Helmet>
 
             <Header />
-            <div className="min-h-screen bg-gray-50 py-8 mt-10">
+            <div className="min-h-screen bg-gray-50 py-8 mt">
                 <div className="container mx-auto px-4 max-w-4xl">
                     <div className="flex items-center justify-between gap-3 mb-8 flex-wrap">
                         <div className="flex items-center gap-3">
-                            <PackageIcon size={32} className="text-emerald-600" />
-                            <h1 className="text-3xl font-bold text-gray-900">My Orders</h1>
+                            <PackageIcon size={25} className="text-emerald-600" />
+                            <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900">My Orders</h1>
                         </div>
 
                         {/* Status Filter */}
@@ -92,6 +115,7 @@ export default function MyOrders() {
                             <option value="pending">Pending</option>
                             <option value="approved">Approved</option>
                             <option value="declined">Declined</option>
+                            <option value="cancelled">Cancelled</option>
                         </select>
                     </div>
 
@@ -158,7 +182,7 @@ export default function MyOrders() {
                                             <div className="flex-1">
                                                 <Link
                                                     to={`/product/${order.product?.slug || order.product?.id}`}
-                                                    className="font-medium text-gray-900 hover:text-emerald-600 block"
+                                                    className="font-medium text-gray-900 hover:text-emerald-600 block text-nowrap"
                                                 >
                                                     {order.product?.name || "Product Unavailable"}
                                                 </Link>
@@ -187,10 +211,12 @@ export default function MyOrders() {
 
                                         {/* Status Description */}
                                         <div className={`mt-4 p-3 rounded-lg ${order.status === "pending" ? "bg-yellow-50" :
-                                                order.status === "approved" ? "bg-emerald-50" : "bg-red-50"
+                                            order.status === "approved" ? "bg-emerald-50" :
+                                                order.status === "cancelled" ? "bg-gray-50" : "bg-red-50"
                                             }`}>
                                             <p className={`text-sm ${order.status === "pending" ? "text-yellow-700" :
-                                                    order.status === "approved" ? "text-emerald-700" : "text-red-700"
+                                                order.status === "approved" ? "text-emerald-700" :
+                                                    order.status === "cancelled" ? "text-gray-700" : "text-red-700"
                                                 }`}>
                                                 {status.description}
                                             </p>
@@ -200,6 +226,29 @@ export default function MyOrders() {
                                                 </p>
                                             )}
                                         </div>
+
+                                        {/* Cancel Button - only for pending orders */}
+                                        {order.status === "pending" && (
+                                            <div className="mt-4">
+                                                <button
+                                                    onClick={() => handleCancelOrder(order.id)}
+                                                    disabled={cancellingId === order.id}
+                                                    className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                                >
+                                                    {cancellingId === order.id ? (
+                                                        <>
+                                                            <Loading03Icon size={16} className="animate-spin" />
+                                                            Cancelling...
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Cancel01Icon size={16} />
+                                                            Cancel Order
+                                                        </>
+                                                    )}
+                                                </button>
+                                            </div>
+                                        )}
 
                                         {order.buyerNotes && (
                                             <p className="mt-3 text-sm text-gray-500">

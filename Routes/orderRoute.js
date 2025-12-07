@@ -6,6 +6,7 @@ import {
     getSellerOrders,
     updateOrderStatus,
     getOrderById,
+    cancelOrder,
 } from "../controller/orderController.js";
 import { verifyToken } from "../middleware/verifyUser.js";
 
@@ -31,5 +32,8 @@ router.get("/:orderId", getOrderById);
 
 // PATCH /api/orders/:orderId/status - Update order status (seller only)
 router.patch("/:orderId/status", updateOrderStatus);
+
+// PATCH /api/orders/:orderId/cancel - Cancel order (buyer only)
+router.patch("/:orderId/cancel", cancelOrder);
 
 export default router;

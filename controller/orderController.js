@@ -457,3 +457,55 @@ export const getOrderById = async (req, res, next) => {
         next(error);
     }
 };
+
+/**
+ * Cancel order (Buyer only - only pending orders)
+ * PATCH /api/orders/:orderId/cancel
+ */
+export const cancelOrder = async (req, res, next) => {
+    try {
+        const { orderId } = req.params;
+        const buyerId = req.user.id;
+
+        // Find order
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return next(errorHandler(404, "Order not found"));
+        }
+
+        // Verify buyer owns this order
+        if (order.buyerId.toString() !== buyerId) {
+            return next(errorHandler(403, "You can only cancel your own orders"));
+        }
+
+        // Check if order can still be cancelled (only pending orders)
+        if (order.status !== "pending") {
+            return next(errorHandler(400, `Cannot cancel order that has already been ${order.status}`));
+        }
+
+        // Update order status to cancelled
+        order.status = "cancelled";
+        order.statusUpdatedAt = new Date();
+
+        await order.save();
+
+        // Restore stock
+        const product = await Product.findById(order.productId);
+        if (product && product.trackInventory) {
+            product.stock += order.quantity;
+            await product.save();
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Order cancelled successfully",
+            order: {
+                id: order._id,
+                status: order.status,
+                statusUpdatedAt: order.statusUpdatedAt,
+            },
+        });
+    } catch (error) {
+        next(error);
+    }
+};
