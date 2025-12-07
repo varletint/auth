@@ -19,6 +19,7 @@ import {
     FavouriteIcon,
     Loading03Icon,
     ViewIcon,
+    ShoppingCartAdd01Icon,
 } from "hugeicons-react";
 import Footer from "../Components/Footer";
 
@@ -209,7 +210,7 @@ export default function ProductPage() {
 
                 {/* Header */}
                 <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5">
                         <div className="flex items-center justify-between">
                             <button
                                 onClick={() => navigate(-1)}
@@ -218,6 +219,9 @@ export default function ProductPage() {
                                 <ArrowLeft01Icon size={20} />
                                 <span className="font-medium">Back</span>
                             </button>
+                            <Link to="/cart" className="">
+                                <ShoppingCart01Icon size={20} className="text-emerald-600 " />
+                            </Link>
                             <button
                                 onClick={handleShare}
                                 className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors py-2"
@@ -358,7 +362,7 @@ export default function ProductPage() {
                                     <Button
                                         text={
                                             <span className="flex items-center gap-2">
-                                                <ShoppingCart01Icon size={20} />
+                                                <ShoppingCartAdd01Icon size={20} />
                                                 {/* Add to Cart */}
                                             </span>
                                         }
