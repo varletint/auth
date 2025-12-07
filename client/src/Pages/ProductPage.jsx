@@ -107,6 +107,8 @@ export default function ProductPage() {
         }
     };
 
+    const [addingToCart, setAddingToCart] = useState(false);
+
     const handleAddToCart = async () => {
         if (!product) return;
 
@@ -115,19 +117,38 @@ export default function ProductPage() {
             return;
         }
 
-        // Check if product is in stock
-        if (product.stock !== undefined && product.stock < quantity) {
-            alert(product.stock === 0
-                ? "This product is out of stock"
-                : `Only ${product.stock} items available in stock`);
-            return;
-        }
-
         try {
+            setAddingToCart(true);
+
+            // Re-fetch product to get the latest stock
+            const latestProduct = await productApi.getProduct(id);
+
+            if (!latestProduct) {
+                alert("Product not found");
+                return;
+            }
+
+            // Update local product state with latest data
+            setProduct(latestProduct);
+
+            // Check if product is in stock with latest data
+            if (latestProduct.stock !== undefined && latestProduct.stock < quantity) {
+                alert(latestProduct.stock === 0
+                    ? "This product is out of stock"
+                    : `Only ${latestProduct.stock} items available in stock. Please reduce your quantity.`);
+                // Adjust quantity if it exceeds new stock
+                if (quantity > latestProduct.stock) {
+                    setQuantity(Math.max(1, latestProduct.stock));
+                }
+                return;
+            }
+
             await cartApi.addToCart(product._id, quantity);
             alert(`${quantity} ${product.name}(s) added to cart!`);
         } catch (err) {
             alert(err.message || "Failed to add to cart");
+        } finally {
+            setAddingToCart(false);
         }
     };
 
@@ -370,15 +391,18 @@ export default function ProductPage() {
                                     <Button
                                         text={
                                             <span className="flex items-center gap-2">
-                                                <ShoppingCartAdd01Icon size={20} />
-                                                {/* Add to Cart */}
+                                                {addingToCart ? (
+                                                    <Loading03Icon size={20} className="animate-spin" />
+                                                ) : (
+                                                    <ShoppingCartAdd01Icon size={20} />
+                                                )}
                                             </span>
                                         }
                                         onClick={handleAddToCart}
                                         className="flex bg-blue-600 
                                     hover:bg-blue-600-dark 
                                     justify-center  w-16 h-10"
-                                        disabled={product.stock === 0}
+                                        disabled={product.stock === 0 || addingToCart}
                                     />
                                     <Button
                                         text={

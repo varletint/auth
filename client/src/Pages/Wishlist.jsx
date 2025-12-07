@@ -86,11 +86,11 @@ export default function Wishlist() {
             </Helmet>
 
             <Header />
-            <div className="min-h-screen bg-gray-50 py-8 mt-10">
+            <div className="min-h-screen bg-gray-50 py-8">
                 <div className="container mx-auto px-4 max-w-6xl">
                     <div className="flex items-center gap-3 mb-8">
-                        <FavouriteIcon size={32} className="text-red-500" />
-                        <h1 className="text-3xl font-bold text-gray-900">My Wishlist</h1>
+                        <FavouriteIcon size={25} className="text-red-500" />
+                        <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">My Wishlist</h1>
                         <span className="bg-red-100 text-red-700 text-sm font-semibold px-3 py-1 rounded-full">
                             {wishlistItems.length} items
                         </span>
