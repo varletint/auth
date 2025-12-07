@@ -13,6 +13,7 @@ import UserPage from "./Pages/UserPage";
 import ForgotPassword from "./Pages/ForgotPassword";
 import AddProduct from "./Pages/AddProduct";
 import ProtectedRoute from "./Components/ProtectedRoute";
+import SellerProtectedRoute from "./Components/SellerProtectedRoute";
 import File from "./Pages/File";
 
 // New Pages
@@ -43,6 +44,7 @@ function App() {
   return (
     <>
       <BrowserRouter>
+        <ScrollToUp />
         {/* <Header /> */}
         <Routes>
           <Route path='/' element={<Home />} />
@@ -71,9 +73,9 @@ function App() {
           <Route
             path='/add-product'
             element={
-              <ProtectedRoute>
+              <SellerProtectedRoute>
                 <AddProduct />
-              </ProtectedRoute>
+              </SellerProtectedRoute>
             }
           />
 
@@ -128,17 +130,17 @@ function App() {
           <Route
             path='/my-products'
             element={
-              <ProtectedRoute>
+              <SellerProtectedRoute>
                 <MyProducts />
-              </ProtectedRoute>
+              </SellerProtectedRoute>
             }
           />
           <Route
             path='/edit-product/:id'
             element={
-              <ProtectedRoute>
+              <SellerProtectedRoute>
                 <EditProduct />
-              </ProtectedRoute>
+              </SellerProtectedRoute>
             }
           />
           <Route
@@ -194,7 +196,7 @@ function App() {
           <Route path='*' element={<NotFound />} />
         </Routes>
         {/* <Footer /> */}
-        <ScrollToUp />
+        {/* <ScrollToUp /> */}
       </BrowserRouter>
     </>
   );

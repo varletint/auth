@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { ArrowUp01Icon } from "hugeicons-react";
+import { useLocation } from "react-router-dom";
 
 export default function ScrollToUp() {
     const [isVisible, setIsVisible] = useState(false);
+    const { pathname } = useLocation();
 
     // Show button when page is scrolled down
     useEffect(() => {
@@ -20,6 +22,14 @@ export default function ScrollToUp() {
             window.removeEventListener("scroll", toggleVisibility);
         };
     }, []);
+
+    useEffect(() => {
+        if (!pathname) return;
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+    }, [pathname]);
 
     // Scroll to top smoothly
     const scrollToTop = () => {
