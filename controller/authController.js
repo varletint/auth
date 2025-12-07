@@ -6,7 +6,7 @@ import { validateSigninInput, validateSignupInput } from "../Utilis/validation.j
 import jwt from "jsonwebtoken";
 
 export const signup = async (req, res, next) => {
-  const { username, email, password, phone_no } = req.body;
+  const { username, email, password, phone_no, appType } = req.body;
 
   const validationError = validateSignupInput(req.body);
   if (validationError) {
@@ -28,6 +28,7 @@ export const signup = async (req, res, next) => {
       phone_no,
       role: ["buyer"],
       accountStatus: "active",
+      appType: appType || "marketplace", // Default to marketplace if not provided
     });
 
     await newUser.save();

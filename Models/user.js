@@ -52,6 +52,16 @@ const userSchema = new mongoose.Schema(
       default: ["buyer"],
     },
 
+    // ==================== App Type Selection ====================
+    appType: {
+      type: String,
+      enum: {
+        values: ["marketplace", "business_management"],
+        message: "{VALUE} is not a valid app type"
+      },
+      default: "marketplace",
+    },
+
     // ==================== Account Status & Security ====================
     accountStatus: {
       type: String,

@@ -14,6 +14,7 @@ import ForgotPassword from "./Pages/ForgotPassword";
 import AddProduct from "./Pages/AddProduct";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import SellerProtectedRoute from "./Components/SellerProtectedRoute";
+import BizProtectedRoute from "./Components/BizProtectedRoute";
 import File from "./Pages/File";
 
 // New Pages
@@ -39,6 +40,7 @@ import BecomeSeller from "./Pages/BecomeSeller";
 import AdminDashboard from "./Pages/AdminDashboard";
 import AdminUsers from "./Pages/AdminUsers";
 import ScrollToUp from "./Components/ScrollToUp";
+import BizDashboard from "./Pages/BizDashboard";
 
 function App() {
   return (
@@ -192,6 +194,16 @@ function App() {
             }
           />
 
+          {/* Business Management Routes */}
+          <Route
+            path='/biz-dashboard'
+            element={
+              <BizProtectedRoute>
+                <BizDashboard />
+              </BizProtectedRoute>
+            }
+          />
+
           {/* 404 Fallback */}
           <Route path='*' element={<NotFound />} />
         </Routes>
@@ -203,3 +215,4 @@ function App() {
 }
 
 export default App;
+
