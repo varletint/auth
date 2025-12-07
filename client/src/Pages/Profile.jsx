@@ -16,7 +16,8 @@ import {
   PlusSignIcon,
   Menu01Icon,
   MultiplicationSignIcon,
-  Loading03Icon
+  Loading03Icon,
+  PackageIcon
 } from "hugeicons-react";
 
 export default function Profile() {
@@ -63,11 +64,18 @@ export default function Profile() {
     }
   };
 
+  // Check if user is a seller
+  const isSeller = currentUser?.role?.includes("seller");
+
   const sidebarItems = [
     { id: "overview", label: "Overview", icon: <GridViewIcon size={20} />, path: null },
     { id: "profile", label: "Edit Profile", icon: <UserIcon size={20} />, path: "/edit-profile" },
-    { id: "products", label: "My Products", icon: <ShoppingBag02Icon size={20} />, path: "/my-products" },
-    { id: "orders", label: "Orders", icon: <ShoppingBag02Icon size={20} />, path: "/orders" },
+    // Show My Products only for sellers
+    ...(isSeller ? [{ id: "products", label: "My Products", icon: <ShoppingBag02Icon size={20} />, path: "/my-products" }] : []),
+    // Sellers see "Manage Orders", buyers see "My Orders"
+    isSeller
+      ? { id: "orders", label: "Manage Orders", icon: <PackageIcon size={20} />, path: "/orders" }
+      : { id: "my-orders", label: "My Orders", icon: <PackageIcon size={20} />, path: "/my-orders" },
     { id: "settings", label: "Settings", icon: <Settings02Icon size={20} />, path: "/settings" },
   ];
 

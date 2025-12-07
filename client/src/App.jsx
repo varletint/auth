@@ -31,6 +31,7 @@ import Privacy from "./Pages/Privacy";
 import NotFound from "./Pages/NotFound";
 import MyProducts from "./Pages/MyProducts";
 import EditProduct from "./Pages/EditProduct";
+import MyOrders from "./Pages/MyOrders";
 import BecomeSeller from "./Pages/BecomeSeller";
 import AdminDashboard from "./Pages/AdminDashboard";
 import AdminUsers from "./Pages/AdminUsers";
@@ -134,6 +135,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <EditProduct />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/my-orders'
+            element={
+              <ProtectedRoute>
+                <MyOrders />
               </ProtectedRoute>
             }
           />

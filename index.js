@@ -18,6 +18,7 @@ import wishlistRoute from "./Routes/wishlistRoute.js";
 import sellerApplicationRoute from "./Routes/sellerApplicationRoute.js";
 import adminRoute from "./Routes/adminRoute.js";
 import cartRoute from "./Routes/cartRoute.js";
+import orderRoute from "./Routes/orderRoute.js";
 
 const app = e();
 
@@ -83,6 +84,7 @@ app.use("/api/wishlist", wishlistRoute);
 app.use("/api/seller-application", sellerApplicationRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/cart", cartRoute);
+app.use("/api/orders", orderRoute);
 
 // app.use("/", e.json(), testing);
 

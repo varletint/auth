@@ -3,26 +3,21 @@ import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
-import useAuthStore from "../store/useAuthStore";
-import { getSellerOrders, updateOrderStatus } from "../api/orderApi";
+import { getMyOrders } from "../api/orderApi";
 import {
     PackageIcon,
     CheckmarkCircle02Icon,
     Clock01Icon,
     Cancel01Icon,
     Loading03Icon,
-    UserIcon,
-    Call02Icon,
-    Mail01Icon,
+    Store01Icon,
 } from "hugeicons-react";
 
-export default function Orders() {
-    const { currentUser } = useAuthStore();
+export default function MyOrders() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [statusFilter, setStatusFilter] = useState("");
-    const [updatingOrder, setUpdatingOrder] = useState(null);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
@@ -31,25 +26,28 @@ export default function Orders() {
             icon: Clock01Icon,
             color: "text-yellow-600 bg-yellow-100",
             label: "Pending",
+            description: "Waiting for seller approval",
         },
         approved: {
             icon: CheckmarkCircle02Icon,
             color: "text-emerald-600 bg-emerald-100",
             label: "Approved",
+            description: "Order has been approved by seller",
         },
         declined: {
             icon: Cancel01Icon,
             color: "text-red-600 bg-red-100",
             label: "Declined",
+            description: "Order was declined by seller",
         },
     };
 
-    // Fetch seller orders
+    // Fetch buyer orders
     const fetchOrders = async () => {
         try {
             setLoading(true);
             setError(null);
-            const data = await getSellerOrders(statusFilter || null, page, 10);
+            const data = await getMyOrders(statusFilter || null, page, 10);
             if (data.success) {
                 setOrders(data.orders);
                 setTotalPages(data.totalPages);
@@ -65,73 +63,20 @@ export default function Orders() {
         fetchOrders();
     }, [statusFilter, page]);
 
-    // Handle order status update
-    const handleStatusUpdate = async (orderId, newStatus) => {
-        try {
-            setUpdatingOrder(orderId);
-            const data = await updateOrderStatus(orderId, newStatus);
-            if (data.success) {
-                // Update local state
-                setOrders((prev) =>
-                    prev.map((order) =>
-                        order.id === orderId
-                            ? { ...order, status: newStatus, statusUpdatedAt: new Date().toISOString() }
-                            : order
-                    )
-                );
-            }
-        } catch (err) {
-            alert(err.message || "Failed to update order");
-        } finally {
-            setUpdatingOrder(null);
-        }
-    };
-
-    // Check if user is a seller
-    const isSeller = currentUser?.role?.includes("seller");
-
-    if (!isSeller) {
-        return (
-            <>
-                <Helmet>
-                    <title>Orders | Lookups</title>
-                </Helmet>
-                <Header />
-                <div className="min-h-screen bg-gray-50 py-8 mt-10">
-                    <div className="container mx-auto px-4 max-w-4xl">
-                        <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
-                            <PackageIcon size={80} className="text-gray-300 mx-auto mb-4" />
-                            <h2 className="text-2xl font-bold text-gray-700 mb-2">Seller Access Only</h2>
-                            <p className="text-gray-500 mb-6">
-                                This page is for sellers to manage incoming orders.
-                            </p>
-                            <Link to="/my-orders">
-                                <button className="bg-emerald-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-emerald-700 transition-colors">
-                                    View My Orders
-                                </button>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-                <Footer />
-            </>
-        );
-    }
-
     return (
         <>
             <Helmet>
-                <title>Manage Orders | Lookups</title>
-                <meta name="description" content="Manage orders for your products on Lookups." />
+                <title>My Orders | Lookups</title>
+                <meta name="description" content="Track and manage your orders on Lookups." />
             </Helmet>
 
             <Header />
-            <div className="min-h-screen bg-gray-50 py-8 mt-">
+            <div className="min-h-screen bg-gray-50 py-8 mt-10">
                 <div className="container mx-auto px-4 max-w-4xl">
                     <div className="flex items-center justify-between gap-3 mb-8 flex-wrap">
                         <div className="flex items-center gap-3">
-                            <PackageIcon size={25} className="text-emerald-600" />
-                            <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">Incoming Orders</h1>
+                            <PackageIcon size={32} className="text-emerald-600" />
+                            <h1 className="text-3xl font-bold text-gray-900">My Orders</h1>
                         </div>
 
                         {/* Status Filter */}
@@ -168,9 +113,12 @@ export default function Orders() {
                         <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
                             <PackageIcon size={80} className="text-gray-300 mx-auto mb-4" />
                             <h2 className="text-2xl font-bold text-gray-700 mb-2">No orders yet</h2>
-                            <p className="text-gray-500 mb-6">
-                                Orders for your products will appear here.
-                            </p>
+                            <p className="text-gray-500 mb-6">Start shopping to see your orders here.</p>
+                            <Link to="/">
+                                <button className="bg-emerald-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-emerald-700 transition-colors">
+                                    Start Shopping
+                                </button>
+                            </Link>
                         </div>
                     ) : (
                         <div className="space-y-4">
@@ -186,12 +134,11 @@ export default function Orders() {
                                         <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
                                             <div>
                                                 <p className="text-sm text-gray-500">
+                                                    Ordered on{" "}
                                                     {new Date(order.createdAt).toLocaleDateString("en-US", {
                                                         year: "numeric",
                                                         month: "short",
                                                         day: "numeric",
-                                                        hour: "2-digit",
-                                                        minute: "2-digit",
                                                     })}
                                                 </p>
                                             </div>
@@ -211,7 +158,7 @@ export default function Orders() {
                                             <div className="flex-1">
                                                 <Link
                                                     to={`/product/${order.product?.slug || order.product?.id}`}
-                                                    className="font-medium text-gray-900 hover:text-emerald-600"
+                                                    className="font-medium text-gray-900 hover:text-emerald-600 block"
                                                 >
                                                     {order.product?.name || "Product Unavailable"}
                                                 </Link>
@@ -224,75 +171,44 @@ export default function Orders() {
                                             </p>
                                         </div>
 
-                                        {/* Buyer Info */}
-                                        <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                                            <p className="text-sm font-semibold text-gray-700 mb-2">Buyer Info</p>
-                                            <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                                                <div className="flex items-center gap-1">
-                                                    <UserIcon size={14} />
-                                                    {order.buyer?.username || "N/A"}
-                                                </div>
-                                                {order.buyer?.phone && (
-                                                    <a
-                                                        href={`tel:${order.buyer.phone}`}
-                                                        className="flex items-center gap-1 hover:text-emerald-600"
-                                                    >
-                                                        <Call02Icon size={14} />
-                                                        {order.buyer.phone}
-                                                    </a>
-                                                )}
-                                                {order.buyer?.email && (
-                                                    <a
-                                                        href={`mailto:${order.buyer.email}`}
-                                                        className="flex items-center gap-1 hover:text-emerald-600"
-                                                    >
-                                                        <Mail01Icon size={14} />
-                                                        {order.buyer.email}
-                                                    </a>
-                                                )}
+                                        {/* Seller Info */}
+                                        {order.seller && (
+                                            <div className="mt-4 flex items-center gap-2 text-sm text-gray-600">
+                                                <Store01Icon size={16} />
+                                                <span>Sold by </span>
+                                                <Link
+                                                    to={`/seller/${order.seller.id}`}
+                                                    className="font-medium text-emerald-600 hover:underline"
+                                                >
+                                                    {order.seller.username}
+                                                </Link>
                                             </div>
-                                            {order.buyerNotes && (
+                                        )}
+
+                                        {/* Status Description */}
+                                        <div className={`mt-4 p-3 rounded-lg ${order.status === "pending" ? "bg-yellow-50" :
+                                                order.status === "approved" ? "bg-emerald-50" : "bg-red-50"
+                                            }`}>
+                                            <p className={`text-sm ${order.status === "pending" ? "text-yellow-700" :
+                                                    order.status === "approved" ? "text-emerald-700" : "text-red-700"
+                                                }`}>
+                                                {status.description}
+                                            </p>
+                                            {order.sellerNotes && (
                                                 <p className="mt-2 text-sm text-gray-600 italic">
-                                                    "{order.buyerNotes}"
+                                                    Seller note: "{order.sellerNotes}"
                                                 </p>
                                             )}
                                         </div>
 
-                                        {/* Action Buttons */}
-                                        {order.status === "pending" && (
-                                            <div className="flex gap-3 mt-4">
-                                                <button
-                                                    onClick={() => handleStatusUpdate(order.id, "approved")}
-                                                    disabled={updatingOrder === order.id}
-                                                    className="flex-1 py-2 bg-emerald-600 text-white 
-                                                    font-semibold rounded-lg hover:bg-emerald-700 
-                                                    transition-colors disabled:opacity-50 flex items-center 
-                                                    justify-center gap-2 text-nowrap"
-                                                >
-                                                    {updatingOrder === order.id ? (
-                                                        <Loading03Icon size={16} className="animate-spin" />
-                                                    ) : (
-                                                        <CheckmarkCircle02Icon size={16} />
-                                                    )}
-                                                    Approve
-                                                </button>
-                                                <button
-                                                    onClick={() => handleStatusUpdate(order.id, "declined")}
-                                                    disabled={updatingOrder === order.id}
-                                                    className="flex-1 py-2 text-nowrap bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-                                                >
-                                                    {updatingOrder === order.id ? (
-                                                        <Loading03Icon size={16} className="animate-spin" />
-                                                    ) : (
-                                                        <Cancel01Icon size={16} />
-                                                    )}
-                                                    Decline
-                                                </button>
-                                            </div>
+                                        {order.buyerNotes && (
+                                            <p className="mt-3 text-sm text-gray-500">
+                                                Your note: "{order.buyerNotes}"
+                                            </p>
                                         )}
 
-                                        {order.status !== "pending" && order.statusUpdatedAt && (
-                                            <p className="mt-4 text-xs text-gray-400 text-right">
+                                        {order.statusUpdatedAt && order.status !== "pending" && (
+                                            <p className="mt-3 text-xs text-gray-400 text-right">
                                                 {order.status === "approved" ? "Approved" : "Declined"} on{" "}
                                                 {new Date(order.statusUpdatedAt).toLocaleDateString()}
                                             </p>
