@@ -6,7 +6,7 @@ import Footer from "../Components/Footer";
 import useAuthStore from "../store/useAuthStore";
 import {
     Analytics01Icon,
-    Package01Icon,
+    PackageIcon,
     MoneyBag01Icon,
     ChartLineData03Icon,
     Add01Icon,
@@ -29,7 +29,7 @@ export default function BizDashboard() {
             value: "0",
             change: "Coming soon",
             isPositive: true,
-            icon: Package01Icon,
+            icon: PackageIcon,
             color: "bg-blue-500",
             link: "/inventory",
         },
@@ -65,7 +65,7 @@ export default function BizDashboard() {
     // Quick actions for business management
     const quickActions = [
         { title: "Add Sale", icon: MoneyBag01Icon, path: "/sales/new", color: "bg-emerald-500" },
-        { title: "Add Stock", icon: Package01Icon, path: "/inventory/new", color: "bg-blue-500" },
+        { title: "Add Stock", icon: PackageIcon, path: "/inventory/new", color: "bg-blue-500" },
         { title: "Add Expense", icon: ShoppingBag01Icon, path: "/expenses/new", color: "bg-red-500" },
         { title: "View Reports", icon: Analytics01Icon, path: "/reports", color: "bg-purple-500" },
     ];
@@ -198,7 +198,7 @@ export default function BizDashboard() {
                                 <span className="text-emerald-600 text-sm font-semibold">Coming Soon</span>
                             </div>
                             <div className="flex flex-col items-center justify-center py-12 text-gray-400">
-                                <Package01Icon size={48} className="mb-4 opacity-50" />
+                                <PackageIcon size={48} className="mb-4 opacity-50" />
                                 <p className="text-center">Add inventory items to track stock levels</p>
                             </div>
                         </div>
