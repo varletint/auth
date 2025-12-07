@@ -51,6 +51,12 @@ export const createOrder = async (req, res, next) => {
 
         await order.save();
 
+        // Decrement stock after order is placed
+        if (product.trackInventory) {
+            product.stock = Math.max(0, product.stock - quantity);
+            await product.save();
+        }
+
         res.status(201).json({
             success: true,
             message: "Order placed successfully",
@@ -84,6 +90,7 @@ export const createBulkOrders = async (req, res, next) => {
 
         // Validate each item and gather product data
         const orderData = [];
+        const productsToUpdate = []; // Track products for stock update
         const errors = [];
 
         for (const item of items) {
@@ -123,6 +130,11 @@ export const createBulkOrders = async (req, res, next) => {
                 unitPrice,
                 totalPrice: unitPrice * item.quantity,
             });
+
+            // Track product for stock update
+            if (product.trackInventory) {
+                productsToUpdate.push({ product, quantity: item.quantity });
+            }
         }
 
         // If any validation errors, return them all
@@ -132,6 +144,12 @@ export const createBulkOrders = async (req, res, next) => {
 
         // Create all orders
         const createdOrders = await Order.insertMany(orderData);
+
+        // Decrement stock for all products
+        for (const { product, quantity } of productsToUpdate) {
+            product.stock = Math.max(0, product.stock - quantity);
+            await product.save();
+        }
 
         res.status(201).json({
             success: true,
@@ -341,6 +359,15 @@ export const updateOrderStatus = async (req, res, next) => {
         order.statusUpdatedAt = new Date();
 
         await order.save();
+
+        // If order is declined, restore the stock
+        if (status === "declined") {
+            const product = await Product.findById(order.productId);
+            if (product && product.trackInventory) {
+                product.stock += order.quantity;
+                await product.save();
+            }
+        }
 
         res.status(200).json({
             success: true,

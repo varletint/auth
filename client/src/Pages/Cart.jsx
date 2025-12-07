@@ -51,8 +51,15 @@ export default function Cart() {
         const newQuantity = item.quantity + delta;
         if (newQuantity < 1) return;
 
+        // Prevent incrementing beyond available stock
+        if (delta > 0 && item.stock && newQuantity > item.stock) {
+            setError(`Only ${item.stock} items available in stock`);
+            return;
+        }
+
         try {
             setUpdatingId(productId);
+            setError(null);
             await cartApi.updateQuantity(productId, newQuantity);
             setCartItems((items) =>
                 items.map((i) =>
@@ -133,12 +140,12 @@ export default function Cart() {
             </Helmet>
 
             <Header />
-            <div className="min-h-screen bg-gray-50 py-8 mt-10">
+            <div className="min-h-screen bg-gray-50 py-8">
                 <div className="container mx-auto px-4 max-w-6xl">
                     {/* Page Header */}
                     <div className="flex items-center gap-3 mb-8">
                         <ShoppingCart01Icon size={32} className="text-emerald-600" />
-                        <h1 className="text-3xl font-bold text-gray-900">Shopping Cart</h1>
+                        <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl  font-bold text-gray-900">Shopping Cart</h1>
                         <span className="bg-emerald-100 text-emerald-700 text-sm font-semibold px-3 py-1 rounded-full">
                             {cartItems.length} items
                         </span>
@@ -178,7 +185,7 @@ export default function Cart() {
                             </Link>
                         </div>
                     ) : (
-                        <div className="grid lg:grid-cols-3 gap-8">
+                        <div className="grid lg:grid-cols-3 gap-2.5">
                             {/* Cart Items */}
                             <div className="lg:col-span-2 space-y-4">
                                 {cartItems.map((item) => (

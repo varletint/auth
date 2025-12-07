@@ -115,6 +115,14 @@ export default function ProductPage() {
             return;
         }
 
+        // Check if product is in stock
+        if (product.stock !== undefined && product.stock < quantity) {
+            alert(product.stock === 0
+                ? "This product is out of stock"
+                : `Only ${product.stock} items available in stock`);
+            return;
+        }
+
         try {
             await cartApi.addToCart(product._id, quantity);
             alert(`${quantity} ${product.name}(s) added to cart!`);
