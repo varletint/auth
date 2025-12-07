@@ -330,3 +330,102 @@ export const getProducts = async (req, res, next) => {
     }
 };
 
+/**
+ * Restock a product
+ * PATCH /api/products/:id/restock
+ */
+export const restockProduct = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { quantity, reason } = req.body;
+
+        // Validate quantity
+        if (!quantity || quantity < 1) {
+            return next(errorHandler(400, "Quantity must be at least 1"));
+        }
+
+        if (!Number.isInteger(quantity)) {
+            return next(errorHandler(400, "Quantity must be a whole number"));
+        }
+
+        const product = await Product.findById(id);
+        if (!product) {
+            return next(errorHandler(404, "Product not found"));
+        }
+
+        // Verify seller owns this product
+        if (product.userId.toString() !== req.user.id && req.user.role !== 'admin') {
+            return next(errorHandler(403, "You are not authorized to restock this product"));
+        }
+
+        // Use existing incrementStock method (logs to transactionHistory)
+        const restockReason = reason || "Manual restock";
+        await product.incrementStock(quantity, null, restockReason);
+
+        res.status(200).json({
+            success: true,
+            message: `Successfully restocked ${quantity} units`,
+            product: {
+                id: product._id,
+                name: product.name,
+                stockBefore: product.stock - quantity,
+                stockAfter: product.stock,
+                quantity: quantity,
+            },
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Get product transaction history
+ * GET /api/products/:id/transactions
+ */
+export const getProductTransactionHistory = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { page = 1, limit = 20, type } = req.query;
+
+        const product = await Product.findById(id);
+        if (!product) {
+            return next(errorHandler(404, "Product not found"));
+        }
+
+        // Verify seller owns this product
+        if (product.userId.toString() !== req.user.id && req.user.role !== 'admin') {
+            return next(errorHandler(403, "You are not authorized to view this product's history"));
+        }
+
+        // Get transaction history
+        let transactions = product.transactionHistory || [];
+
+        // Filter by type if specified
+        if (type && ["sale", "return", "adjustment", "restock"].includes(type)) {
+            transactions = transactions.filter(t => t.type === type);
+        }
+
+        // Sort by timestamp (newest first)
+        transactions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        // Paginate
+        const total = transactions.length;
+        const startIndex = (page - 1) * limit;
+        const paginatedTransactions = transactions.slice(startIndex, startIndex + parseInt(limit));
+
+        res.status(200).json({
+            success: true,
+            transactions: paginatedTransactions,
+            total,
+            page: parseInt(page),
+            totalPages: Math.ceil(total / limit),
+            product: {
+                id: product._id,
+                name: product.name,
+                currentStock: product.stock,
+            },
+        });
+    } catch (error) {
+        next(error);
+    }
+};

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import Button from "../Components/Button";
+import RestockModal from "../Components/RestockModal";
 import useAuthStore from "../store/useAuthStore";
 import {
     ShoppingBag01Icon,
@@ -13,7 +14,8 @@ import {
     Search01Icon,
     MoreVerticalIcon,
     Loading03Icon,
-    ViewIcon
+    ViewIcon,
+    PackageIcon
 } from "hugeicons-react";
 import { productApi } from "../api/productApi";
 
@@ -27,6 +29,7 @@ export default function MyProducts() {
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+    const [restockProduct, setRestockProduct] = useState(null);
     const dropdownRef = useRef(null);
 
     // Close dropdown when clicking outside
@@ -96,6 +99,16 @@ export default function MyProducts() {
     const filteredProducts = products.filter((product) =>
         product.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const handleRestockSuccess = (updatedProduct) => {
+        setProducts((prev) =>
+            prev.map((p) =>
+                (p._id || p.id) === updatedProduct.id
+                    ? { ...p, stock: updatedProduct.stockAfter }
+                    : p
+            )
+        );
+    };
 
     return (
         <>
@@ -210,6 +223,16 @@ export default function MyProducts() {
                                                         </Link>
                                                         <button
                                                             onClick={() => {
+                                                                setRestockProduct(product);
+                                                                setActiveDropdown(null);
+                                                            }}
+                                                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors w-full"
+                                                        >
+                                                            <PackageIcon size={16} className="text-emerald-600" />
+                                                            Restock
+                                                        </button>
+                                                        <button
+                                                            onClick={() => {
                                                                 setDeleteConfirm(product._id || product.id);
                                                                 setActiveDropdown(null);
                                                             }}
@@ -294,6 +317,14 @@ export default function MyProducts() {
             )}
 
             <Footer />
+
+            {/* Restock Modal */}
+            <RestockModal
+                product={restockProduct}
+                isOpen={!!restockProduct}
+                onClose={() => setRestockProduct(null)}
+                onSuccess={handleRestockSuccess}
+            />
         </>
     );
 }
