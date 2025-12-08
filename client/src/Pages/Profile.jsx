@@ -68,8 +68,23 @@ export default function Profile() {
 
   // Check if user is a seller
   const isSeller = currentUser?.role?.includes("seller");
+  // Check if user is business management user
+  const isBizUser = currentUser?.appType === "business_management";
 
-  const sidebarItems = [
+  // Sidebar items for Business Management users
+  const bizSidebarItems = [
+    { id: "overview", label: "Overview", icon: <GridViewIcon size={20} />, path: null },
+    { id: "biz-dashboard", label: "Dashboard", icon: <GridViewIcon size={20} />, path: "/biz-dashboard" },
+    { id: "inventory", label: "Inventory", icon: <PackageIcon size={20} />, path: "/inventory" },
+    { id: "sales", label: "Sales", icon: <ArrowUp01Icon size={20} />, path: "/sales" },
+    { id: "expenses", label: "Expenses", icon: <ShoppingBag02Icon size={20} />, path: "/expenses" },
+    { id: "customers", label: "Customers", icon: <UserIcon size={20} />, path: "/customers" },
+    { id: "profile", label: "Edit Profile", icon: <UserIcon size={20} />, path: "/edit-profile" },
+    { id: "settings", label: "Settings", icon: <Settings02Icon size={20} />, path: "/settings" },
+  ];
+
+  // Sidebar items for Marketplace users
+  const marketplaceSidebarItems = [
     { id: "overview", label: "Overview", icon: <GridViewIcon size={20} />, path: null },
     { id: "profile", label: "Edit Profile", icon: <UserIcon size={20} />, path: "/edit-profile" },
     // Show My Products only for sellers
@@ -84,6 +99,9 @@ export default function Profile() {
       : { id: "purchases", label: "Purchase History", icon: <ShoppingBag02Icon size={20} />, path: "/purchase-history" },
     { id: "settings", label: "Settings", icon: <Settings02Icon size={20} />, path: "/settings" },
   ];
+
+  // Use appropriate sidebar items based on user type
+  const sidebarItems = isBizUser ? bizSidebarItems : marketplaceSidebarItems;
 
   return (
     <>
