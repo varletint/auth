@@ -42,12 +42,17 @@ import AdminUsers from "./Pages/AdminUsers";
 import ScrollToUp from "./Components/ScrollToUp";
 import BizDashboard from "./Pages/BizDashboard";
 
+// Business Management Pages
+import Inventory from "./Pages/Inventory";
+import Sales from "./Pages/Sales";
+import Expenses from "./Pages/Expenses";
+import Customers from "./Pages/Customers";
+
 function App() {
   return (
     <>
       <BrowserRouter>
         <ScrollToUp />
-        {/* <Header /> */}
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/register' element={<Register />} />
@@ -81,7 +86,6 @@ function App() {
             }
           />
 
-          {/* New Routes oks */}
           <Route path='/cart' element={<Cart />} />
           <Route
             path='/checkout'
@@ -203,16 +207,45 @@ function App() {
               </BizProtectedRoute>
             }
           />
+          <Route
+            path='/inventory'
+            element={
+              <BizProtectedRoute>
+                <Inventory />
+              </BizProtectedRoute>
+            }
+          />
+          <Route
+            path='/sales'
+            element={
+              <BizProtectedRoute>
+                <Sales />
+              </BizProtectedRoute>
+            }
+          />
+          <Route
+            path='/expenses'
+            element={
+              <BizProtectedRoute>
+                <Expenses />
+              </BizProtectedRoute>
+            }
+          />
+          <Route
+            path='/customers'
+            element={
+              <BizProtectedRoute>
+                <Customers />
+              </BizProtectedRoute>
+            }
+          />
 
           {/* 404 Fallback */}
           <Route path='*' element={<NotFound />} />
         </Routes>
-        {/* <Footer /> */}
-        {/* <ScrollToUp /> */}
       </BrowserRouter>
     </>
   );
 }
 
 export default App;
-

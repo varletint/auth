@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, Navigate } from "react-router-dom";
 import Button from "../Components/Button";
 import { productApi } from "../api/productApi";
+import useAuthStore from "../store/useAuthStore";
 import {
     Mail01Icon,
     Location01Icon,
@@ -18,6 +19,13 @@ import {
 } from "hugeicons-react";
 
 export default function UserPage() {
+    const { currentUser } = useAuthStore();
+
+    // Redirect business_management users to BizDashboard
+    if (currentUser && currentUser.appType === "business_management") {
+        return <Navigate to="/biz-dashboard" replace />;
+    }
+
     const { id } = useParams();
     const navigate = useNavigate();
     const [user, setUser] = useState(null);

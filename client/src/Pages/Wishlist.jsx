@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, Navigate } from "react-router-dom";
 import useAuthStore from "../store/useAuthStore";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
@@ -10,13 +10,18 @@ import { wishlistApi } from "../api/wishlistApi";
 import { cartApi } from "../api/cartApi";
 
 export default function Wishlist() {
+    const { currentUser } = useAuthStore();
+    const navigate = useNavigate();
+
+    // Redirect business_management users to BizDashboard
+    if (currentUser && currentUser.appType === "business_management") {
+        return <Navigate to="/biz-dashboard" replace />;
+    }
+
     const [wishlistItems, setWishlistItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [removingId, setRemovingId] = useState(null);
-
-    const { currentUser } = useAuthStore();
-    const navigate = useNavigate();
 
     useEffect(() => {
         // Redirect if not logged in

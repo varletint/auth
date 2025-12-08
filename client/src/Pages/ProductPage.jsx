@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, Navigate } from "react-router-dom";
 import useAuthStore from "../store/useAuthStore";
 import Button from "../Components/Button";
 import { productApi } from "../api/productApi";
@@ -26,6 +26,13 @@ import Footer from "../Components/Footer";
 export default function ProductPage() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { currentUser } = useAuthStore();
+
+    // Redirect business_management users to BizDashboard
+    if (currentUser && currentUser.appType === "business_management") {
+        return <Navigate to="/biz-dashboard" replace />;
+    }
+
     const [product, setProduct] = useState(null);
     const [seller, setSeller] = useState(null);
     const [relatedProducts, setRelatedProducts] = useState([]);
@@ -35,8 +42,6 @@ export default function ProductPage() {
     const [quantity, setQuantity] = useState(1);
     const [inWishlist, setInWishlist] = useState(false);
     const [wishlistLoading, setWishlistLoading] = useState(false);
-
-    const { currentUser } = useAuthStore();
 
     const BASE_URL = 'https://lookupsbackend.vercel.app'
 

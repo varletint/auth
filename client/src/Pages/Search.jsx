@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, Navigate } from "react-router-dom";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import Input from "../Components/Input";
 import { Search01Icon, FilterIcon, GridViewIcon } from "hugeicons-react";
 import { productApi } from "../api/productApi";
+import useAuthStore from "../store/useAuthStore";
 
 export default function Search() {
+    const { currentUser } = useAuthStore();
+
+    // Redirect business_management users to BizDashboard
+    if (currentUser && currentUser.appType === "business_management") {
+        return <Navigate to="/biz-dashboard" replace />;
+    }
+
     const [searchParams, setSearchParams] = useSearchParams();
     const [query, setQuery] = useState(searchParams.get("q") || "");
     const [products, setProducts] = useState([]);

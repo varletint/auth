@@ -16,9 +16,10 @@ import {
   Settings03Icon,
   SmartPhone01Icon,
 } from "hugeicons-react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import Button from "../Components/Button";
 import logo from "../assets/logo.png";
+import useAuthStore from "../store/useAuthStore";
 
 // Skeleton Components
 const HeroSkeleton = () => (
@@ -42,6 +43,13 @@ const CarouselSkeleton = () => (
 );
 
 export default function Home() {
+  const { currentUser } = useAuthStore();
+
+  // Redirect business_management users to BizDashboard
+  if (currentUser && currentUser.appType === "business_management") {
+    return <Navigate to="/biz-dashboard" replace />;
+  }
+
   const [apiData, setApiData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [heroLoading, setHeroLoading] = useState(true);

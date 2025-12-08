@@ -1,8 +1,9 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
+import useAuthStore from "../store/useAuthStore";
 import {
     SmartPhone01Icon,
     Dress01Icon,
@@ -17,6 +18,13 @@ import {
 } from "hugeicons-react";
 
 export default function Categories() {
+    const { currentUser } = useAuthStore();
+
+    // Redirect business_management users to BizDashboard
+    if (currentUser && currentUser.appType === "business_management") {
+        return <Navigate to="/biz-dashboard" replace />;
+    }
+
     const categories = [
         {
             name: "Electronics",

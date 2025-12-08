@@ -9,7 +9,10 @@ import {
   FavouriteIcon,
   ShoppingBag01Icon,
   DashboardSquare01Icon,
-  Settings02Icon
+  Settings02Icon,
+  PackageIcon,
+  MoneyBag01Icon,
+  Analytics01Icon,
 } from "hugeicons-react";
 import useAuthStore from "../store/useAuthStore";
 import lookups from "../assets/logo.png";
@@ -21,6 +24,8 @@ export default function Header() {
 
   // Check if user is admin
   const isAdmin = currentUser?.role?.includes("admin");
+  // Check if user is business management user
+  const isBizUser = currentUser?.appType === "business_management";
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -49,7 +54,7 @@ export default function Header() {
       <div
         className='header sticky top-0 w-[1500px] max-w-[95%] m-auto border-b border-gray-200 
       flex justify-between items-center z-[100] px-[0px] py-[0px] bg-white'>
-        <Link to='/' className='font-bold  text-nowrap
+        <Link to={isBizUser ? '/biz-dashboard' : '/'} className='font-bold  text-nowrap
       flex items-center gap-[0px] text-emerald-600 '>
           <img src={lookups} alt="Lookups" className="h-[60px] w-[60px]" />
           <span className="text-[20px] ml-[-12px]">Lookups</span>
@@ -59,32 +64,55 @@ export default function Header() {
         <ul className='hidden sm:flex gap-[20px] justify-end items-center font-bold'>
           {currentUser ? (
             <>
-              {/* Quick Access Icons */}
-              <li>
-                <Link to={"/search"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Search">
-                  <Search01Icon size={22} className="text-gray-600 hover:text-emerald-600" />
-                </Link>
-              </li>
-              <li>
-                <Link to={"/wishlist"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Wishlist">
-                  <FavouriteIcon size={22} className="text-gray-600 hover:text-red-500" />
-                </Link>
-              </li>
-              <li>
-                <Link to={"/cart"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Cart">
-                  <ShoppingCart01Icon size={22} className="text-gray-600 hover:text-emerald-600" />
-                </Link>
-              </li>
-              <li>
-                <Link to={"/my-products"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="My Products">
-                  <ShoppingBag01Icon size={22} className="text-gray-600 hover:text-emerald-600" />
-                </Link>
-              </li>
-              <li>
-                <Link to={"/dashboard"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Dashboard">
-                  <DashboardSquare01Icon size={22} className="text-gray-600 hover:text-emerald-600" />
-                </Link>
-              </li>
+              {isBizUser ? (
+                /* Business User Navigation */
+                <>
+                  <li>
+                    <Link to={"/inventory"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Inventory">
+                      <PackageIcon size={22} className="text-gray-600 hover:text-blue-600" />
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to={"/sales"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Sales">
+                      <MoneyBag01Icon size={22} className="text-gray-600 hover:text-emerald-600" />
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to={"/biz-dashboard"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Business Dashboard">
+                      <Analytics01Icon size={22} className="text-gray-600 hover:text-emerald-600" />
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                /* Marketplace User Navigation */
+                <>
+                  <li>
+                    <Link to={"/search"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Search">
+                      <Search01Icon size={22} className="text-gray-600 hover:text-emerald-600" />
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to={"/wishlist"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Wishlist">
+                      <FavouriteIcon size={22} className="text-gray-600 hover:text-red-500" />
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to={"/cart"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Cart">
+                      <ShoppingCart01Icon size={22} className="text-gray-600 hover:text-emerald-600" />
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to={"/my-products"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="My Products">
+                      <ShoppingBag01Icon size={22} className="text-gray-600 hover:text-emerald-600" />
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to={"/dashboard"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Dashboard">
+                      <DashboardSquare01Icon size={22} className="text-gray-600 hover:text-emerald-600" />
+                    </Link>
+                  </li>
+                </>
+              )}
               <li className="border-l border-gray-200 pl-4 ml-2">
                 <Link to={"/profile"} className="hover:text-emerald-600 transition-colors">Profile</Link>
               </li>
@@ -93,9 +121,11 @@ export default function Header() {
                   <Link to="/admin" className="text-red-600 hover:text-red-700 font-semibold transition-colors">Admin</Link>
                 </li>
               )}
-              <li>
-                <Link to={"/add-product"} className="text-emerald-600 hover:text-emerald-700 transition-colors">Add Product</Link>
-              </li>
+              {!isBizUser && (
+                <li>
+                  <Link to={"/add-product"} className="text-emerald-600 hover:text-emerald-700 transition-colors">Add Product</Link>
+                </li>
+              )}
               <li>
                 <button
                   onClick={handleLogout}
@@ -147,36 +177,75 @@ export default function Header() {
           >
             {currentUser ? (
               <>
-                <li>
-                  <Link to={"/search"} onClick={toggleMenu} className="flex items-center gap-2">
-                    <Search01Icon size={20} />
-                    Search
-                  </Link>
-                </li>
-                <li>
-                  <Link to={"/cart"} onClick={toggleMenu} className="flex items-center gap-2">
-                    <ShoppingCart01Icon size={20} />
-                    Cart
-                  </Link>
-                </li>
-                <li>
-                  <Link to={"/wishlist"} onClick={toggleMenu} className="flex items-center gap-2">
-                    <FavouriteIcon size={20} />
-                    Wishlist
-                  </Link>
-                </li>
-                <li>
-                  <Link to={"/my-products"} onClick={toggleMenu} className="flex items-center gap-2">
-                    <ShoppingBag01Icon size={20} />
-                    My Products
-                  </Link>
-                </li>
-                <li>
-                  <Link to={"/dashboard"} onClick={toggleMenu} className="flex items-center gap-2">
-                    <DashboardSquare01Icon size={20} />
-                    Dashboard
-                  </Link>
-                </li>
+                {isBizUser ? (
+                  /* Business User Mobile Navigation */
+                  <>
+                    <li>
+                      <Link to={"/biz-dashboard"} onClick={toggleMenu} className="flex items-center gap-2">
+                        <Analytics01Icon size={20} />
+                        Dashboard
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to={"/inventory"} onClick={toggleMenu} className="flex items-center gap-2">
+                        <PackageIcon size={20} />
+                        Inventory
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to={"/sales"} onClick={toggleMenu} className="flex items-center gap-2">
+                        <MoneyBag01Icon size={20} />
+                        Sales
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to={"/expenses"} onClick={toggleMenu} className="flex items-center gap-2">
+                        <ShoppingBag01Icon size={20} />
+                        Expenses
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to={"/customers"} onClick={toggleMenu} className="flex items-center gap-2">
+                        <Settings02Icon size={20} />
+                        Customers
+                      </Link>
+                    </li>
+                  </>
+                ) : (
+                  /* Marketplace User Mobile Navigation */
+                  <>
+                    <li>
+                      <Link to={"/search"} onClick={toggleMenu} className="flex items-center gap-2">
+                        <Search01Icon size={20} />
+                        Search
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to={"/cart"} onClick={toggleMenu} className="flex items-center gap-2">
+                        <ShoppingCart01Icon size={20} />
+                        Cart
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to={"/wishlist"} onClick={toggleMenu} className="flex items-center gap-2">
+                        <FavouriteIcon size={20} />
+                        Wishlist
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to={"/my-products"} onClick={toggleMenu} className="flex items-center gap-2">
+                        <ShoppingBag01Icon size={20} />
+                        My Products
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to={"/dashboard"} onClick={toggleMenu} className="flex items-center gap-2">
+                        <DashboardSquare01Icon size={20} />
+                        Dashboard
+                      </Link>
+                    </li>
+                  </>
+                )}
                 <li className="border-t border-gray-200 pt-4 w-full text-center">
                   <Link to={"/profile"} onClick={toggleMenu}>
                     Profile
@@ -189,11 +258,13 @@ export default function Header() {
                     </Link>
                   </li>
                 )}
-                <li>
-                  <Link to={"/add-product"} onClick={toggleMenu} className="text-emerald-600">
-                    Add Product
-                  </Link>
-                </li>
+                {!isBizUser && (
+                  <li>
+                    <Link to={"/add-product"} onClick={toggleMenu} className="text-emerald-600">
+                      Add Product
+                    </Link>
+                  </li>
+                )}
                 <li>
                   <button
                     onClick={handleLogout}
@@ -225,3 +296,4 @@ export default function Header() {
     </>
   );
 }
+

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, Navigate } from "react-router-dom";
 import useAuthStore from "../store/useAuthStore";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
@@ -10,6 +10,14 @@ import { cartApi } from "../api/cartApi";
 import { createBulkOrders } from "../api/orderApi";
 
 export default function Cart() {
+    const { currentUser } = useAuthStore();
+    const navigate = useNavigate();
+
+    // Redirect business_management users to BizDashboard
+    if (currentUser && currentUser.appType === "business_management") {
+        return <Navigate to="/biz-dashboard" replace />;
+    }
+
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -17,9 +25,6 @@ export default function Cart() {
     const [removingId, setRemovingId] = useState(null);
     const [ordering, setOrdering] = useState(false);
     const [orderSuccess, setOrderSuccess] = useState(false);
-
-    const { currentUser } = useAuthStore();
-    const navigate = useNavigate();
 
     useEffect(() => {
         // Redirect if not logged in

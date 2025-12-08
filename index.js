@@ -20,6 +20,12 @@ import adminRoute from "./Routes/adminRoute.js";
 import cartRoute from "./Routes/cartRoute.js";
 import orderRoute from "./Routes/orderRoute.js";
 
+// Business Management Routes
+import inventoryRoute from "./Routes/inventoryRoute.js";
+import customerRoute from "./Routes/customerRoute.js";
+import saleRoute from "./Routes/saleRoute.js";
+import expenseRoute from "./Routes/expenseRoute.js";
+
 const app = e();
 
 // app.use(
@@ -85,6 +91,12 @@ app.use("/api/seller-application", sellerApplicationRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/cart", cartRoute);
 app.use("/api/orders", orderRoute);
+
+// Business Management API Routes
+app.use("/api/inventory", inventoryRoute);
+app.use("/api/customers", customerRoute);
+app.use("/api/sales", saleRoute);
+app.use("/api/expenses", expenseRoute);
 
 // app.use("/", e.json(), testing);
 

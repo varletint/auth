@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import useAuthStore from "../store/useAuthStore";
@@ -23,6 +23,12 @@ import { wishlistApi } from "../api/wishlistApi";
 
 export default function Dashboard() {
     const { currentUser } = useAuthStore();
+
+    // Redirect business_management users to BizDashboard
+    if (currentUser && currentUser.appType === "business_management") {
+        return <Navigate to="/biz-dashboard" replace />;
+    }
+
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [productCount, setProductCount] = useState(0);
