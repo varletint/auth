@@ -199,7 +199,7 @@ export default function Sales() {
             </Helmet>
 
             <Header />
-            <div className="min-h-screen bg-gray-50 py-8 mt-10">
+            <div className="min-h-screen bg-gray-50 py-8">
                 <div className="container mx-auto px-4 max-w-7xl">
                     {/* Header */}
                     <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
@@ -317,7 +317,7 @@ export default function Sales() {
 
             {/* Add Sale Modal */}
             {showModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-100 p-4">
                     <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
                         <div className="p-6 border-b flex items-center justify-between">
                             <h2 className="text-xl font-bold">Record New Sale</h2>
@@ -473,7 +473,7 @@ export default function Sales() {
 
             {/* Sale Detail Modal (Receipt) */}
             {selectedSale && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-100 p-4">
                     <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
                         {/* Receipt Header */}
                         <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white p-6 rounded-t-2xl">
@@ -581,10 +581,10 @@ export default function Sales() {
                                         <p className="text-gray-500">Status</p>
                                         <span
                                             className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${selectedSale.paymentStatus === "paid"
-                                                    ? "bg-green-100 text-green-700"
-                                                    : selectedSale.paymentStatus === "pending"
-                                                        ? "bg-yellow-100 text-yellow-700"
-                                                        : "bg-blue-100 text-blue-700"
+                                                ? "bg-green-100 text-green-700"
+                                                : selectedSale.paymentStatus === "pending"
+                                                    ? "bg-yellow-100 text-yellow-700"
+                                                    : "bg-blue-100 text-blue-700"
                                                 }`}
                                         >
                                             {selectedSale.paymentStatus}
