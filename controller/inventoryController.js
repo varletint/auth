@@ -91,6 +91,25 @@ export const createInventoryItem = async (req, res, next) => {
             return next(errorHandler(400, "Name, cost price, and selling price are required"));
         }
 
+        const initialQuantity = quantity || 0;
+        const stockHistory = [];
+
+        // Record initial stock as first history entry
+        if (initialQuantity > 0) {
+            stockHistory.push({
+                type: "in",
+                quantity: initialQuantity,
+                reason: "Initial stock",
+                referenceType: "Initial",
+                costPriceAtTime: costPrice,
+                sellingPriceAtTime: sellingPrice,
+                balanceAfter: initialQuantity,
+                valueAfter: initialQuantity * costPrice,
+                createdBy: userId,
+                createdAt: new Date(),
+            });
+        }
+
         const newItem = new InventoryItem({
             userId,
             name,
@@ -99,9 +118,10 @@ export const createInventoryItem = async (req, res, next) => {
             category,
             costPrice,
             sellingPrice,
-            quantity: quantity || 0,
+            quantity: initialQuantity,
             lowStockThreshold: lowStockThreshold || 5,
             unit: unit || "pieces",
+            stockHistory,
         });
 
         const savedItem = await newItem.save();
@@ -189,7 +209,7 @@ export const restockInventoryItem = async (req, res, next) => {
     try {
         const { id } = req.params;
         const userId = req.user.id;
-        const { quantity, costPrice } = req.body;
+        const { quantity, costPrice, reason, idempotencyKey } = req.body;
 
         if (!quantity || quantity <= 0) {
             return next(errorHandler(400, "Quantity must be a positive number"));
@@ -201,10 +221,42 @@ export const restockInventoryItem = async (req, res, next) => {
             return next(errorHandler(404, "Inventory item not found"));
         }
 
+        // Idempotency check - if key exists, return existing entry
+        if (idempotencyKey) {
+            const existingEntry = item.stockHistory.find(
+                (h) => h.idempotencyKey === idempotencyKey
+            );
+            if (existingEntry) {
+                return res.status(200).json({
+                    success: true,
+                    message: "Restock already processed (idempotent)",
+                    item,
+                    duplicate: true,
+                });
+            }
+        }
+
+        // Update quantity and cost price
         item.quantity += quantity;
+        const updatedCostPrice = costPrice !== undefined ? costPrice : item.costPrice;
         if (costPrice !== undefined) {
             item.costPrice = costPrice;
         }
+
+        // Add history entry
+        item.stockHistory.push({
+            type: "in",
+            quantity,
+            reason: reason || "Restock",
+            referenceType: "Manual",
+            costPriceAtTime: updatedCostPrice,
+            sellingPriceAtTime: item.sellingPrice,
+            balanceAfter: item.quantity,
+            valueAfter: item.quantity * updatedCostPrice,
+            idempotencyKey,
+            createdBy: userId,
+            createdAt: new Date(),
+        });
 
         const updatedItem = await item.save();
 
@@ -212,6 +264,111 @@ export const restockInventoryItem = async (req, res, next) => {
             success: true,
             message: `Added ${quantity} units to ${item.name}`,
             item: updatedItem,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Stock out an inventory item (manual deduction)
+ * PATCH /api/inventory/:id/stock-out
+ */
+export const stockOutInventoryItem = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user.id;
+        const { quantity, reason, idempotencyKey } = req.body;
+
+        if (!quantity || quantity <= 0) {
+            return next(errorHandler(400, "Quantity must be a positive number"));
+        }
+
+        if (!reason) {
+            return next(errorHandler(400, "Reason is required for stock out"));
+        }
+
+        const item = await InventoryItem.findOne({ _id: id, userId });
+
+        if (!item) {
+            return next(errorHandler(404, "Inventory item not found"));
+        }
+
+        if (item.quantity < quantity) {
+            return next(errorHandler(400, `Insufficient stock. Available: ${item.quantity}`));
+        }
+
+        // Idempotency check
+        if (idempotencyKey) {
+            const existingEntry = item.stockHistory.find(
+                (h) => h.idempotencyKey === idempotencyKey
+            );
+            if (existingEntry) {
+                return res.status(200).json({
+                    success: true,
+                    message: "Stock out already processed (idempotent)",
+                    item,
+                    duplicate: true,
+                });
+            }
+        }
+
+        // Update quantity
+        item.quantity -= quantity;
+
+        // Add history entry
+        item.stockHistory.push({
+            type: "out",
+            quantity: -quantity,
+            reason,
+            referenceType: "Manual",
+            costPriceAtTime: item.costPrice,
+            sellingPriceAtTime: item.sellingPrice,
+            balanceAfter: item.quantity,
+            valueAfter: item.quantity * item.costPrice,
+            idempotencyKey,
+            createdBy: userId,
+            createdAt: new Date(),
+        });
+
+        const updatedItem = await item.save();
+
+        res.status(200).json({
+            success: true,
+            message: `Removed ${quantity} units from ${item.name}`,
+            item: updatedItem,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Get item with full history
+ * GET /api/inventory/:id/history
+ */
+export const getItemWithHistory = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user.id;
+
+        const item = await InventoryItem.findOne({ _id: id, userId });
+
+        if (!item) {
+            return next(errorHandler(404, "Inventory item not found"));
+        }
+
+        // Sort history by date descending (newest first)
+        const sortedHistory = item.stockHistory.sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+
+        res.status(200).json({
+            success: true,
+            item: {
+                ...item.toObject(),
+                stockHistory: sortedHistory,
+            },
         });
     } catch (error) {
         next(error);

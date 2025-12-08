@@ -44,6 +44,7 @@ import BizDashboard from "./Pages/BizDashboard";
 
 // Business Management Pages
 import Inventory from "./Pages/Inventory";
+import ItemPage from "./Pages/ItemPage";
 import Sales from "./Pages/Sales";
 import Expenses from "./Pages/Expenses";
 import Customers from "./Pages/Customers";
@@ -212,6 +213,14 @@ function App() {
             element={
               <BizProtectedRoute>
                 <Inventory />
+              </BizProtectedRoute>
+            }
+          />
+          <Route
+            path='/inventory/:id'
+            element={
+              <BizProtectedRoute>
+                <ItemPage />
               </BizProtectedRoute>
             }
           />

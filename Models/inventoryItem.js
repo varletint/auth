@@ -83,6 +83,62 @@ const inventoryItemSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+
+        // ==================== Stock History ====================
+        stockHistory: [
+            {
+                type: {
+                    type: String,
+                    enum: ["in", "out", "adjustment"],
+                    required: true,
+                },
+                quantity: {
+                    type: Number,
+                    required: true,
+                },
+                reason: {
+                    type: String,
+                    trim: true,
+                    maxlength: [200, "Reason cannot exceed 200 characters"],
+                },
+                referenceId: {
+                    type: mongoose.Schema.Types.ObjectId,
+                },
+                referenceType: {
+                    type: String,
+                    enum: ["Sale", "Manual", "Initial"],
+                },
+                costPriceAtTime: {
+                    type: Number,
+                    min: 0,
+                },
+                sellingPriceAtTime: {
+                    type: Number,
+                    min: 0,
+                },
+                balanceAfter: {
+                    type: Number,
+                    required: true,
+                    min: 0,
+                },
+                valueAfter: {
+                    type: Number,
+                    min: 0,
+                },
+                idempotencyKey: {
+                    type: String,
+                    index: true,
+                },
+                createdBy: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "User",
+                },
+                createdAt: {
+                    type: Date,
+                    default: Date.now,
+                },
+            },
+        ],
     },
     {
         timestamps: true,
@@ -109,6 +165,20 @@ inventoryItemSchema.virtual("profitMargin").get(function () {
 
 inventoryItemSchema.virtual("stockValue").get(function () {
     return this.quantity * this.costPrice;
+});
+
+inventoryItemSchema.virtual("totalStockIn").get(function () {
+    if (!this.stockHistory || this.stockHistory.length === 0) return 0;
+    return this.stockHistory
+        .filter((h) => h.type === "in")
+        .reduce((sum, h) => sum + h.quantity, 0);
+});
+
+inventoryItemSchema.virtual("totalStockOut").get(function () {
+    if (!this.stockHistory || this.stockHistory.length === 0) return 0;
+    return this.stockHistory
+        .filter((h) => h.type === "out")
+        .reduce((sum, h) => sum + Math.abs(h.quantity), 0);
 });
 
 // ==================== Query Middleware ====================

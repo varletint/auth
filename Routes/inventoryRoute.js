@@ -7,6 +7,8 @@ import {
     updateInventoryItem,
     deleteInventoryItem,
     restockInventoryItem,
+    stockOutInventoryItem,
+    getItemWithHistory,
     getInventoryStats,
 } from "../controller/inventoryController.js";
 
@@ -27,5 +29,11 @@ router.delete("/:id", deleteInventoryItem);
 
 // Restock route
 router.patch("/:id/restock", restockInventoryItem);
+
+// Stock out route
+router.patch("/:id/stock-out", stockOutInventoryItem);
+
+// History route
+router.get("/:id/history", getItemWithHistory);
 
 export default router;

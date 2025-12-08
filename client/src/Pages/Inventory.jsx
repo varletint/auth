@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
@@ -17,6 +18,7 @@ import {
 } from "hugeicons-react";
 
 export default function Inventory() {
+    const navigate = useNavigate();
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
@@ -260,7 +262,12 @@ export default function Inventory() {
                                             <tr key={item._id} className="hover:bg-gray-50">
                                                 <td className="px-4 py-3">
                                                     <div>
-                                                        <p className="font-medium text-gray-900">{item.name}</p>
+                                                        <button
+                                                            onClick={() => navigate(`/inventory/${item._id}`)}
+                                                            className="font-medium text-gray-900 hover:text-blue-600 hover:underline text-left"
+                                                        >
+                                                            {item.name}
+                                                        </button>
                                                         {item.sku && <p className="text-xs text-gray-500">SKU: {item.sku}</p>}
                                                     </div>
                                                 </td>

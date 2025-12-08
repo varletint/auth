@@ -71,4 +71,21 @@ export const inventoryApi = {
     getStats: async () => {
         return apiCall('/inventory/stats');
     },
+
+    /**
+     * Stock out an inventory item (manual deduction)
+     */
+    stockOutItem: async (id, data) => {
+        return apiCall(`/inventory/${id}/stock-out`, {
+            method: 'PATCH',
+            body: JSON.stringify(data),
+        });
+    },
+
+    /**
+     * Get item with full stock history
+     */
+    getItemWithHistory: async (id) => {
+        return apiCall(`/inventory/${id}/history`);
+    },
 };
