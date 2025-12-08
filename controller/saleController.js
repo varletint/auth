@@ -99,19 +99,25 @@ export const createSale = async (req, res, next) => {
 
         // Process items - deduct from inventory and get cost prices
         const processedItems = [];
+        const inventoryUpdates = []; // Store items to update after sale is saved
+
         for (const item of items) {
             let costPrice = 0;
 
             if (item.inventoryItem) {
-                // Get inventory item and update stock
+                // Get inventory item and check stock
                 const invItem = await InventoryItem.findOne({ _id: item.inventoryItem, userId });
                 if (invItem) {
                     if (invItem.quantity < item.quantity) {
                         return next(errorHandler(400, `Insufficient stock for ${invItem.name}. Available: ${invItem.quantity}`));
                     }
-                    invItem.quantity -= item.quantity;
-                    await invItem.save();
                     costPrice = invItem.costPrice;
+
+                    // Store for later update (after we have sale ID)
+                    inventoryUpdates.push({
+                        invItem,
+                        quantity: item.quantity,
+                    });
                 }
             }
 
@@ -139,6 +145,29 @@ export const createSale = async (req, res, next) => {
         });
 
         const savedSale = await newSale.save();
+
+        // Now update inventory with stock history entries (after we have sale ID)
+        for (const update of inventoryUpdates) {
+            const { invItem, quantity } = update;
+            invItem.quantity -= quantity;
+
+            // Add stock history entry for the sale
+            invItem.stockHistory.push({
+                type: "out",
+                quantity: -quantity,
+                reason: `Sale #${savedSale.referenceNumber}`,
+                referenceId: savedSale._id,
+                referenceType: "Sale",
+                costPriceAtTime: invItem.costPrice,
+                sellingPriceAtTime: invItem.sellingPrice,
+                balanceAfter: invItem.quantity,
+                valueAfter: invItem.quantity * invItem.costPrice,
+                createdBy: userId,
+                createdAt: new Date(),
+            });
+
+            await invItem.save();
+        }
 
         // Update customer stats if customer is linked
         if (customer) {
@@ -209,12 +238,30 @@ export const deleteSale = async (req, res, next) => {
             return next(errorHandler(404, "Sale not found"));
         }
 
-        // Restore inventory quantities
+        // Restore inventory quantities and record history entries
         for (const item of sale.items) {
             if (item.inventoryItem) {
-                await InventoryItem.findByIdAndUpdate(item.inventoryItem, {
-                    $inc: { quantity: item.quantity },
-                });
+                const invItem = await InventoryItem.findById(item.inventoryItem);
+                if (invItem) {
+                    invItem.quantity += item.quantity;
+
+                    // Add stock history entry for the return
+                    invItem.stockHistory.push({
+                        type: "in",
+                        quantity: item.quantity,
+                        reason: `Sale cancelled #${sale.referenceNumber}`,
+                        referenceId: sale._id,
+                        referenceType: "Sale",
+                        costPriceAtTime: invItem.costPrice,
+                        sellingPriceAtTime: invItem.sellingPrice,
+                        balanceAfter: invItem.quantity,
+                        valueAfter: invItem.quantity * invItem.costPrice,
+                        createdBy: userId,
+                        createdAt: new Date(),
+                    });
+
+                    await invItem.save();
+                }
             }
         }
 
