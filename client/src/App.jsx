@@ -46,6 +46,7 @@ import BizDashboard from "./Pages/BizDashboard";
 import Inventory from "./Pages/Inventory";
 import ItemPage from "./Pages/ItemPage";
 import Sales from "./Pages/Sales";
+import BizSalesHistory from "./Pages/BizSalesHistory";
 import Expenses from "./Pages/Expenses";
 import Customers from "./Pages/Customers";
 
@@ -229,6 +230,14 @@ function App() {
             element={
               <BizProtectedRoute>
                 <Sales />
+              </BizProtectedRoute>
+            }
+          />
+          <Route
+            path='/biz/sales-history'
+            element={
+              <BizProtectedRoute>
+                <BizSalesHistory />
               </BizProtectedRoute>
             }
           />

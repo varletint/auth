@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
@@ -19,6 +20,7 @@ import {
     UserIcon,
     CreditCardIcon,
     PrinterIcon,
+    Clock01Icon,
 } from "hugeicons-react";
 
 export default function Sales() {
@@ -207,13 +209,22 @@ export default function Sales() {
                             <MoneyBag01Icon size={32} className="text-emerald-600" />
                             <h1 className="text-2xl font-bold text-gray-900">Sales</h1>
                         </div>
-                        <button
-                            onClick={openAddModal}
-                            className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-emerald-700 transition-colors"
-                        >
-                            <Add01Icon size={20} />
-                            Record Sale
-                        </button>
+                        <div className="flex items-center gap-2">
+                            <Link
+                                to="/biz/sales-history"
+                                className="flex items-center gap-2 border border-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+                            >
+                                <Clock01Icon size={20} />
+                                History
+                            </Link>
+                            <button
+                                onClick={openAddModal}
+                                className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-emerald-700 transition-colors"
+                            >
+                                <Add01Icon size={20} />
+                                Record Sale
+                            </button>
+                        </div>
                     </div>
 
                     {/* Period Selector */}
