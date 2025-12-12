@@ -39,6 +39,7 @@ export default function Sales() {
         customer: "",
         paymentMethod: "cash",
         paymentStatus: "paid",
+        amountPaid: "",
         notes: "",
     });
     const [formError, setFormError] = useState("");
@@ -101,6 +102,7 @@ export default function Sales() {
             customer: "",
             paymentMethod: "cash",
             paymentStatus: "paid",
+            amountPaid: "",
             notes: "",
         });
         setFormError("");
@@ -154,6 +156,7 @@ export default function Sales() {
 
         setSubmitting(true);
         try {
+            const totalAmount = calculateTotal();
             const saleData = {
                 items: validItems.map((item) => ({
                     ...item,
@@ -163,9 +166,10 @@ export default function Sales() {
                 })),
                 customerName: formData.customerName,
                 customer: formData.customer || undefined,
-                totalAmount: calculateTotal(),
+                totalAmount,
                 paymentMethod: formData.paymentMethod,
                 paymentStatus: formData.paymentStatus,
+                amountPaid: formData.paymentStatus === "partial" ? parseFloat(formData.amountPaid) || 0 : totalAmount,
                 notes: formData.notes,
             };
 
@@ -448,6 +452,28 @@ export default function Sales() {
                                         </select>
                                     </div>
                                 </div>
+
+                                {/* Amount Paid (for partial payments) */}
+                                {formData.paymentStatus === "partial" && (
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Amount Paid</label>
+                                        <input
+                                            type="number"
+                                            value={formData.amountPaid}
+                                            onChange={(e) => setFormData({ ...formData, amountPaid: e.target.value })}
+                                            className="w-full px-3 py-2 border border-gray-200 rounded-lg"
+                                            placeholder="Enter amount paid"
+                                            min="0"
+                                            max={calculateTotal()}
+                                            step="0.01"
+                                        />
+                                        {formData.amountPaid && (
+                                            <p className="text-sm text-gray-500 mt-1">
+                                                Balance: ₦{(calculateTotal() - parseFloat(formData.amountPaid || 0)).toLocaleString()}
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
 
                                 {/* Total */}
                                 <div className="bg-gray-50 rounded-lg p-4 text-center">
