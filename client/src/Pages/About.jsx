@@ -39,7 +39,7 @@ export default function About() {
             </Helmet>
 
             <Header />
-            <div className="min-h-screen bg-gray-50 mt-10">
+            <div className="min-h-screen bg-gray-50">
                 {/* Hero Section */}
                 <div className="bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600 text-white py-20">
                     <div className="container mx-auto px-4 text-center">

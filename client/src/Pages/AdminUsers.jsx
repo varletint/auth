@@ -192,7 +192,8 @@ export default function AdminUsers() {
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <div className="flex flex-wrap gap-2">
-                                                            {user.role.map((r) => (
+                                                            {/* Added fallback for users without role array */}
+                                                            {(user.role && user.role.length > 0 ? user.role : ["buyer"]).map((r) => (
                                                                 <span
                                                                     key={r}
                                                                     className={`px-2 py-1 rounded-full text-xs font-semibold ${getRoleBadge([r]).color}`}
@@ -246,7 +247,7 @@ export default function AdminUsers() {
                                                                     <span
                                                                         className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-300 ease-in-out
                                                                             ${user.accountStatus === "active"
-                                                                                ? "translate-x-7"
+                                                                                ? "-translate-x-5"
                                                                                 : "translate-x-1"}
                                                                         `}
                                                                     />

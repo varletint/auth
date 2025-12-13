@@ -177,7 +177,7 @@ export default function Inventory() {
             </Helmet>
 
             <Header />
-            <div className="min-h-screen bg-gray-50 py-8 mt-10">
+            <div className="min-h-screen bg-gray-50 py-8">
                 <div className="container mx-auto px-4 max-w-7xl">
                     {/* Header */}
                     <div className="flex flex-wrap items-center justify-between gap-4 mb-6">

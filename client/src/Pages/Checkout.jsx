@@ -58,7 +58,7 @@ export default function Checkout() {
             </Helmet>
 
             <Header />
-            <div className="min-h-screen bg-gray-50 py-8 mt-10">
+            <div className="min-h-screen bg-gray-50 py-8">
                 <div className="container mx-auto px-4 max-w-4xl">
                     {/* Progress Steps */}
                     <div className="flex justify-center mb-8">
@@ -66,8 +66,8 @@ export default function Checkout() {
                             <div key={s.id} className="flex items-center">
                                 <div
                                     className={`flex items-center justify-center w-10 h-10 rounded-full ${step >= s.id
-                                            ? "bg-emerald-600 text-white"
-                                            : "bg-gray-200 text-gray-500"
+                                        ? "bg-emerald-600 text-white"
+                                        : "bg-gray-200 text-gray-500"
                                         } transition-colors`}
                                 >
                                     <s.icon size={20} />
@@ -202,8 +202,8 @@ export default function Checkout() {
                                             <label
                                                 key={method.id}
                                                 className={`flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all ${formData.paymentMethod === method.id
-                                                        ? "border-emerald-500 bg-emerald-50"
-                                                        : "border-gray-200 hover:border-gray-300"
+                                                    ? "border-emerald-500 bg-emerald-50"
+                                                    : "border-gray-200 hover:border-gray-300"
                                                     }`}
                                             >
                                                 <input

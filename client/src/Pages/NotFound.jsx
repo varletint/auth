@@ -14,7 +14,7 @@ export default function NotFound() {
             </Helmet>
 
             <Header />
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 mt-10">
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12">
                 <div className="container mx-auto px-4 text-center">
                     {/* 404 Animation */}
                     <div className="relative inline-block mb-8">

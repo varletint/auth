@@ -60,7 +60,7 @@ export default function Settings() {
             </Helmet>
 
             <Header />
-            <div className="min-h-screen bg-gray-50 py-8 mt-10">
+            <div className="min-h-screen bg-gray-50 py-8">
                 <div className="container mx-auto px-4 max-w-3xl">
                     <div className="flex items-center gap-3 mb-8">
                         <Settings02Icon size={32} className="text-emerald-600" />

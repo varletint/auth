@@ -178,7 +178,7 @@ export default function ItemPage() {
             </Helmet>
 
             <Header />
-            <div className="min-h-screen bg-gray-50 py-8 mt-10">
+            <div className="min-h-screen bg-gray-50 py-8">
                 <div className="container mx-auto px-4 max-w-5xl">
                     {/* Back Button */}
                     <button
@@ -250,10 +250,10 @@ export default function ItemPage() {
                                 Current Stock
                             </div>
                             <p className={`text-2xl font-bold ${item.quantity === 0
-                                    ? "text-red-600"
-                                    : item.quantity <= item.lowStockThreshold
-                                        ? "text-amber-600"
-                                        : "text-gray-900"
+                                ? "text-red-600"
+                                : item.quantity <= item.lowStockThreshold
+                                    ? "text-amber-600"
+                                    : "text-gray-900"
                                 }`}>
                                 {item.quantity} {item.unit}
                             </p>

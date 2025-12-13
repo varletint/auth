@@ -199,7 +199,7 @@ export default function EditProduct() {
         return (
             <>
                 <Header />
-                <div className="min-h-screen bg-gray-50 py-12 mt-10">
+                <div className="min-h-screen bg-gray-50 py-12">
                     <div className="container mx-auto px-4 max-w-4xl">
                         <div className="bg-white rounded-2xl shadow-lg p-8 animate-pulse">
                             <div className="h-8 bg-gray-200 rounded w-1/3 mb-8"></div>
@@ -222,7 +222,7 @@ export default function EditProduct() {
     return (
         <>
             <Header />
-            <div className="min-h-screen bg-gray-50 py-12 mt-10">
+            <div className="min-h-screen bg-gray-50 py-12">
                 <div className="container mx-auto px-4 max-w-4xl">
                     {/* Page Header */}
                     <div className="mb-8">
