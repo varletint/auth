@@ -225,24 +225,35 @@ export default function AdminUsers() {
                                                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadge(user.accountStatus)}`}>
                                                             {user.accountStatus || "active"}
                                                         </span>
+                                                        {/* Toggle Switch for Active/Suspended */}
                                                         {!user.role.includes("admin") && (
-                                                            <div className="flex gap-1 mt-2">
+                                                            <div className="flex items-center gap-2 mt-2">
                                                                 <button
-                                                                    onClick={() => handleStatusChange(user._id, "active")}
+                                                                    onClick={() => handleStatusChange(
+                                                                        user._id,
+                                                                        user.accountStatus === "active" ? "suspended" : "active"
+                                                                    )}
                                                                     disabled={actionLoading === `${user._id}-status`}
-                                                                    className={`p-2 rounded ${user.accountStatus === "active" ? "bg-emerald-100" : "hover:bg-gray-100"}`}
-                                                                    title="Activate"
+                                                                    className={`relative w-12 h-6 rounded-full transition-colors duration-300 ease-in-out
+                                                                        ${user.accountStatus === "active"
+                                                                            ? "bg-emerald-500"
+                                                                            : "bg-yellow-500"}
+                                                                        ${actionLoading === `${user._id}-status` ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
+                                                                    `}
+                                                                    title={user.accountStatus === "active" ? "Click to suspend" : "Click to activate"}
                                                                 >
-                                                                    <CheckmarkCircle02Icon size={16} className="text-emerald-600" />
+                                                                    {/* Toggle Circle */}
+                                                                    <span
+                                                                        className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-300 ease-in-out
+                                                                            ${user.accountStatus === "active"
+                                                                                ? "translate-x-7"
+                                                                                : "translate-x-1"}
+                                                                        `}
+                                                                    />
                                                                 </button>
-                                                                <button
-                                                                    onClick={() => handleStatusChange(user._id, "suspended")}
-                                                                    disabled={actionLoading === `${user._id}-status`}
-                                                                    className={`p-2 rounded ${user.accountStatus === "suspended" ? "bg-yellow-100" : "hover:bg-gray-100"}`}
-                                                                    title="Suspend"
-                                                                >
-                                                                    <Cancel01Icon size={16} className="text-yellow-600" />
-                                                                </button>
+                                                                <span className="text-xs text-gray-500">
+                                                                    {user.accountStatus === "active" ? "Active" : "Suspended"}
+                                                                </span>
                                                             </div>
                                                         )}
                                                     </td>
