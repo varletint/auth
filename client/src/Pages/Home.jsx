@@ -148,7 +148,7 @@ export default function Home() {
         <meta property="og:title" content="Lookups - Discover Amazing Products" />
         <meta property="og:description" content="Discover and shop the latest trending products on Lookups." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://auth-fawn-eight.vercel.app" />
+        <meta property="og:url" content="https://lookupss.vercel.app" />
         <meta property="og:site_name" content="Lookups" />
 
         {/* Twitter Card */}
@@ -156,7 +156,7 @@ export default function Home() {
         <meta name="twitter:title" content="Lookups - Discover Amazing Products" />
         <meta name="twitter:description" content="Discover and shop the latest trending products on Lookups." />
 
-        <link rel="canonical" href="https://auth-fawn-eight.vercel.app" />
+        <link rel="canonical" href="https://lookupss.vercel.app" />
       </Helmet>
 
       <Header />

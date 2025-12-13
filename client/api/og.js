@@ -18,7 +18,7 @@ const BOT_AGENTS = [
 ];
 
 // Site configuration
-const SITE_URL = 'https://auth-fawn-eight.vercel.app';
+const SITE_URL = 'https://lookupss.vercel.app';
 const BACKEND_URL = 'https://lookupsbackend.vercel.app';
 const SITE_NAME = 'Lookups';
 const DEFAULT_IMAGE = `${SITE_URL}/logo.png`;

@@ -4,4 +4,4 @@ Allow: /
 # Disallow auth pages from being indexed
 Disallow: /forgot-password
 
-Sitemap: https://auth-fawn-eight.vercel.app/sitemap.xml
+Sitemap: https://lookupss.vercel.app/sitemap.xml

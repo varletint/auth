@@ -39,7 +39,7 @@ const app = e();
 // allow preflight requests
 
 const allowedOrigins = [
-  "https://auth-fawn-eight.vercel.app",
+  "https://lookupss.vercel.app",
   "http://localhost:5173",
 ];
 app.use(

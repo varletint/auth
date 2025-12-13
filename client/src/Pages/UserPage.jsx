@@ -132,7 +132,7 @@ export default function UserPage() {
                     <meta property="og:title" content={`${user.fullName || user.username} | Lookups Seller`} />
                     <meta property="og:description" content={user.bio || `Shop ${products.length} products from ${user.username}`} />
                     <meta property="og:type" content="profile" />
-                    <meta property="og:url" content={`https://auth-fawn-eight.vercel.app/seller/${id}`} />
+                    <meta property="og:url" content={`https://lookupss.vercel.app/seller/${id}`} />
                     <meta property="og:site_name" content="Lookups" />
 
                     {/* Twitter Card */}
@@ -140,7 +140,7 @@ export default function UserPage() {
                     <meta name="twitter:title" content={`${user.fullName || user.username} | Lookups`} />
                     <meta name="twitter:description" content={user.bio || `Shop products from ${user.username}`} />
 
-                    <link rel="canonical" href={`https://auth-fawn-eight.vercel.app/seller/${id}`} />
+                    <link rel="canonical" href={`https://lookupss.vercel.app/seller/${id}`} />
                 </Helmet>
             )}
 

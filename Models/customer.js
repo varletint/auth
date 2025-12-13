@@ -86,6 +86,17 @@ customerSchema.index({ userId: 1, name: 1 });
 customerSchema.index({ userId: 1, phone: 1 });
 customerSchema.index({ userId: 1, isDeleted: 1 });
 
+// ==================== Virtuals ====================
+customerSchema.virtual('customersHistory', {
+    ref: 'Sale',           // Look in the Sale collection
+    localField: '_id',     // Match Customer._id
+    foreignField: 'customer', // With Sale.customer
+    justOne: false,       // Return all matching sales (array)
+    count: true,
+    options: { populate: 'customer', limit: 10 },
+    match: { isDeleted: false },
+});
+
 // ==================== Query Middleware ====================
 customerSchema.pre(/^find/, function (next) {
     if (!this.getOptions().includeDeleted) {

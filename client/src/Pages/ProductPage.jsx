@@ -230,7 +230,7 @@ export default function ProductPage() {
                     <meta property="og:title" content={`${product.name} | Lookups`} />
                     <meta property="og:description" content={product.description?.substring(0, 160) || `Buy ${product.name} on Lookups`} />
                     <meta property="og:type" content="product" />
-                    <meta property="og:url" content={`https://auth-fawn-eight.vercel.app/product/${product._id}`} />
+                    <meta property="og:url" content={`https://lookupss.vercel.app/product/${product._id}`} />
                     <meta property="og:image" content={product.images?.[0] || ''} />
                     <meta property="og:site_name" content="Lookups" />
                     <meta property="product:price:amount" content={product.price} />
@@ -239,7 +239,7 @@ export default function ProductPage() {
                     <meta name="twitter:title" content={`${product.name} | Lookups`} />
                     <meta name="twitter:description" content={product.description?.substring(0, 160) || `Buy ${product.name} on Lookups`} />
                     <meta name="twitter:image" content={product.images?.[0] || ''} />
-                    <link rel="canonical" href={`https://auth-fawn-eight.vercel.app/product/${product._id}`} />
+                    <link rel="canonical" href={`https://lookupss.vercel.app/product/${product._id}`} />
                 </Helmet>
 
                 {/* Header */}
