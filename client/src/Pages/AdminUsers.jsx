@@ -129,7 +129,7 @@ export default function AdminUsers() {
             </Helmet>
 
             <Header />
-            <div className="min-h-screen bg-gray-50 py-8 mt-10">
+            <div className="min-h-screen bg-gray-50 py-8">
                 <div className="container mx-auto px-4 max-w-7xl">
                     {/* Header */}
                     <div className="flex items-center gap-4 mb-8">
@@ -137,7 +137,7 @@ export default function AdminUsers() {
                             <ArrowLeft02Icon size={24} className="text-gray-600" />
                         </Link>
                         <div className="flex items-center gap-3">
-                            <UserMultiple02Icon size={32} className="text-blue-600" />
+                            <UserMultiple02Icon size={32} className="text-emerald-600" />
                             <div>
                                 <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
                                 <p className="text-gray-500">{pagination?.totalUsers || 0} total users</p>
@@ -153,14 +153,14 @@ export default function AdminUsers() {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Search users..."
-                            className="w-full pl-12 pr-4 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+                            className="w-full pl-12 pr-4 py-2 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none"
                         />
                     </div>
 
                     {/* Users Table */}
                     {loading ? (
                         <div className="flex justify-center py-12">
-                            <Loading03Icon size={40} className="text-blue-600 animate-spin" />
+                            <Loading03Icon size={40} className="text-emerald-600 animate-spin" />
                         </div>
                     ) : (
                         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
