@@ -87,16 +87,18 @@ export default function Profile() {
   const marketplaceSidebarItems = [
     { id: "overview", label: "Overview", icon: <GridViewIcon size={20} />, path: null },
     { id: "profile", label: "Edit Profile", icon: <UserIcon size={20} />, path: "/edit-profile" },
-    // Show My Products only for sellers
+    { id: 'add-product', label: 'Add Product', icon: <PlusSignIcon size={20} />, path: '/add-product' },
+    // { id: 'my-orders', label: 'My Orders', icon: <PackageIcon size={20} />, path: '/my-orders' },
+    // // Show My Products only for sellers
     ...(isSeller ? [{ id: "products", label: "My Products", icon: <ShoppingBag02Icon size={20} />, path: "/my-products" }] : []),
-    // Sellers see "Manage Orders", buyers see "My Orders"
-    isSeller
-      ? { id: "orders", label: "Manage Orders", icon: <PackageIcon size={20} />, path: "/orders" }
-      : { id: "my-orders", label: "My Orders", icon: <PackageIcon size={20} />, path: "/my-orders" },
-    // Sales History for sellers, Purchase History for buyers
-    isSeller
-      ? { id: "sales", label: "Sales History", icon: <ArrowUp01Icon size={20} />, path: "/sales-history" }
-      : { id: "purchases", label: "Purchase History", icon: <ShoppingBag02Icon size={20} />, path: "/purchase-history" },
+    // Sellers see "Manage Orders" (for orders they need to fulfill)
+    ...(isSeller ? [{ id: "orders", label: "Manage Orders", icon: <PackageIcon size={20} />, path: "/orders" }] : []),
+    // Everyone sees "My Orders" (for personal purchases)
+    { id: "my-orders", label: "My Orders", icon: <PackageIcon size={20} />, path: "/my-orders" },
+    // Sales History for sellers only
+    ...(isSeller ? [{ id: "sales", label: "Sales History", icon: <ArrowUp01Icon size={20} />, path: "/sales-history" }] : []),
+    // Everyone sees Purchase History (for personal purchases)
+    { id: "purchases", label: "Purchase History", icon: <ShoppingBag02Icon size={20} />, path: "/purchase-history" },
     { id: "settings", label: "Settings", icon: <Settings02Icon size={20} />, path: "/settings" },
   ];
 
@@ -190,7 +192,7 @@ export default function Profile() {
             >
               {isSidebarOpen ? <MultiplicationSignIcon size={24} /> : <Menu01Icon size={24} />}
             </button>
-            <h2 className='ml-20 text-2xl font-bold text-gray-900'>My Profile</h2>
+            <h2 className='ml-20 text-xl md:text-2xl font-bold text-gray-900'>My Profile</h2>
           </div>
           <div className='max-w- mx-auto p-2'>
             {/* Header Section */}
@@ -240,7 +242,19 @@ export default function Profile() {
                       <Button text='Edit Profile' onClick={() => navigate('/edit-profile')} className='!py-2 !px-4 !text-sm bg-white !text-gray-700 border border-gray-200 hover:bg-off-white !shadow-sm' />
                     </div>
                     <div>
-                      <h1 className='text-2xl font-bold text-gray-900'>{currentUser?.username || "User"}</h1>
+                      <h1 className='text-2xl font-bold flex items-center justify-between gap-2 text-gray-900'>{currentUser?.username || "User"}
+                        <span className="flex gap-1">
+                          {currentUser?.role?.includes("admin") && (
+                            <span className="text-sm bg-red-500 text-white px-2 py-1 rounded">Admin</span>
+                          )}
+                          {currentUser?.role?.includes("seller") && (
+                            <span className="text-sm bg-emerald-500 text-white px-2 py-1 rounded">Seller</span>
+                          )}
+                          {currentUser?.role?.includes("buyer") && (
+                            <span className="text-sm bg-blue-500 text-white px-2 py-1 rounded">Buyer</span>
+                          )}
+                        </span>
+                      </h1>
                       <p className='text-gray-500'>{currentUser?.email || "user@example.com"}</p>
                     </div>
                   </div>
