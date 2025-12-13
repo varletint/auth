@@ -16,6 +16,7 @@ import {
     CheckmarkCircle02Icon,
     Cancel01Icon,
     Clock01Icon,
+    Analytics01Icon,
 } from "hugeicons-react";
 
 export default function AdminDashboard() {
@@ -165,8 +166,8 @@ export default function AdminDashboard() {
                         ))}
                     </div>
 
-                    <div className="grid lg:grid-cols-2 gap-8">
-                        {/* User Breakdown */}
+                    <div className="grid lg:grid-cols-3 gap-8">
+                        {/* User Breakdown by Role */}
                         <div className="bg-white rounded-xl shadow-sm p-6">
                             <h2 className="text-xl font-bold text-gray-900 mb-6">Users by Role</h2>
                             <div className="space-y-4">
@@ -182,6 +183,31 @@ export default function AdminDashboard() {
                                         <span className="text-2xl font-bold text-gray-900">{item.count}</span>
                                     </div>
                                 ))}
+                            </div>
+                        </div>
+
+                        {/* Users by App Type - NEW SECTION */}
+                        <div className="bg-white rounded-xl shadow-sm p-6">
+                            <h2 className="text-xl font-bold text-gray-900 mb-6">Users by App Type</h2>
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div className="flex items-center gap-3">
+                                        <Store04Icon size={24} className="text-emerald-600" />
+                                        <span className="font-medium text-gray-700">Marketplace</span>
+                                    </div>
+                                    <span className="text-2xl font-bold text-gray-900">
+                                        {stats?.users?.marketplace || 0}
+                                    </span>
+                                </div>
+                                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div className="flex items-center gap-3">
+                                        <Analytics01Icon size={24} className="text-blue-600" />
+                                        <span className="font-medium text-gray-700">Business Management</span>
+                                    </div>
+                                    <span className="text-2xl font-bold text-gray-900">
+                                        {stats?.users?.businessManagement || 0}
+                                    </span>
+                                </div>
                             </div>
                         </div>
 

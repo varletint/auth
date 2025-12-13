@@ -13,6 +13,10 @@ export const getStats = async (req, res, next) => {
         const sellerCount = await User.countDocuments({ role: "seller" });
         const buyerCount = await User.countDocuments({ role: "buyer" });
 
+        // Get user counts by appType
+        const marketplaceUsers = await User.countDocuments({ appType: "marketplace" });
+        const businessManagementUsers = await User.countDocuments({ appType: "business_management" });
+
         // Get product count
         const totalProducts = await Product.countDocuments();
 
@@ -38,6 +42,9 @@ export const getStats = async (req, res, next) => {
                     sellers: sellerCount,
                     buyers: buyerCount,
                     newThisWeek: newUsersThisWeek,
+                    // New: App type breakdown
+                    marketplace: marketplaceUsers,
+                    businessManagement: businessManagementUsers,
                 },
                 products: {
                     total: totalProducts,
