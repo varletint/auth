@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+// IMPROVEMENT #1: Added useLocation to auto-close menu on route change
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   Menu01Icon,
   MultiplicationSignIcon,
@@ -17,10 +18,46 @@ import {
 import useAuthStore from "../store/useAuthStore";
 import lookups from "../assets/logo.png";
 
+// ==========================================
+// IMPROVEMENT #2: Extract Navigation Items into Config Arrays
+// This reduces code duplication between desktop and mobile navigation
+// ==========================================
+const bizNavItems = [
+  { to: "/inventory", icon: PackageIcon, label: "Inventory", hoverColor: "hover:text-blue-600" },
+  { to: "/sales", icon: MoneyBag01Icon, label: "Sales", hoverColor: "hover:text-emerald-600" },
+  { to: "/biz-dashboard", icon: Analytics01Icon, label: "Dashboard", hoverColor: "hover:text-emerald-600" },
+];
+
+const bizMobileNavItems = [
+  { to: "/biz-dashboard", icon: Analytics01Icon, label: "Dashboard" },
+  { to: "/inventory", icon: PackageIcon, label: "Inventory" },
+  { to: "/sales", icon: MoneyBag01Icon, label: "Sales" },
+  { to: "/expenses", icon: ShoppingBag01Icon, label: "Expenses" },
+  { to: "/customers", icon: Settings02Icon, label: "Customers" },
+];
+
+const marketplaceNavItems = [
+  { to: "/search", icon: Search01Icon, label: "Search", hoverColor: "hover:text-emerald-600" },
+  { to: "/wishlist", icon: FavouriteIcon, label: "Wishlist", hoverColor: "hover:text-red-500" },
+  { to: "/cart", icon: ShoppingCart01Icon, label: "Cart", hoverColor: "hover:text-emerald-600" },
+  { to: "/my-products", icon: ShoppingBag01Icon, label: "My Products", hoverColor: "hover:text-emerald-600" },
+  { to: "/dashboard", icon: DashboardSquare01Icon, label: "Dashboard", hoverColor: "hover:text-emerald-600" },
+];
+
+const marketplaceMobileNavItems = [
+  { to: "/search", icon: Search01Icon, label: "Search" },
+  { to: "/cart", icon: ShoppingCart01Icon, label: "Cart" },
+  { to: "/wishlist", icon: FavouriteIcon, label: "Wishlist" },
+  { to: "/my-products", icon: ShoppingBag01Icon, label: "My Products" },
+  { to: "/dashboard", icon: DashboardSquare01Icon, label: "Dashboard" },
+];
+
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { currentUser, signOut } = useAuthStore();
   const navigate = useNavigate();
+  // IMPROVEMENT #3: Added useLocation for auto-closing menu on route change
+  const location = useLocation();
 
   // Check if user is admin
   const isAdmin = currentUser?.role?.includes("admin");
@@ -37,6 +74,23 @@ export default function Header() {
     setIsMenuOpen(false);
   };
 
+  // IMPROVEMENT #3: Auto-close mobile menu on route change
+  // This removes the need for onClick={toggleMenu} on every Link
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
+
+  // IMPROVEMENT #4: Close menu with Escape key (keyboard accessibility)
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === "Escape") setIsMenuOpen(false);
+    };
+    if (isMenuOpen) {
+      window.addEventListener("keydown", handleEscape);
+    }
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [isMenuOpen]);
+
   useEffect(() => {
     if (isMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -49,10 +103,33 @@ export default function Header() {
     };
   }, [isMenuOpen]);
 
+  // Helper component for rendering nav items (reduces duplication)
+  const NavIcon = ({ to, icon: Icon, label, hoverColor = "hover:text-emerald-600" }) => (
+    <li>
+      <Link to={to} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title={label}>
+        <Icon size={22} className={`text-gray-600 ${hoverColor}`} />
+      </Link>
+    </li>
+  );
+
+  // Helper component for mobile nav items
+  const MobileNavItem = ({ to, icon: Icon, label }) => (
+    <li>
+      {/* PREVIOUS: onClick={toggleMenu} was needed on every Link */}
+      {/* NOW: Auto-closes via useEffect watching location.pathname */}
+      <Link to={to} className="flex items-center gap-2">
+        <Icon size={20} />
+        {label}
+      </Link>
+    </li>
+  );
+
   return (
     <>
+      {/* IMPROVEMENT #5: Changed from hardcoded w-[1500px] to max-w-7xl for better responsiveness */}
+      {/* PREVIOUS: className='header sticky top-0 w-[1500px] max-w-[95%] m-auto ...' */}
       <div
-        className='header sticky top-0 w-[1500px] max-w-[95%] m-auto border-b border-gray-200 
+        className='header sticky top-0 max-w-7xl w-full max-w-[95%] m-auto border-b border-gray-200 
       flex justify-between items-center z-[100] px-[0px] py-[0px] bg-white'>
         <Link to={isBizUser ? '/biz-dashboard' : '/'} className='font-bold  text-nowrap
       flex items-center gap-[0px] text-emerald-600 '>
@@ -64,8 +141,9 @@ export default function Header() {
         <ul className='hidden sm:flex gap-[20px] justify-end items-center font-bold'>
           {currentUser ? (
             <>
+              {/* IMPROVEMENT #2: Using config arrays with .map() instead of hardcoded JSX */}
+              {/* PREVIOUS CODE (commented out):
               {isBizUser ? (
-                /* Business User Navigation */
                 <>
                   <li>
                     <Link to={"/inventory"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Inventory">
@@ -84,35 +162,22 @@ export default function Header() {
                   </li>
                 </>
               ) : (
-                /* Marketplace User Navigation */
                 <>
                   <li>
                     <Link to={"/search"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Search">
                       <Search01Icon size={22} className="text-gray-600 hover:text-emerald-600" />
                     </Link>
                   </li>
-                  <li>
-                    <Link to={"/wishlist"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Wishlist">
-                      <FavouriteIcon size={22} className="text-gray-600 hover:text-red-500" />
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to={"/cart"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Cart">
-                      <ShoppingCart01Icon size={22} className="text-gray-600 hover:text-emerald-600" />
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to={"/my-products"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="My Products">
-                      <ShoppingBag01Icon size={22} className="text-gray-600 hover:text-emerald-600" />
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to={"/dashboard"} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Dashboard">
-                      <DashboardSquare01Icon size={22} className="text-gray-600 hover:text-emerald-600" />
-                    </Link>
-                  </li>
+                  ... (more hardcoded items)
                 </>
               )}
+              */}
+
+              {/* NEW: Using config arrays */}
+              {(isBizUser ? bizNavItems : marketplaceNavItems).map((item) => (
+                <NavIcon key={item.to} {...item} />
+              ))}
+
               <li className="border-l border-gray-200 pl-4 ml-2">
                 <Link to={"/profile"} className="hover:text-emerald-600 transition-colors">Profile</Link>
               </li>
@@ -154,8 +219,12 @@ export default function Header() {
         </ul>
 
         {/* Mobile Menu Button */}
+        {/* IMPROVEMENT #6: Added aria-label and aria-expanded for accessibility */}
+        {/* PREVIOUS: <button onClick={toggleMenu} className='flex sm:hidden ...'> */}
         <button
           onClick={toggleMenu}
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={isMenuOpen}
           className='flex sm:hidden justify-end z-[100] font-semibold text-[25px]'>
           {isMenuOpen ? <MultiplicationSignIcon /> : <Menu01Icon />}
         </button>
@@ -177,8 +246,9 @@ export default function Header() {
           >
             {currentUser ? (
               <>
+                {/* IMPROVEMENT #2: Using config arrays with .map() for mobile nav */}
+                {/* PREVIOUS CODE (commented out):
                 {isBizUser ? (
-                  /* Business User Mobile Navigation */
                   <>
                     <li>
                       <Link to={"/biz-dashboard"} onClick={toggleMenu} className="flex items-center gap-2">
@@ -192,27 +262,9 @@ export default function Header() {
                         Inventory
                       </Link>
                     </li>
-                    <li>
-                      <Link to={"/sales"} onClick={toggleMenu} className="flex items-center gap-2">
-                        <MoneyBag01Icon size={20} />
-                        Sales
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to={"/expenses"} onClick={toggleMenu} className="flex items-center gap-2">
-                        <ShoppingBag01Icon size={20} />
-                        Expenses
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to={"/customers"} onClick={toggleMenu} className="flex items-center gap-2">
-                        <Settings02Icon size={20} />
-                        Customers
-                      </Link>
-                    </li>
+                    ... (more hardcoded items with onClick={toggleMenu})
                   </>
                 ) : (
-                  /* Marketplace User Mobile Navigation */
                   <>
                     <li>
                       <Link to={"/search"} onClick={toggleMenu} className="flex items-center gap-2">
@@ -220,47 +272,32 @@ export default function Header() {
                         Search
                       </Link>
                     </li>
-                    <li>
-                      <Link to={"/cart"} onClick={toggleMenu} className="flex items-center gap-2">
-                        <ShoppingCart01Icon size={20} />
-                        Cart
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to={"/wishlist"} onClick={toggleMenu} className="flex items-center gap-2">
-                        <FavouriteIcon size={20} />
-                        Wishlist
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to={"/my-products"} onClick={toggleMenu} className="flex items-center gap-2">
-                        <ShoppingBag01Icon size={20} />
-                        My Products
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to={"/dashboard"} onClick={toggleMenu} className="flex items-center gap-2">
-                        <DashboardSquare01Icon size={20} />
-                        Dashboard
-                      </Link>
-                    </li>
+                    ... (more hardcoded items)
                   </>
                 )}
+                */}
+
+                {/* NEW: Using config arrays - no more onClick={toggleMenu} needed! */}
+                {(isBizUser ? bizMobileNavItems : marketplaceMobileNavItems).map((item) => (
+                  <MobileNavItem key={item.to} {...item} />
+                ))}
+
                 <li className="border-t border-gray-200 pt-4 w-full text-center">
-                  <Link to={"/profile"} onClick={toggleMenu}>
+                  {/* PREVIOUS: onClick={toggleMenu} - no longer needed */}
+                  <Link to={"/profile"}>
                     Profile
                   </Link>
                 </li>
                 {isAdmin && (
                   <li>
-                    <Link to="/admin" onClick={toggleMenu} className="text-red-600 font-semibold">
+                    <Link to="/admin" className="text-red-600 font-semibold">
                       Admin Panel
                     </Link>
                   </li>
                 )}
                 {!isBizUser && (
                   <li>
-                    <Link to={"/add-product"} onClick={toggleMenu} className="text-emerald-600">
+                    <Link to={"/add-product"} className="text-emerald-600">
                       Add Product
                     </Link>
                   </li>
@@ -278,12 +315,13 @@ export default function Header() {
             ) : (
               <>
                 <li>
-                  <Link to={"/login"} onClick={toggleMenu}>
+                  {/* PREVIOUS: onClick={toggleMenu} - no longer needed */}
+                  <Link to={"/login"}>
                     Login
                   </Link>
                 </li>
                 <li>
-                  <Link to={"/register"} onClick={toggleMenu}>
+                  <Link to={"/register"}>
                     Register
                   </Link>
                 </li>
@@ -296,4 +334,3 @@ export default function Header() {
     </>
   );
 }
-
