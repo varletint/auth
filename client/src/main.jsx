@@ -4,7 +4,11 @@ import { HelmetProvider } from 'react-helmet-async'
 import './index.css'
 import App from './App.jsx'
 
-// Register Service Worker for PWA
+// Service Worker registration is handled automatically by vite-plugin-pwa
+// No manual registration needed - the plugin handles this with registerType: "autoUpdate"
+
+/*
+// Manual SW registration (not needed with vite-plugin-pwa)
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
@@ -16,6 +20,7 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
+*/
 
 
 /*

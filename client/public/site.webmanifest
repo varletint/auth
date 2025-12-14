@@ -1,6 +1,7 @@
 {
     "name": "Lookups",
     "short_name": "Lookups",
+    "start_url": "/",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",
