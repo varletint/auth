@@ -19,7 +19,8 @@ import {
   Loading03Icon,
   PackageIcon,
   // TrendingUp01Icon,
-  ArrowUp01Icon
+  ArrowUp01Icon,
+  Home01Icon
 } from "hugeicons-react";
 
 export default function Profile() {
@@ -68,6 +69,7 @@ export default function Profile() {
 
   // Check if user is a seller
   const isSeller = currentUser?.role?.includes("seller");
+  const isBuyer = currentUser?.role?.includes("buyer");
   // Check if user is business management user
   const isBizUser = currentUser?.appType === "business_management";
 
@@ -100,6 +102,7 @@ export default function Profile() {
     // Everyone sees Purchase History (for personal purchases)
     { id: "purchases", label: "Purchase History", icon: <ShoppingBag02Icon size={20} />, path: "/purchase-history" },
     { id: "settings", label: "Settings", icon: <Settings02Icon size={20} />, path: "/settings" },
+    // ...(isBuyer ? [{ id: 'become-seller', label: 'Become Seller', icon: <UserIcon size={20} />, path: '/become-seller' }] : [])
   ];
 
   // Use appropriate sidebar items based on user type
@@ -110,16 +113,16 @@ export default function Profile() {
       {/* <Header /> */}
       <div className='min-h-screen bg-off-white flex border border-gray-900'>
         {/* Mobile menu button */}
-        <button
+        {/* <button
           className='md:hidden fixed top-4 left-4 z-50 p-2 py-2 rounded-md bg-white shadow-md text-gray-700'
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
           {isSidebarOpen ? <MultiplicationSignIcon size={24} /> : <Menu01Icon size={24} />}
-        </button>
+        </button> */}
 
         {/* Sidebar */}
         <aside
-          className={`fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 z-40 transform transition-transform duration-300 ease-in-out
+          className={`fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 z-10 transform transition-transform duration-300 ease-in-out
             ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
             md:translate-x-0 md:sticky md:top-0 md:h-screen overflow-y-auto flex flex-col`}
         >
@@ -178,21 +181,29 @@ export default function Profile() {
         {/* Overlay for mobile sidebar */}
         {isSidebarOpen && (
           <div
-            className='fixed inset-0 bg-black/70 z-30 md:hidden'
+            className='fixed inset-0 bg-black/70 z-1 md:hidden'
             onClick={() => setIsSidebarOpen(false)}
           ></div>
         )}
 
         {/* Main Content */}
         <main className='flex-1 md:ml- pt-   '>
-          <div className='sticky  top-0 z-10 bg-white py-4 px-6 border-b border-gray-200  flex items-center justify-between'>
+          <div className='sticky  top-0 z-100 bg-white py-4 px-6 border-b border-gray-200  flex items-center justify-between'>
+            {/* <h2 className='ml-20 text-xl md:text-2xl font-bold text-gray-900'>My Profile</h2>
             <button
-              className='md:hidden fixed top-4 left-4 z-50 p-2 py-2 rounded-md bg-white  text-gray-700'
+              className='md:hidden fixed top-4 left-4 z-100 p-2 py-2 rounded-md bg-white  text-gray-700'
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             >
               {isSidebarOpen ? <MultiplicationSignIcon size={24} /> : <Menu01Icon size={24} />}
-            </button>
-            <h2 className='ml-20 text-xl md:text-2xl font-bold text-gray-900'>My Profile</h2>
+            </button> */}
+            <div className=" flex  justify-between  w-full">
+              <h2 className=' font-semibold text-lg md:text-xl lg:text-2xl'>My Profile</h2>
+              <div className=" flex gap-5">
+
+                <Link to="/"><Home01Icon size={24} /></Link>
+                <h1 onClick={() => setIsSidebarOpen(!isSidebarOpen)}>{isSidebarOpen ? <MultiplicationSignIcon size={24} /> : <Menu01Icon size={24} />} </h1>
+              </div>
+            </div>
           </div>
           <div className='max-w- mx-auto p-2'>
             {/* Header Section */}
@@ -255,7 +266,7 @@ export default function Profile() {
                           )}
                         </span>
                       </h1>
-                      <p className='text-gray-500'>{currentUser?.email || "user@example.com"}</p>
+                      <p className='text-gray-400 text-sm sm:text-lg '>{currentUser?.email || "user@example.com"}</p>
                     </div>
                   </div>
                 </div>
