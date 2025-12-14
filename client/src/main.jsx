@@ -17,7 +17,8 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// PWA Install Prompt
+
+/*
 let deferredPrompt;
 
 window.addEventListener('beforeinstallprompt', (e) => {
@@ -105,6 +106,7 @@ window.addEventListener('appinstalled', () => {
   if (banner) banner.remove();
   deferredPrompt = null;
 });
+*/
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
