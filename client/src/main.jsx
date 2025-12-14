@@ -4,11 +4,7 @@ import { HelmetProvider } from 'react-helmet-async'
 import './index.css'
 import App from './App.jsx'
 
-// Service Worker registration is handled automatically by vite-plugin-pwa
-// No manual registration needed - the plugin handles this with registerType: "autoUpdate"
-
-/*
-// Manual SW registration (not needed with vite-plugin-pwa)
+// Register Service Worker for PWA
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
@@ -20,10 +16,8 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
-*/
 
-
-/*
+// PWA Install Prompt
 let deferredPrompt;
 
 window.addEventListener('beforeinstallprompt', (e) => {
@@ -111,7 +105,6 @@ window.addEventListener('appinstalled', () => {
   if (banner) banner.remove();
   deferredPrompt = null;
 });
-*/
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -120,3 +113,4 @@ createRoot(document.getElementById('root')).render(
     </HelmetProvider>
   </StrictMode>,
 )
+
