@@ -44,7 +44,7 @@ export const signup = async (req, res, next) => {
     const refreshToken = jwt.sign(
       { id: newUser._id },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "30d" }
     );
 
     const { password: pass, ...rest } = newUser._doc;
@@ -60,7 +60,7 @@ export const signup = async (req, res, next) => {
         httpOnly: true,
         secure: true, // secure: true is required for sameSite: 'none' and works on localhost
         sameSite: 'none',
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days (1 month)
       })
       .status(201)
       .json(rest);
@@ -124,7 +124,7 @@ export const signin = async (req, res, next) => {
     const refreshToken = jwt.sign(
       { id: validUser._id },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "30d" }
     );
 
     // Convert to object and remove password
@@ -145,7 +145,7 @@ export const signin = async (req, res, next) => {
         httpOnly: true,
         secure: true, // secure: true is required for sameSite: 'none' and works on localhost
         sameSite: 'none',
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days (1 month)
       })
       .status(200)
       .json({ ...rest, userDetails });

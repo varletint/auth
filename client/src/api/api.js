@@ -32,6 +32,25 @@ const apiCall = async (url, options = {}) => {
 
         const data = await response.json();
 
+        // Handle session expiration (401/403)
+        if (response.status === 401 || response.status === 403) {
+            const sessionExpiredMessages = [
+                'unauthorized',
+                'session expired',
+                'invalid refresh token',
+                'forbidden'
+            ];
+
+            const messageLC = (data.message || '').toLowerCase();
+            if (sessionExpiredMessages.some(msg => messageLC.includes(msg))) {
+                // Clear auth state and redirect to login
+                const useAuthStore = (await import('../store/useAuthStore')).default;
+                useAuthStore.getState().signOut();
+                window.location.href = '/login';
+                throw new ApiError('Session expired. Redirecting to login...', response.status, data);
+            }
+        }
+
         if (!response.ok) {
             throw new ApiError(
                 data.message || 'Request failed',
@@ -63,6 +82,25 @@ const apiUpload = async (url, formData, options = {}) => {
         });
 
         const data = await response.json();
+
+        // Handle session expiration (401/403)
+        if (response.status === 401 || response.status === 403) {
+            const sessionExpiredMessages = [
+                'unauthorized',
+                'session expired',
+                'invalid refresh token',
+                'forbidden'
+            ];
+
+            const messageLC = (data.message || '').toLowerCase();
+            if (sessionExpiredMessages.some(msg => messageLC.includes(msg))) {
+                // Clear auth state and redirect to login
+                const useAuthStore = (await import('../store/useAuthStore')).default;
+                useAuthStore.getState().signOut();
+                window.location.href = '/login';
+                throw new ApiError('Session expired. Redirecting to login...', response.status, data);
+            }
+        }
 
         if (!response.ok) {
             throw new ApiError(

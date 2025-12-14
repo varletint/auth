@@ -1,4 +1,3 @@
-// Load environment variables FIRST, before any other imports
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -28,19 +27,14 @@ import expenseRoute from "./Routes/expenseRoute.js";
 
 const app = e();
 
-// app.use(
-//   bodyParser.json({
-//     verify: (req, res, buf) => {
-//       req.rawBody = buf.toString();
-//     },
-//   })
-// );
+
 
 // allow preflight requests
 
 const allowedOrigins = [
   "https://lookupss.vercel.app",
   "http://localhost:5173",
+  "http://10.15.213.108:5173"
 ];
 app.use(
   cors({
@@ -98,32 +92,51 @@ app.use("/api/customers", customerRoute);
 app.use("/api/sales", saleRoute);
 app.use("/api/expenses", expenseRoute);
 
-// app.use("/", e.json(), testing);
 
-// app.use("/api", testing);
 
+// Enhanced Error Handler Middleware
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
-  const message = err.message || "Internal server error";
+  const isProduction = process.env.NODE_ENV === 'production';
 
-  res.status(statusCode).json({
+  // Generate request ID for tracking
+  const requestId = req.headers['x-request-id'] || `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+  // Log error details (always log on server, but sanitize for production)
+  console.error(`[${new Date().toISOString()}] [${requestId}] Error ${statusCode}:`, {
+    message: err.message,
+    path: req.path,
+    method: req.method,
+    ip: req.ip,
+    ...(isProduction ? {} : { stack: err.stack })
+  });
+
+  // Determine user-facing message (hide internal errors in production)
+  let message = err.message || 'Internal server error';
+  if (isProduction && statusCode >= 500) {
+    message = 'Something went wrong. Please try again later.';
+  }
+
+  // Build response
+  const response = {
     success: false,
     message,
     statusCode,
-  });
+    requestId, // Helps users reference specific errors in support
+    timestamp: new Date().toISOString(),
+  };
+
+  // Include stack trace in development only
+  if (!isProduction && err.stack) {
+    response.stack = err.stack;
+  }
+
+  // Include validation errors if present (e.g., from express-validator)
+  if (err.errors) {
+    response.errors = err.errors;
+  }
+
+  res.status(statusCode).json(response);
 });
 
-// // module.exports = app;
 
-// // import testing from "./Routes/webhook.js";
-
-// // const app = e();
-
-// // app.get("/", (req, res) => {
-// //   res.send("Hello from Vercel backend!");
-// // });
-
-// // app.use("/api", testing);
-
-// // const port = process.env.PORT || 3000;
-// // app.listen(port, () => console.log(`Server running on port ${port}`));
