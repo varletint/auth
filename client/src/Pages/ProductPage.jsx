@@ -43,6 +43,14 @@ export default function ProductPage() {
     const [inWishlist, setInWishlist] = useState(false);
     const [wishlistLoading, setWishlistLoading] = useState(false);
 
+    // Toast notification state
+    const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
+    const showToast = (message, type = 'success') => {
+        setToast({ show: true, message, type });
+        setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 3000);
+    };
+
     const BASE_URL = 'https://lookupsbackend.vercel.app'
 
     useEffect(() => {
@@ -57,7 +65,7 @@ export default function ProductPage() {
                     const response = await wishlistApi.checkWishlistItem(id);
                     setInWishlist(response.inWishlist);
                 } catch (err) {
-                    console.log("Could not check wishlist status:", err);
+                    // Silent fail for wishlist check
                 }
             }
         };
@@ -84,7 +92,7 @@ export default function ProductPage() {
                         setSeller(sellerData);
                     }
                 } catch (err) {
-                    console.log("Could not fetch seller info:", err);
+                    // Silent fail for seller info
                 }
             }
 
@@ -102,7 +110,7 @@ export default function ProductPage() {
                         setRelatedProducts(filtered.slice(0, 3));
                     }
                 } catch (err) {
-                    console.log("Could not fetch related products:", err);
+                    // Silent fail for related products
                 }
             }
         } catch (err) {
@@ -129,7 +137,7 @@ export default function ProductPage() {
             const latestProduct = await productApi.getProduct(id);
 
             if (!latestProduct) {
-                alert("Product not found");
+                showToast("Product not found", "error");
                 return;
             }
 
@@ -138,9 +146,9 @@ export default function ProductPage() {
 
             // Check if product is in stock with latest data
             if (latestProduct.stock !== undefined && latestProduct.stock < quantity) {
-                alert(latestProduct.stock === 0
+                showToast(latestProduct.stock === 0
                     ? "This product is out of stock"
-                    : `Only ${latestProduct.stock} items available in stock. Please reduce your quantity.`);
+                    : `Only ${latestProduct.stock} items available in stock. Please reduce your quantity.`, "error");
                 // Adjust quantity if it exceeds new stock
                 if (quantity > latestProduct.stock) {
                     setQuantity(Math.max(1, latestProduct.stock));
@@ -149,9 +157,9 @@ export default function ProductPage() {
             }
 
             await cartApi.addToCart(product._id, quantity);
-            alert(`${quantity} ${product.name}(s) added to cart!`);
+            showToast(`${quantity} ${product.name}(s) added to cart!`, "success");
         } catch (err) {
-            alert(err.message || "Failed to add to cart");
+            showToast(err.message || "Failed to add to cart", "error");
         } finally {
             setAddingToCart(false);
         }
@@ -161,7 +169,7 @@ export default function ProductPage() {
         if (seller?.email) {
             window.location.href = `mailto:${seller.email}?subject=Inquiry about ${product.name}`;
         } else {
-            alert("Seller contact information not available");
+            showToast("Seller contact information not available", "error");
         }
     };
 
@@ -174,7 +182,7 @@ export default function ProductPage() {
             });
         } else {
             navigator.clipboard.writeText(window.location.href);
-            alert("Product link copied to clipboard!");
+            showToast("Product link copied to clipboard!", "success");
         }
     };
 
@@ -194,7 +202,7 @@ export default function ProductPage() {
                 setInWishlist(true);
             }
         } catch (err) {
-            console.error("Wishlist error:", err);
+            showToast(err.message || "Wishlist action failed", "error");
         } finally {
             setWishlistLoading(false);
         }
@@ -222,6 +230,23 @@ export default function ProductPage() {
 
     return (
         <>
+            {/* Toast Notification */}
+            {toast.show && (
+                <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg transition-all duration-300 ${toast.type === 'success'
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-red-600 text-white'
+                    }`}>
+                    <div className="flex items-center gap-2">
+                        {toast.type === 'success' ? (
+                            <CheckmarkCircle02Icon size={20} />
+                        ) : (
+                            <span className="text-lg">⚠️</span>
+                        )}
+                        <span className="font-medium">{toast.message}</span>
+                    </div>
+                </div>
+            )}
+
             <div className="min-h-screen bg-off-white">
                 <Helmet>
                     <title>{product.name} | Lookups</title>

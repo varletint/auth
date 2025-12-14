@@ -79,6 +79,8 @@ export default function AddProduct() {
     const [imagePreviews, setImagePreviews] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [uploadProgress, setUploadProgress] = useState(0); // Upload progress percentage
+    const [uploadStatus, setUploadStatus] = useState(''); // Status message for upload steps
     const [sku, setSku] = useState("");
     const [skuCounter, setSkuCounter] = useState(1);
 
@@ -341,25 +343,28 @@ export default function AddProduct() {
 
         setLoading(true);
         setError(null);
+        setUploadProgress(0);
+        setUploadStatus('Uploading images...');
 
         try {
             // Step 1: Upload images to Firebase
             const { uploadMultipleImages } = await import('../utils/uploadImage');
 
             // Upload with progress tracking
-            let uploadProgress = 0;
             const imageUrls = await uploadMultipleImages(
                 images,
                 'products',
                 (progress) => {
-                    uploadProgress = progress;
-                    console.log(`Upload progress: ${progress.toFixed(0)}% `);
+                    setUploadProgress(Math.round(progress));
                 }
             );
 
-            console.log('Images uploaded successfully:', imageUrls);
+            setUploadStatus('Creating product...');
 
             // Step 2: Send product data with image URLs to backend
+            // Generate idempotency key to prevent duplicate submissions
+            const idempotencyKey = crypto.randomUUID();
+
             const productData = {
                 name: data.name,
                 description: data.description,
@@ -374,7 +379,7 @@ export default function AddProduct() {
                 color: data.color || undefined,
             };
 
-            const result = await productApi.createProduct(productData);
+            const result = await productApi.createProduct(productData, idempotencyKey);
 
             // console.log("Product created successfully:", result);
 
@@ -870,10 +875,25 @@ export default function AddProduct() {
 
                                 {/* Submit Button */}
                                 <div className="pt-4">
+                                    {/* Upload Progress UI */}
+                                    {loading && (
+                                        <div className="mb-4 p-4 bg-emerald-50 rounded-xl border border-emerald-200">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className="text-sm font-medium text-emerald-700">{uploadStatus}</span>
+                                                <span className="text-sm font-semibold text-emerald-600">{uploadProgress}%</span>
+                                            </div>
+                                            <div className="w-full bg-emerald-100 rounded-full h-2.5">
+                                                <div
+                                                    className="bg-emerald-500 h-2.5 rounded-full transition-all duration-300"
+                                                    style={{ width: `${uploadProgress}%` }}
+                                                ></div>
+                                            </div>
+                                        </div>
+                                    )}
 
                                     <Button
                                         type="submit"
-                                        text={loading ? "Creating..." : "Create Product"}
+                                        text={loading ? uploadStatus : "Create Product"}
                                         disabled={loading}
                                         className="w-full py text-white text-base font-semibold shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all duration-200"
                                     />

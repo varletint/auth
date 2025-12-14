@@ -35,6 +35,7 @@ export default function Profile() {
     daysUntilReset: 7,
     isSeller: false
   });
+  const [error, setError] = useState(''); // Error message state
   const { currentUser, signOut } = useAuthStore();
   const navigate = useNavigate();
 
@@ -44,12 +45,13 @@ export default function Profile() {
       if (!currentUser) return;
       try {
         setStatsLoading(true);
+        setError('');
         const data = await apiCall("/seller/profile-stats", "GET");
         if (data.success) {
           setProfileStats(data.stats);
         }
       } catch (error) {
-        console.error("Error fetching profile stats:", error);
+        setError(error.message || "Failed to load profile stats");
       } finally {
         setStatsLoading(false);
       }
@@ -63,7 +65,7 @@ export default function Profile() {
       signOut();
       navigate("/login");
     } catch (error) {
-      console.log(error);
+      setError("Failed to sign out. Please try again.");
     }
   };
 
@@ -233,6 +235,19 @@ export default function Profile() {
 
             {/* Content Area */}
             <div className='grid grid-cols-1 gap-2.5'>
+              {/* Error Message */}
+              {error && (
+                <div className='bg-red-50 border border-red-200 rounded-xl p-4 flex items-center justify-between'>
+                  <p className='text-red-600 text-sm'>{error}</p>
+                  <button
+                    onClick={() => setError('')}
+                    className='text-red-600 hover:text-red-800'
+                  >
+                    <MultiplicationSignIcon size={16} />
+                  </button>
+                </div>
+              )}
+
               <div className='grid grid-cols-1 md:grid-2 lg:grid-cols-2 gap-2.5'>
 
                 <div className='relative mb-2.5 rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-200'>
@@ -363,8 +378,8 @@ export default function Profile() {
               </div> */}
             </div>
           </div>
-        </main>
-      </div>
+        </main >
+      </div >
     </>
   );
 }

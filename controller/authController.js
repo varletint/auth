@@ -247,6 +247,17 @@ export const updateProfile = async (req, res, next) => {
     res.status(200).json(responseData);
 
   } catch (error) {
+    // Handle MongoDB duplicate key errors
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyValue)[0];
+      const fieldMap = {
+        username: "Username",
+        email: "Email address",
+        phone_no: "Phone number"
+      };
+      const friendlyField = fieldMap[field] || field;
+      return next(errorHandler(400, `${friendlyField} is already in use. Please choose a different one.`));
+    }
     next(error);
   }
 };

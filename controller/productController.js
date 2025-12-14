@@ -67,6 +67,19 @@ export const createProduct = async (req, res, next) => {
             return next(errorHandler(404, "User not found"));
         }
 
+        // ============================================
+        // IDEMPOTENCY CHECK
+        // ============================================
+        const idempotencyKey = req.headers['x-idempotency-key'];
+        if (idempotencyKey) {
+            const existingProduct = await Product.findOne({ idempotencyKey });
+            if (existingProduct) {
+                // Return existing product to prevent duplicate creation
+                console.log(`Idempotency hit: returning existing product ${existingProduct._id}`);
+                return res.status(200).json(existingProduct);
+            }
+        }
+
         // Check 0: Verify user has seller role
         if (!user.role || !user.role.includes('seller')) {
             return next(errorHandler(403, "You must be an approved seller to create products. Apply at /become-seller"));
@@ -129,7 +142,8 @@ export const createProduct = async (req, res, next) => {
             model: model ? model.trim() : undefined,
             color: color ? color.trim() : undefined,
             isActive: isActive !== undefined ? isActive : true,
-            userId: req.user.id
+            userId: req.user.id,
+            idempotencyKey: idempotencyKey || undefined, // Store idempotency key if provided
         });
 
         const savedProduct = await newProduct.save();

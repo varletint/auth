@@ -28,8 +28,6 @@ export default function Login() {
     resolver: yupResolver(schema),
   });
 
-  console.log(watch());
-
   const onSubmit = async (data) => {
     signInStart();
     const signInData = {
@@ -38,8 +36,6 @@ export default function Login() {
     };
     try {
       const result = await authApi.signin(signInData);
-
-      console.log("Login success:", result);
       signInSuccess(result);
       navigate("/profile");
     } catch (err) {

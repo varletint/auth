@@ -25,11 +25,17 @@ export const productApi = {
     /**
      * Create a new product
      * @param {Object} productData - Product data with image URLs
+     * @param {string} idempotencyKey - Optional unique key to prevent duplicate submissions
      */
-    createProduct: async (productData) => {
+    createProduct: async (productData, idempotencyKey = null) => {
+        const headers = {};
+        if (idempotencyKey) {
+            headers['X-Idempotency-Key'] = idempotencyKey;
+        }
         return apiCall('/products', {
             method: 'POST',
             body: JSON.stringify(productData),
+            headers,
         });
     },
 

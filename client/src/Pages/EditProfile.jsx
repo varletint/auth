@@ -34,6 +34,7 @@ export default function EditProfile() {
 
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
+    const [fieldErrors, setFieldErrors] = useState({}); // Field-specific errors
     const [success, setSuccess] = useState("");
 
     // Handle input changes
@@ -43,6 +44,19 @@ export default function EditProfile() {
             ...prev,
             [name]: value,
         }));
+        // Clear field error when user starts typing
+        if (fieldErrors[name]) {
+            setFieldErrors((prev) => ({ ...prev, [name]: "" }));
+        }
+    };
+
+    // Parse error message to detect which field has the issue
+    const parseFieldError = (errorMessage) => {
+        const lowerMsg = errorMessage.toLowerCase();
+        if (lowerMsg.includes("username")) return "username";
+        if (lowerMsg.includes("email")) return "email";
+        if (lowerMsg.includes("phone")) return "phone";
+        return null;
     };
 
     // Handle form submission
@@ -50,6 +64,7 @@ export default function EditProfile() {
         e.preventDefault();
         setIsLoading(true);
         setError("");
+        setFieldErrors({});
         setSuccess("");
 
         try {
@@ -65,7 +80,14 @@ export default function EditProfile() {
                 navigate("/profile");
             }, 1500);
         } catch (err) {
-            setError(err.message || "Something went wrong. Please try again.");
+            const errorMsg = err.message || "Something went wrong. Please try again.";
+            setError(errorMsg);
+
+            // Set field-specific error if detected
+            const errorField = parseFieldError(errorMsg);
+            if (errorField) {
+                setFieldErrors({ [errorField]: errorMsg });
+            }
         } finally {
             setIsLoading(false);
         }
@@ -143,8 +165,8 @@ export default function EditProfile() {
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                             {/* Username */}
                             <div className='space-y-2'>
-                                <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
-                                    <UserIcon size={16} className='text-gray-500' />
+                                <label className={`flex items-center gap-2 text-sm font-medium ${fieldErrors.username ? 'text-red-600' : 'text-gray-700'}`}>
+                                    <UserIcon size={16} className={fieldErrors.username ? 'text-red-500' : 'text-gray-500'} />
                                     Username
                                 </label>
                                 <Input
@@ -153,13 +175,17 @@ export default function EditProfile() {
                                     placeholder='Enter username'
                                     value={formData.username}
                                     OnChange={handleChange}
+                                    className={fieldErrors.username ? '!border-red-500 !ring-red-200' : ''}
                                 />
+                                {fieldErrors.username && (
+                                    <p className='text-xs text-red-600'>{fieldErrors.username}</p>
+                                )}
                             </div>
 
                             {/* Email */}
                             <div className='space-y-2'>
-                                <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
-                                    <Mail01Icon size={16} className='text-gray-500' />
+                                <label className={`flex items-center gap-2 text-sm font-medium ${fieldErrors.email ? 'text-red-600' : 'text-gray-700'}`}>
+                                    <Mail01Icon size={16} className={fieldErrors.email ? 'text-red-500' : 'text-gray-500'} />
                                     Email Address
                                 </label>
                                 <Input
@@ -168,7 +194,11 @@ export default function EditProfile() {
                                     placeholder='Enter email'
                                     value={formData.email}
                                     OnChange={handleChange}
+                                    className={fieldErrors.email ? '!border-red-500 !ring-red-200' : ''}
                                 />
+                                {fieldErrors.email && (
+                                    <p className='text-xs text-red-600'>{fieldErrors.email}</p>
+                                )}
                             </div>
 
                             {/* FullName*/}
@@ -201,8 +231,8 @@ export default function EditProfile() {
 
                             {/* Phone */}
                             <div className='space-y-2'>
-                                <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
-                                    <SmartPhone01Icon size={16} className='text-gray-500' />
+                                <label className={`flex items-center gap-2 text-sm font-medium ${fieldErrors.phone ? 'text-red-600' : 'text-gray-700'}`}>
+                                    <SmartPhone01Icon size={16} className={fieldErrors.phone ? 'text-red-500' : 'text-gray-500'} />
                                     Phone Number
                                 </label>
                                 <Input
@@ -211,7 +241,11 @@ export default function EditProfile() {
                                     placeholder='+1 (555) 000-0000'
                                     value={formData.phone}
                                     OnChange={handleChange}
+                                    className={fieldErrors.phone ? '!border-red-500 !ring-red-200' : ''}
                                 />
+                                {fieldErrors.phone && (
+                                    <p className='text-xs text-red-600'>{fieldErrors.phone}</p>
+                                )}
                             </div>
 
                             {/* Location */}

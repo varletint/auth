@@ -212,8 +212,8 @@ export default function MyProducts() {
                                                 </button>
                                                 {/*  */}
                                                 {activeDropdown === (product._id || product.id) && (
-                                                    <div className="absolute right-0 top-[-13px] bg-white rounded-lg 
-                                                    shadow-lg border border-gray-100 py-1 z-100 min-w-[120px] overflow-y-auto scroll-smooth">
+                                                    <div className="absolute right-3 top-[-53px] bg-white rounded-lg 
+                                                    shadow-lg border border-gray-100 py-1 z-100 min-w-[120px] overflow-y-scroll scroll-smooth">
                                                         <Link
                                                             to={`/edit-product/${product._id || product.id}`}
                                                             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"

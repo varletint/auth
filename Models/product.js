@@ -363,6 +363,16 @@ const productSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
+
+    // ============================================
+    // IDEMPOTENCY
+    // ============================================
+    idempotencyKey: {
+      type: String,
+      unique: true,
+      sparse: true, // Allows null values, enforces uniqueness when present
+      index: true,
+    },
   },
   {
     timestamps: true,

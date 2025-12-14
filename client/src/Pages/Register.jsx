@@ -50,7 +50,7 @@ export default function Register() {
     resolver: yupResolver(schema),
   });
 
-  console.log(watch());
+
 
   // Auto-dismiss error after 3.5 seconds
   useEffect(() => {
@@ -94,8 +94,6 @@ export default function Register() {
     };
     try {
       const result = await authApi.signup(signUpData);
-
-      console.log("Registration success:", result);
       signInSuccess(result);
       setSuccessMessage("Account created successfully! Redirecting...");
 
@@ -235,8 +233,8 @@ export default function Register() {
               {/* Selected App Type Badge */}
               <div className='mb-6'>
                 <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${selectedAppType === "business_management"
-                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                    : "bg-blue-50 text-blue-700 border border-blue-200"
+                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                  : "bg-blue-50 text-blue-700 border border-blue-200"
                   }`}>
                   {selectedAppType === "business_management" ? (
                     <Analytics01Icon size={16} />
