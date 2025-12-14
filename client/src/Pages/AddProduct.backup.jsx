@@ -193,7 +193,7 @@ export default function AddProduct() {
                                     rows={4}
                                     placeholder="Describe your product in detail..."
                                     {...register("description")}
-                                    className={`w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all duration-200 bg-off-white text-gray-800 placeholder-gray-400 resize-none ${errors.description ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""
+                                    className={`w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all duration-200 bg-off-white text-gray-800 placeholder-gray-400 resize-none ${errors.description ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""
                                         }`}
                                 />
                                 {errors.description && (
@@ -246,7 +246,7 @@ export default function AddProduct() {
                                     <select
                                         id="category"
                                         {...register("category")}
-                                        className={`w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all duration-200 bg-off-white text-gray-800 ${errors.category ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""
+                                        className={`w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all duration-200 bg-off-white text-gray-800 ${errors.category ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""
                                             }`}
                                     >
                                         <option value="">Select a category</option>

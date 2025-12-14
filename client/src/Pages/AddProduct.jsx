@@ -512,7 +512,7 @@ export default function AddProduct() {
                                                     handleQuickProductSelect(product);
                                                     setAddMode('manual');
                                                 }}
-                                                className={`cursor-pointer p-1.5 px-4 rounded-xl border-2 transition-all duration-200 hover:border-indigo-500 hover:bg-indigo-50 ${selectedQuickProduct?.id === product.id ? 'border-indigo-500 bg-indigo-50 ring-2 ring-indigo-200' : 'border-gray-100 bg-gray-50'}`}
+                                                className={`cursor-pointer p-1.5 px-4 rounded-xl border-2 transition-all duration-200 hover:border-emerald-500 hover:bg-emerald-50 ${selectedQuickProduct?.id === product.id ? 'border-emerald-500 bg-emerald-50 ring-2 ring-emerald-200' : 'border-gray-100 bg-gray-50'}`}
                                             >
                                                 <div className="font-semibold  text-gray-900">{product.name}</div>
                                                 <div className="text-xs text-gray-500 mt-1">{product.brand} • {product.category}</div>
@@ -521,7 +521,7 @@ export default function AddProduct() {
                                 </div>
 
                                 <div className="text-center text-sm text-gray-500 mt-4">
-                                    Can't find what you're looking for? <button type="button" onClick={() => setAddMode('manual')} className="text-indigo-600 font-semibold hover:underline py-2">Switch to Manual Entry</button>
+                                    Can't find what you're looking for? <button type="button" onClick={() => setAddMode('manual')} className="text-emerald-600 font-semibold hover:underline py-2">Switch to Manual Entry</button>
                                 </div>
                             </div>
                         ) : (
@@ -611,7 +611,7 @@ export default function AddProduct() {
                                         <select
                                             id="category"
                                             {...register("category")}
-                                            className={`w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all duration-200 bg-off-white text-gray-800 ${errors.category ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""
+                                            className={`w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all duration-200 bg-off-white text-gray-800 ${errors.category ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""
                                                 }`}
                                         >
                                             <option value="">Select a category</option>
@@ -641,7 +641,7 @@ export default function AddProduct() {
                                                     setSelectedSubcategory(value);
                                                     setValue("subcategory", value, { shouldValidate: true });
                                                 }}
-                                                className={`w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all duration-200 bg-off-white text-gray-800 ${errors.subcategory ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""}`}
+                                                className={`w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all duration-200 bg-off-white text-gray-800 ${errors.subcategory ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""}`}
                                             >
                                                 <option value="">Select subcategory</option>
                                                 {subcategories.map((subcat) => (
@@ -674,7 +674,7 @@ export default function AddProduct() {
                                                     setSelectedBrand(value);
                                                     setValue("brand", value, { shouldValidate: true });
                                                 }}
-                                                className={`w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all duration-200 bg-off-white text-gray-800 ${errors.brand ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""}`}
+                                                className={`w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all duration-200 bg-off-white text-gray-800 ${errors.brand ? "border-red-500 focus:border-red-500 focus:ring-red-200" : ""}`}
                                             >
                                                 <option value="">Select brand</option>
                                                 {getAvailableBrands(selectedSubcategory).map((brandName) => (
@@ -712,7 +712,7 @@ export default function AddProduct() {
                                                     setSelectedModel(value);
                                                     setValue("model", value, { shouldValidate: true });
                                                 }}
-                                                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all duration-200 bg-off-white text-gray-800"
+                                                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all duration-200 bg-off-white text-gray-800"
                                             >
                                                 <option value="">Select model</option>
                                                 {getAvailableModels(selectedBrand).map((modelName) => (
@@ -737,7 +737,7 @@ export default function AddProduct() {
                                                     setSelectedColor(value);
                                                     setValue("color", value, { shouldValidate: true });
                                                 }}
-                                                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all duration-200 bg-off-white text-gray-800"
+                                                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all duration-200 bg-off-white text-gray-800"
                                             >
                                                 <option value="">Select color</option>
                                                 {colors.map((colorName) => (
@@ -765,7 +765,7 @@ export default function AddProduct() {
                                                 setSelectedColor(value);
                                                 setValue("color", value, { shouldValidate: true });
                                             }}
-                                            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all duration-200 bg-off-white text-gray-800"
+                                            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all duration-200 bg-off-white text-gray-800"
                                         >
                                             <option value="">Select color</option>
                                             {colors.map((colorName) => (
@@ -778,12 +778,12 @@ export default function AddProduct() {
                                 )}
 
                                 {/* Live SKU Display */}
-                                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-xl p-6">
+                                <div className="bg-gradient-to-r from-emerald-50 to-purple-50 border-2 border-emerald-200 rounded-xl p-6">
                                     <label className="block text-sm font-semibold text-gray-700 mb-2">
                                         Generated SKU (Stock Keeping Unit)
                                     </label>
                                     <div className="flex items-center gap-4">
-                                        <div className="flex-1 bg-white px-4 py-3 rounded-lg border border-gray-200 font-mono text-lg tracking-wider text-indigo-600 font-bold shadow-sm">
+                                        <div className="flex-1 bg-white px-4 py-3 rounded-lg border border-gray-200 font-mono text-lg tracking-wider text-emerald-600 font-bold shadow-sm">
                                             {sku || "Generating..."}
                                         </div>
                                         <div className="flex flex-col gap-1">
@@ -793,7 +793,7 @@ export default function AddProduct() {
                                                 min="1"
                                                 value={skuCounter}
                                                 onChange={(e) => setSkuCounter(Number(e.target.value))}
-                                                className="w-20 px-3 py-2 rounded-lg border border-gray-200 text-center font-mono focus:border-indigo-500 outline-none"
+                                                className="w-20 px-3 py-2 rounded-lg border border-gray-200 text-center font-mono focus:border-emerald-500 outline-none"
                                             />
                                         </div>
                                     </div>
@@ -807,7 +807,7 @@ export default function AddProduct() {
                                     <label className="block text-sm font-semibold text-gray-700 mb-2">
                                         Product Images (Max 5) *
                                     </label>
-                                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-indigo-500 transition-colors duration-200 bg-gray-50">
+                                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-emerald-500 transition-colors duration-200 bg-gray-50">
                                         <input
                                             type="file"
                                             id="images"
@@ -820,11 +820,11 @@ export default function AddProduct() {
                                             htmlFor="images"
                                             className="cursor-pointer flex flex-col items-center gap-3"
                                         >
-                                            <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600">
+                                            <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600">
                                                 <Image01Icon size={24} />
                                             </div>
                                             <div>
-                                                <span className="text-indigo-600 font-semibold hover:text-indigo-700">
+                                                <span className="text-emerald-600 font-semibold hover:text-emerald-700">
                                                     Click to upload
                                                 </span>
                                                 <span className="text-gray-500"> or drag and drop</span>
@@ -875,7 +875,7 @@ export default function AddProduct() {
                                         type="submit"
                                         text={loading ? "Creating..." : "Create Product"}
                                         disabled={loading}
-                                        className="w-full py text-white text-base font-semibold shadow-lg shadow-indigo-200 hover:shadow-indigo-300 transition-all duration-200"
+                                        className="w-full py text-white text-base font-semibold shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all duration-200"
                                     />
                                     {/* {loading ? (
                                             <div className="flex items-center justify-center gap-2">
