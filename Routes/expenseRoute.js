@@ -1,5 +1,5 @@
 import express from "express";
-import { verifyToken } from "../middleware/verifyUser.js";
+import { verifyBusinessOrStaff } from "../middleware/verifyStaff.js";
 import {
     getExpenses,
     getExpense,
@@ -11,8 +11,8 @@ import {
 
 const router = express.Router();
 
-// All routes require authentication
-router.use(verifyToken);
+// All routes require business owner or staff authentication
+router.use(verifyBusinessOrStaff);
 
 // Stats route (must be before /:id to avoid conflict)
 router.get("/stats", getExpenseStats);

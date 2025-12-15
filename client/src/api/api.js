@@ -38,15 +38,35 @@ const apiCall = async (url, options = {}) => {
                 'unauthorized',
                 'session expired',
                 'invalid refresh token',
-                'forbidden'
+                'forbidden',
+                'authentication required',
+                'staff session expired',
+                'staff authentication required'
             ];
 
             const messageLC = (data.message || '').toLowerCase();
             if (sessionExpiredMessages.some(msg => messageLC.includes(msg))) {
-                // Clear auth state and redirect to login
+                // Check if this is a staff session
+                const useStaffStore = (await import('../store/useStaffStore')).default;
                 const useAuthStore = (await import('../store/useAuthStore')).default;
-                useAuthStore.getState().signOut();
-                window.location.href = '/login';
+
+                const isStaffSession = useStaffStore.getState().isStaffAuthenticated;
+                const isUserSession = useAuthStore.getState().currentUser;
+
+                // Clear both auth states to be safe
+                if (isStaffSession) {
+                    useStaffStore.getState().staffSignOut();
+                }
+                if (isUserSession) {
+                    useAuthStore.getState().signOut();
+                }
+
+                // Redirect based on which session was active
+                if (isStaffSession && !isUserSession) {
+                    window.location.href = '/staff-login';
+                } else {
+                    window.location.href = '/login';
+                }
                 throw new ApiError('Session expired. Redirecting to login...', response.status, data);
             }
         }

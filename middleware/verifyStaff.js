@@ -145,6 +145,7 @@ export const verifyBusinessOrStaff = async (req, res, next) => {
             if (user && user.appType === "business_management") {
                 req.user = user;
                 req.isBusinessOwner = true;
+                req.businessOwnerId = user._id; // Unified ID for controllers
                 return next();
             }
         } catch (err) {
@@ -163,6 +164,9 @@ export const verifyBusinessOrStaff = async (req, res, next) => {
                     req.staff = staff;
                     req.isStaff = true;
                     req.staffPermissions = staff.permissions;
+                    req.businessOwnerId = staff.businessOwner; // Staff's business owner ID
+                    // Set req.user with an id property for backward compatibility with controllers
+                    req.user = { id: staff.businessOwner, _id: staff.businessOwner };
                     return next();
                 }
             }

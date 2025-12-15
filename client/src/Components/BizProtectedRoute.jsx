@@ -1,24 +1,29 @@
 import { Navigate } from 'react-router-dom';
 import useAuthStore from '../store/useAuthStore';
+import useStaffStore from '../store/useStaffStore';
 
 /**
  * Business Management Protected Route wrapper component
- * - Redirects to login if user is not authenticated
- * - Redirects to dashboard if user has a different appType
+ * - Allows access if user is a business owner OR an authenticated staff member
+ * - Redirects to appropriate login page if not authenticated
  */
 export default function BizProtectedRoute({ children }) {
     const { currentUser } = useAuthStore();
+    const { isStaffAuthenticated } = useStaffStore();
 
-    // Not logged in -> redirect to login
-    if (!currentUser) {
-        return <Navigate to="/login" replace />;
+    // Check if user is a business owner
+    const isBusinessOwner = currentUser?.appType === "business_management";
+
+    // Allow access if either business owner OR authenticated staff
+    if (isBusinessOwner || isStaffAuthenticated) {
+        return children;
     }
 
-    // Not a business_management user -> redirect to regular dashboard
-    const isBusinessUser = currentUser?.appType === "business_management";
-    if (!isBusinessUser) {
+    // If regular user (marketplace), redirect to their dashboard
+    if (currentUser && !isBusinessOwner) {
         return <Navigate to="/dashboard" replace />;
     }
 
-    return children;
+    // Not logged in at all -> redirect to login
+    return <Navigate to="/login" replace />;
 }
