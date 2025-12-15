@@ -271,13 +271,13 @@ export default function Profile() {
                       <h1 className='text-2xl font-bold flex items-center justify-between gap-2 text-gray-900'>{currentUser?.username || "User"}
                         <span className="flex gap-1">
                           {currentUser?.role?.includes("admin") && (
-                            <span className="text-sm bg-red-500 text-white px-2 py-1 rounded">Admin</span>
+                            <span className="text-sm bg-red-100 text-red-700 px-2 py-1 rounded-full font-medium">Admin</span>
                           )}
                           {currentUser?.role?.includes("seller") && (
-                            <span className="text-sm bg-emerald-500 text-white px-2 py-1 rounded">Seller</span>
+                            <span className="text-sm bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full font-medium">Seller</span>
                           )}
                           {currentUser?.role?.includes("buyer") && (
-                            <span className="text-sm bg-blue-500 text-white px-2 py-1 rounded">Buyer</span>
+                            <span className="text-sm bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">Buyer</span>
                           )}
                         </span>
                       </h1>
