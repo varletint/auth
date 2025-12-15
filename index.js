@@ -24,6 +24,7 @@ import inventoryRoute from "./Routes/inventoryRoute.js";
 import customerRoute from "./Routes/customerRoute.js";
 import saleRoute from "./Routes/saleRoute.js";
 import expenseRoute from "./Routes/expenseRoute.js";
+import staffRoute from "./Routes/staffRoute.js";
 
 const app = e();
 
@@ -91,6 +92,7 @@ app.use("/api/inventory", inventoryRoute);
 app.use("/api/customers", customerRoute);
 app.use("/api/sales", saleRoute);
 app.use("/api/expenses", expenseRoute);
+app.use("/api/staff", staffRoute);
 
 
 

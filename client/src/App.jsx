@@ -49,6 +49,8 @@ import Sales from "./Pages/Sales";
 import BizSalesHistory from "./Pages/BizSalesHistory";
 import Expenses from "./Pages/Expenses";
 import Customers from "./Pages/Customers";
+import StaffManagement from "./Pages/StaffManagement";
+import StaffLogin from "./Pages/StaffLogin";
 
 function App() {
   return (
@@ -257,6 +259,15 @@ function App() {
               </BizProtectedRoute>
             }
           />
+          <Route
+            path='/staff-management'
+            element={
+              <BizProtectedRoute>
+                <StaffManagement />
+              </BizProtectedRoute>
+            }
+          />
+          <Route path='/staff-login' element={<StaffLogin />} />
 
           {/* 404 Fallback */}
           <Route path='*' element={<NotFound />} />

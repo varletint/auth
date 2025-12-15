@@ -99,6 +99,7 @@ export default function BizDashboard() {
         { title: "Add Stock", icon: PackageIcon, path: "/inventory", color: "bg-blue-500" },
         { title: "Add Expense", icon: Invoice02Icon, path: "/expenses", color: "bg-red-500" },
         { title: "Customers", icon: UserMultiple02Icon, path: "/customers", color: "bg-amber-500" },
+        { title: "Manage Staff", icon: UserMultiple02Icon, path: "/staff-management", color: "bg-purple-500" },
     ];
 
     if (loading) {
