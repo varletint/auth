@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import useAuthStore from "../store/useAuthStore";
+import useStaffStore from "../store/useStaffStore";
 import { inventoryApi } from "../api/inventoryApi";
 import { salesApi } from "../api/salesApi";
 import { customerApi } from "../api/customerApi";
@@ -24,6 +25,7 @@ import {
 
 export default function BizDashboard() {
     const { currentUser } = useAuthStore();
+    const { currentStaff } = useStaffStore();
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({
         inventory: { totalItems: 0, lowStockItems: 0 },
@@ -56,6 +58,20 @@ export default function BizDashboard() {
             console.error("Error fetching stats:", error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    // Helper function to get role badge color
+    const getRoleBadgeColor = (role) => {
+        switch (role) {
+            case 'manager':
+                return 'bg-purple-100 text-purple-700';
+            case 'cashier':
+                return 'bg-blue-100 text-blue-700';
+            case 'stock_manager':
+                return 'bg-amber-100 text-amber-700';
+            default:
+                return 'bg-gray-100 text-gray-700';
         }
     };
 
@@ -130,7 +146,17 @@ export default function BizDashboard() {
                             <Analytics01Icon size={32} className="text-emerald-600" />
                             <div>
                                 <h1 className="text-3xl font-bold text-gray-900">Business Dashboard</h1>
-                                <p className="text-gray-500 text-sm">Welcome back, {currentUser?.username || "User"}</p>
+                                <p className="text-gray-500 text-sm flex items-center gap-2 flex-wrap">
+                                    Welcome back,{" "}
+                                    <span className="font-bold text-emerald-600 capitalize">
+                                        {currentStaff?.staff_name || currentUser?.username || "User"}
+                                    </span>
+                                    {currentStaff && (
+                                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getRoleBadgeColor(currentStaff.role)}`}>
+                                            {currentStaff.role.replace('_', ' ')}
+                                        </span>
+                                    )}
+                                </p>
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -218,4 +244,3 @@ export default function BizDashboard() {
         </>
     );
 }
-

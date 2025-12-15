@@ -29,9 +29,7 @@ export default function ProductPage() {
     const { currentUser } = useAuthStore();
 
     // Redirect business_management users to BizDashboard
-    if (currentUser && currentUser.appType === "business_management") {
-        return <Navigate to="/biz-dashboard" replace />;
-    }
+
 
     const [product, setProduct] = useState(null);
     const [seller, setSeller] = useState(null);
@@ -45,6 +43,10 @@ export default function ProductPage() {
 
     // Toast notification state
     const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
+    if (currentUser && currentUser.appType === "business_management") {
+        return <Navigate to="/biz-dashboard" replace />;
+    }
 
     const showToast = (message, type = 'success') => {
         setToast({ show: true, message, type });
@@ -233,8 +235,8 @@ export default function ProductPage() {
             {/* Toast Notification */}
             {toast.show && (
                 <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg transition-all duration-300 ${toast.type === 'success'
-                        ? 'bg-emerald-600 text-white'
-                        : 'bg-red-600 text-white'
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-red-600 text-white'
                     }`}>
                     <div className="flex items-center gap-2">
                         {toast.type === 'success' ? (
@@ -471,7 +473,7 @@ export default function ProductPage() {
                     border-gray-200 px-3 py-2.5 mb-3 w-fit">
                             {/* <h2 className="text- font-bold text-gray-900 mb-6">Seller Information</h2> */}
                             <div className="flex flex-co sm:flex-row items-start gap-6">
-                                <Link to={`/seller/${seller._id}`}
+                                <Link to={`/seller/${seller.username}`}
                                     className="w-16 h-16 rounded-full bg-blue-600/10 flex items-center justify-center 
                             text-2xl font-bold text-blue-500 flex-shrink-0 uppercase text-nowrap">
                                     {seller.username?.[0] || seller.fullname?.[0] || "S"}

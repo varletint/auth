@@ -3,24 +3,36 @@ import UserDetails from "../Models/userDetails.js";
 import Product from "../Models/product.js";
 import { errorHandler } from "../Utilis/errorHandler.js";
 import dayjs from "dayjs";
+import mongoose from "mongoose";
 
 /**
- * Get user by ID
+ * Get user by ID or Username
+ * Automatically detects if the identifier is a MongoDB ObjectId or username
  * Returns user information without sensitive data (password, OTP, security fields)
  */
 export const getUserById = async (req, res, next) => {
     try {
-        const { id } = req.params;
+        const { id: identifier } = req.params;
 
-        // Find user and exclude password and other sensitive fields
-        const user = await User.findById(id).select("-password -resetOTP -resetOTPExpiry -failedLoginAttempts -accountLockedUntil");
+        let user;
+        let userId;
+
+        // Check if identifier is a valid MongoDB ObjectId
+        if (mongoose.Types.ObjectId.isValid(identifier)) {
+            user = await User.findById(identifier).select("-password -resetOTP -resetOTPExpiry -failedLoginAttempts -accountLockedUntil");
+            userId = identifier;
+        } else {
+            // Treat as username (case-insensitive)
+            user = await User.findOne({ username: identifier.toLowerCase() }).select("-password -resetOTP -resetOTPExpiry -failedLoginAttempts -accountLockedUntil");
+            userId = user?._id;
+        }
 
         if (!user) {
             return next(errorHandler(404, "User not found"));
         }
 
         // Fetch user details
-        const userDetails = await UserDetails.findOne({ user_id: id });
+        const userDetails = await UserDetails.findOne({ user_id: userId });
 
         // Convert to plain object and ensure no sensitive data leaks
         const userObject = user.toObject();

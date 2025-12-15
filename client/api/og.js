@@ -155,8 +155,8 @@ export default async function handler(request) {
         }
     }
 
-    // Handle dynamic seller pages: /seller/:id
-    const sellerMatch = pathname.match(/^\/seller\/([a-zA-Z0-9]+)$/);
+    // Handle dynamic seller pages: /seller/:id or /seller/:username
+    const sellerMatch = pathname.match(/^\/seller\/([a-zA-Z0-9_-]+)$/);
     if (sellerMatch) {
         const sellerId = sellerMatch[1];
         const sellerMeta = await getSellerMeta(sellerId);

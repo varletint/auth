@@ -20,12 +20,6 @@ import {
 
 export default function UserPage() {
     const { currentUser } = useAuthStore();
-
-    // Redirect business_management users to BizDashboard
-    if (currentUser && currentUser.appType === "business_management") {
-        return <Navigate to="/biz-dashboard" replace />;
-    }
-
     const { id } = useParams();
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
@@ -37,41 +31,47 @@ export default function UserPage() {
     const BASE_URL = 'https://lookupsbackend.vercel.app';
 
     useEffect(() => {
+        const fetchUserData = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                // Fetch user information
+                const userRes = await fetch(`${BASE_URL}/api/seller/${id}`);
+                if (!userRes.ok) throw new Error("User not found");
+                const userData = await userRes.json();
+                setUser(userData);
+
+                // Fetch user's products
+                setProductsLoading(true);
+                try {
+                    const productsResponse = await productApi.getProducts({
+                        userId: id,
+                        limit: 50
+                    });
+
+                    if (productsResponse && productsResponse.products) {
+                        setProducts(productsResponse.products);
+                    }
+                } catch (err) {
+                    console.log("Could not fetch user products:", err);
+                } finally {
+                    setProductsLoading(false);
+                }
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
         fetchUserData();
     }, [id]);
 
-    const fetchUserData = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            // Fetch user information
-            const userRes = await fetch(`${BASE_URL}/api/seller/${id}`);
-            if (!userRes.ok) throw new Error("User not found");
-            const userData = await userRes.json();
-            setUser(userData);
+    // Redirect business_management users to BizDashboard
+    if (currentUser && currentUser.appType === "business_management") {
+        return <Navigate to="/biz-dashboard" replace />;
+    }
 
-            // Fetch user's products
-            setProductsLoading(true);
-            try {
-                const productsResponse = await productApi.getProducts({
-                    userId: id,
-                    limit: 50
-                });
 
-                if (productsResponse && productsResponse.products) {
-                    setProducts(productsResponse.products);
-                }
-            } catch (err) {
-                console.log("Could not fetch user products:", err);
-            } finally {
-                setProductsLoading(false);
-            }
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleShare = () => {
         if (navigator.share) {
