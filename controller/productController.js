@@ -278,7 +278,7 @@ export const getProduct = async (req, res, next) => {
 
 export const getProducts = async (req, res, next) => {
     try {
-        const { page = 1, limit = 10, category, minPrice, maxPrice, sort, name, searchTerm, userId } = req.query;
+        const { page = 1, limit = 10, category, minPrice, maxPrice, sort, name, searchTerm, userId, username } = req.query;
 
         // Create a unique cache key based on query params
         // const cacheKey = `products_list:${JSON.stringify(req.query)}`;
@@ -293,7 +293,14 @@ export const getProducts = async (req, res, next) => {
         const query = {};
         if (category) query.category = category;
         if (name) query.name = { $regex: name, $options: 'i' }; // Case-insensitive name search
-        if (userId) query.userId = userId; // Filter by user ID
+
+        // Dynamic filter: check username first, then userId
+        if (username) {
+            const user = await U.findOne({ username });
+            if (user) query.userId = user._id;
+        } else if (userId) {
+            query.userId = userId;
+        }
 
         if (searchTerm) {
             query.$or = [
