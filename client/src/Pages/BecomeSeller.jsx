@@ -152,7 +152,7 @@ export default function BecomeSeller() {
                     <title>Application Approved | Lookups</title>
                 </Helmet>
                 <Header />
-                <div className="min-h-screen bg-gray-50 py-12 mt-10">
+                <div className="min-h-screen bg-gray-50 py-12">
                     <div className="container mx-auto px-4 max-w-lg">
                         <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
                             <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">

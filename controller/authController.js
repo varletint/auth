@@ -21,12 +21,15 @@ export const signup = async (req, res, next) => {
 
     const hashedPassword = await argon2.hash(password);
 
+    // Set role based on appType: owner for business_management, buyer for marketplace
+    const defaultRole = appType === "business_management" ? ["owner"] : ["buyer"];
+
     const newUser = new User({
       username,
       // email, // Optional field
       password: hashedPassword,
       phone_no,
-      role: ["buyer"],
+      role: defaultRole,
       accountStatus: "active",
       appType: appType || "marketplace", // Default to marketplace if not provided
     });

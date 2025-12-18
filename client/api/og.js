@@ -111,6 +111,10 @@ async function getSellerMeta(sellerId) {
         if (!res.ok) return null;
         const seller = await res.json();
 
+        // Validate seller status: must be marketplace user with seller role
+        const isValidSeller = seller.appType === "marketplace" && seller.role?.includes("seller");
+        if (!isValidSeller) return null;
+
         const name = seller.fullName || seller.username || 'Seller';
         const description = seller.bio
             ? seller.bio.substring(0, 200)
@@ -119,7 +123,7 @@ async function getSellerMeta(sellerId) {
         return {
             title: `${name} | Lookups Seller`,
             description: description,
-            image: DEFAULT_IMAGE,
+            image: seller.avatar || DEFAULT_IMAGE,
             type: 'profile',
         };
     } catch (err) {

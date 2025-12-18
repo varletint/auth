@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Header from "../Components/Header";
 import Input from "../Components/Input";
 import Button from "../Components/Button";
+import ThemeToggle from "../Components/ThemeToggle";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../store/useAuthStore";
 import { apiCall } from "../api/api.js";
@@ -72,6 +73,8 @@ export default function Profile() {
   // Check if user is a seller
   const isSeller = currentUser?.role?.includes("seller");
   const isBuyer = currentUser?.role?.includes("buyer");
+  // Check if user is an admin
+  const isAdmin = currentUser?.role?.includes("admin");
   // Check if user is business management user
   const isBizUser = currentUser?.appType === "business_management";
 
@@ -104,6 +107,11 @@ export default function Profile() {
     // Everyone sees Purchase History (for personal purchases)
     { id: "purchases", label: "Purchase History", icon: <ShoppingBag02Icon size={20} />, path: "/purchase-history" },
     { id: "settings", label: "Settings", icon: <Settings02Icon size={20} />, path: "/settings" },
+    // Admin Panel links - only visible to admins
+    ...(isAdmin ? [
+      { id: "admin-dashboard", label: "Admin Dashboard", icon: <GridViewIcon size={20} />, path: "/admin" },
+      { id: "admin-users", label: "Manage Users", icon: <UserIcon size={20} />, path: "/admin/users" },
+    ] : []),
     // ...(isBuyer ? [{ id: 'become-seller', label: 'Become Seller', icon: <UserIcon size={20} />, path: '/become-seller' }] : [])
   ];
 
@@ -190,7 +198,7 @@ export default function Profile() {
 
         {/* Main Content */}
         <main className='flex-1 md:ml- pt-   '>
-          <div className='sticky  top-0 z-100 bg-white py-4 px-6 border-b border-gray-200  flex items-center justify-between'>
+          <div className='sticky top-0 z-100 bg-white dark:bg-dark-surface py-4 px-6 border-b border-gray-200 dark:border-dark-border flex items-center justify-between transition-colors'>
             {/* <h2 className='ml-20 text-xl md:text-2xl font-bold text-gray-900'>My Profile</h2>
             <button
               className='md:hidden fixed top-4 left-4 z-100 p-2 py-2 rounded-md bg-white  text-gray-700'
@@ -250,7 +258,7 @@ export default function Profile() {
 
               <div className='grid grid-cols-1 md:grid-2 lg:grid-cols-2 gap-2.5'>
 
-                <div className='relative mb-2.5 rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-200'>
+                <div className='relative mb-2.5 rounded-2xl overflow-hidden bg-white dark:bg-dark-surface shadow-sm border border-gray-200 dark:border-dark-border transition-colors'>
                   <div className='h-[75px] bg-gradient-to-r from-emerald-600 to-emerald-400'></div>
                   <div className='px-8 pb-8'>
                     <div className='relative flex justify-between items-end -mt-12 mb-6'>

@@ -3,6 +3,10 @@ import { createRoot } from 'react-dom/client'
 import { HelmetProvider } from 'react-helmet-async'
 import './index.css'
 import App from './App.jsx'
+import useThemeStore from './store/useThemeStore'
+
+// Initialize theme before React renders
+// useThemeStore.getState().initializeTheme();
 
 // Register Service Worker for PWA
 if ('serviceWorker' in navigator) {

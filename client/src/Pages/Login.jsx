@@ -108,6 +108,12 @@ export default function Login() {
                 Sign up
               </Link>
             </div>
+
+            <div className='mt-4 text-center text-sm text-gray-400'>
+              <Link to='/staff-login' className='hover:text-gray-600 transition-colors'>
+                Staff Login
+              </Link>
+            </div>
           </div>
         </div>
       </div>

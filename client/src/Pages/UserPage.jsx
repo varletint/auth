@@ -124,6 +124,22 @@ export default function UserPage() {
         );
     }
 
+    // Check if user is a valid seller (must be marketplace user with seller role)
+    const isValidSeller = user.appType === "marketplace" && user.role?.includes("seller");
+
+    if (!isValidSeller) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-off-white">
+                <div className="text-center">
+                    <UserIcon size={48} className="text-gray-300 mx-auto mb-4" />
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Not a Seller</h2>
+                    <p className="text-gray-600 mb-6">This user is not a registered seller on the marketplace.</p>
+                    <Button text="Go Back" onClick={() => navigate(-1)} className="bg-emerald-600 hover:bg-emerald-700" />
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-white">
             {/* SEO Meta Tags */}

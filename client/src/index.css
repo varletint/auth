@@ -9,6 +9,14 @@
   --color-cyan-dark: #00A8E0;
   --color-yellow-accent: #FFE600;
   --color-yellow-dark: #E6D000;
+
+  /* Dark theme colors */
+  --color-dark-bg: #0F0F0F;
+  --color-dark-surface: #1A1A1A;
+  --color-dark-card: #252525;
+  --color-dark-border: #333333;
+  --color-dark-text: #E5E5E5;
+  --color-dark-text-muted: #9CA3AF;
 }
 
 .header {

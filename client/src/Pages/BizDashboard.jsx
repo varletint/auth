@@ -122,7 +122,7 @@ export default function BizDashboard() {
         return (
             <>
                 <Header />
-                <div className="min-h-screen bg-gray-50 flex items-center justify-center mt-10">
+                <div className="min-h-screen bg-gray-50 flex items-center justify-center">
                     <Loading03Icon size={40} className="text-emerald-600 animate-spin" />
                 </div>
                 <Footer />

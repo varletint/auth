@@ -1,5 +1,5 @@
 import express from "express";
-import { verifyBusinessOrStaff } from "../middleware/verifyStaff.js";
+import { verifyBusinessOrStaff, verifyStaffPermission } from "../middleware/verifyStaff.js";
 import {
     getSales,
     getSale,
@@ -18,10 +18,10 @@ router.use(verifyBusinessOrStaff);
 router.get("/stats", getSalesStats);
 
 // CRUD routes
-router.get("/", getSales);
-router.get("/:id", getSale);
-router.post("/", createSale);
-router.put("/:id", updateSale);
-router.delete("/:id", deleteSale);
+router.get("/", verifyStaffPermission("view_sales"), getSales);
+router.get("/:id", verifyStaffPermission("view_sales"), getSale);
+router.post("/", verifyStaffPermission("create_sale"), createSale);
+router.put("/:id", verifyStaffPermission("create_sale"), updateSale);
+router.delete("/:id", verifyStaffPermission("create_sale"), deleteSale);
 
 export default router;

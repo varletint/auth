@@ -46,7 +46,7 @@ const userSchema = new mongoose.Schema(
     role: {
       type: [String], // Array of roles
       enum: {
-        values: ["admin", "seller", "buyer"],
+        values: ["admin", "seller", "buyer", "owner"],
         message: "{VALUE} is not a valid role"
       },
       default: ["buyer"],
@@ -189,6 +189,10 @@ userSchema.virtual("isSeller").get(function () {
 
 userSchema.virtual("isBuyer").get(function () {
   return this.role && this.role.includes("buyer");
+});
+
+userSchema.virtual("isOwner").get(function () {
+  return this.role && this.role.includes("owner");
 });
 
 // ==================== Instance Methods ====================

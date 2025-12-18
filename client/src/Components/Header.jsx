@@ -74,13 +74,11 @@ export default function Header() {
     setIsMenuOpen(false);
   };
 
-  // IMPROVEMENT #3: Auto-close mobile menu on route change
-  // This removes the need for onClick={toggleMenu} on every Link
+
+
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location.pathname]);
-
-  // IMPROVEMENT #4: Close menu with Escape key (keyboard accessibility)
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === "Escape") setIsMenuOpen(false);
@@ -115,8 +113,6 @@ export default function Header() {
   // Helper component for mobile nav items
   const MobileNavItem = ({ to, icon: Icon, label }) => (
     <li>
-      {/* PREVIOUS: onClick={toggleMenu} was needed on every Link */}
-      {/* NOW: Auto-closes via useEffect watching location.pathname */}
       <Link to={to} className="flex items-center gap-2">
         <Icon size={20} />
         {label}
@@ -129,7 +125,11 @@ export default function Header() {
       {/* IMPROVEMENT #5: Changed from hardcoded w-[1500px] to max-w-7xl for better responsiveness */}
       {/* PREVIOUS: className='header sticky top-0 w-[1500px] max-w-[95%] m-auto ...' */}
       <div
-        className='header sticky top-0 max-w-7xl w-full max-w-[95%] m-auto border-b border-gray-200 
+        //   className='header sticky top-0 max-w-7xl w-full max-w-[95%] m-auto border-b border-gray-200 
+        // flex justify-between items-center z-[100] px-[0px] py-[0px] bg-white'>
+        //   <Link to={isBizUser ? '/biz-dashboard' : '/'} className='font-bold  text-nowrap
+        // flex items-center gap-[0px] text-emerald-600 '>
+        className='header sticky top-0 w-full md:w-[95%] m-auto border-b border-gray-200 
       flex justify-between items-center z-[100] px-[0px] py-[0px] bg-white'>
         <Link to={isBizUser ? '/biz-dashboard' : '/'} className='font-bold  text-nowrap
       flex items-center gap-[0px] text-emerald-600 '>
@@ -219,13 +219,11 @@ export default function Header() {
         </ul>
 
         {/* Mobile Menu Button */}
-        {/* IMPROVEMENT #6: Added aria-label and aria-expanded for accessibility */}
-        {/* PREVIOUS: <button onClick={toggleMenu} className='flex sm:hidden ...'> */}
         <button
           onClick={toggleMenu}
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           aria-expanded={isMenuOpen}
-          className='flex sm:hidden justify-end z-[100] font-semibold text-[25px]'>
+          className='flex sm:hidden justify-end z-[100] font-semibold text-[25px] mr-2.5'>
           {isMenuOpen ? <MultiplicationSignIcon /> : <Menu01Icon />}
         </button>
 
@@ -246,38 +244,8 @@ export default function Header() {
           >
             {currentUser ? (
               <>
-                {/* IMPROVEMENT #2: Using config arrays with .map() for mobile nav */}
-                {/* PREVIOUS CODE (commented out):
-                {isBizUser ? (
-                  <>
-                    <li>
-                      <Link to={"/biz-dashboard"} onClick={toggleMenu} className="flex items-center gap-2">
-                        <Analytics01Icon size={20} />
-                        Dashboard
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to={"/inventory"} onClick={toggleMenu} className="flex items-center gap-2">
-                        <PackageIcon size={20} />
-                        Inventory
-                      </Link>
-                    </li>
-                    ... (more hardcoded items with onClick={toggleMenu})
-                  </>
-                ) : (
-                  <>
-                    <li>
-                      <Link to={"/search"} onClick={toggleMenu} className="flex items-center gap-2">
-                        <Search01Icon size={20} />
-                        Search
-                      </Link>
-                    </li>
-                    ... (more hardcoded items)
-                  </>
-                )}
-                */}
 
-                {/* NEW: Using config arrays - no more onClick={toggleMenu} needed! */}
+
                 {(isBizUser ? bizMobileNavItems : marketplaceMobileNavItems).map((item) => (
                   <MobileNavItem key={item.to} {...item} />
                 ))}
