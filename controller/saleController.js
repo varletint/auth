@@ -87,7 +87,22 @@ export const getSale = async (req, res, next) => {
 export const createSale = async (req, res, next) => {
     try {
         const userId = req.user.id;
-        const { items, customer, customerName, totalAmount, paymentMethod, paymentStatus, amountPaid, saleDate, notes } = req.body;
+        const { items, customer, customerName, totalAmount, paymentMethod, paymentStatus, amountPaid, saleDate, notes, idempotencyKey } = req.body;
+
+        // ==================== Idempotency Check ====================
+        // If idempotencyKey is provided, check if sale already exists
+        if (idempotencyKey) {
+            const existingSale = await Sale.findOne({ userId, idempotencyKey });
+            if (existingSale) {
+                // Return the existing sale (idempotent response)
+                return res.status(200).json({
+                    success: true,
+                    message: "Sale already recorded (duplicate request)",
+                    sale: existingSale,
+                    duplicate: true,
+                });
+            }
+        }
 
         if (!items || items.length === 0) {
             return next(errorHandler(400, "At least one item is required"));
@@ -108,27 +123,92 @@ export const createSale = async (req, res, next) => {
                 // Get inventory item and check stock
                 const invItem = await InventoryItem.findOne({ _id: item.inventoryItem, userId });
                 if (invItem) {
-                    if (invItem.quantity < item.quantity) {
-                        return next(errorHandler(400, `Insufficient stock for ${invItem.name}. Available: ${invItem.quantity}`));
-                    }
-                    costPrice = invItem.costPrice;
+                    // Handle multi-unit items
+                    if (invItem.hasMultipleUnits) {
+                        // Get the selling unit info
+                        const sellingUnit = item.sellingUnit;
+                        if (!sellingUnit || !sellingUnit.conversionFactor) {
+                            return next(errorHandler(400, `Selling unit is required for multi-unit item ${invItem.name}`));
+                        }
 
-                    // Store for later update (after we have sale ID)
-                    inventoryUpdates.push({
-                        invItem,
+                        // Calculate base quantity to deduct
+                        const baseQtyToDeduct = item.quantity * sellingUnit.conversionFactor;
+
+                        if (invItem.baseQuantity < baseQtyToDeduct) {
+                            return next(errorHandler(400, `Insufficient stock for ${invItem.name}. Available: ${invItem.baseQuantity} ${invItem.baseUnit}`));
+                        }
+
+                        // Get cost price for the selling unit
+                        const matchingUnit = invItem.sellingUnits?.find(u => u.name === sellingUnit.name);
+                        costPrice = matchingUnit?.costPrice || 0;
+
+                        // Store for later update
+                        inventoryUpdates.push({
+                            invItem,
+                            quantity: baseQtyToDeduct,
+                            isMultiUnit: true,
+                            sellingUnit,
+                            soldQuantity: item.quantity,
+                        });
+
+                        processedItems.push({
+                            inventoryItem: item.inventoryItem,
+                            name: item.name,
+                            quantity: item.quantity,
+                            unitPrice: item.unitPrice,
+                            costPrice: item.costPrice || costPrice,
+                            subtotal: item.quantity * item.unitPrice,
+                            sellingUnit: {
+                                name: sellingUnit.name,
+                                label: sellingUnit.label || sellingUnit.name,
+                                conversionFactor: sellingUnit.conversionFactor,
+                            },
+                            baseQuantityDeducted: baseQtyToDeduct,
+                        });
+                    } else {
+                        // Handle standard single-unit items
+                        if (invItem.quantity < item.quantity) {
+                            return next(errorHandler(400, `Insufficient stock for ${invItem.name}. Available: ${invItem.quantity}`));
+                        }
+                        costPrice = invItem.costPrice;
+
+                        // Store for later update (after we have sale ID)
+                        inventoryUpdates.push({
+                            invItem,
+                            quantity: item.quantity,
+                            isMultiUnit: false,
+                        });
+
+                        processedItems.push({
+                            inventoryItem: item.inventoryItem,
+                            name: item.name,
+                            quantity: item.quantity,
+                            unitPrice: item.unitPrice,
+                            costPrice: item.costPrice || costPrice,
+                            subtotal: item.quantity * item.unitPrice,
+                        });
+                    }
+                } else {
+                    // Item not in inventory, just add as-is
+                    processedItems.push({
+                        inventoryItem: item.inventoryItem,
+                        name: item.name,
                         quantity: item.quantity,
+                        unitPrice: item.unitPrice,
+                        costPrice: item.costPrice || 0,
+                        subtotal: item.quantity * item.unitPrice,
                     });
                 }
+            } else {
+                // No inventory item linked
+                processedItems.push({
+                    name: item.name,
+                    quantity: item.quantity,
+                    unitPrice: item.unitPrice,
+                    costPrice: item.costPrice || 0,
+                    subtotal: item.quantity * item.unitPrice,
+                });
             }
-
-            processedItems.push({
-                inventoryItem: item.inventoryItem,
-                name: item.name,
-                quantity: item.quantity,
-                unitPrice: item.unitPrice,
-                costPrice: item.costPrice || costPrice,
-                subtotal: item.quantity * item.unitPrice,
-            });
         }
 
         const newSale = new Sale({
@@ -142,29 +222,54 @@ export const createSale = async (req, res, next) => {
             amountPaid: amountPaid !== undefined ? amountPaid : totalAmount,
             saleDate: saleDate || new Date(),
             notes,
+            idempotencyKey: idempotencyKey || undefined,
         });
 
         const savedSale = await newSale.save();
 
         // Now update inventory with stock history entries (after we have sale ID)
         for (const update of inventoryUpdates) {
-            const { invItem, quantity } = update;
-            invItem.quantity -= quantity;
+            const { invItem, quantity, isMultiUnit, sellingUnit, soldQuantity } = update;
 
-            // Add stock history entry for the sale
-            invItem.stockHistory.push({
-                type: "out",
-                quantity: -quantity,
-                reason: `Sale #${savedSale.referenceNumber}`,
-                referenceId: savedSale._id,
-                referenceType: "Sale",
-                costPriceAtTime: invItem.costPrice,
-                sellingPriceAtTime: invItem.sellingPrice,
-                balanceAfter: invItem.quantity,
-                valueAfter: invItem.quantity * invItem.costPrice,
-                createdBy: userId,
-                createdAt: new Date(),
-            });
+            if (isMultiUnit) {
+                // Multi-unit: deduct from baseQuantity
+                invItem.baseQuantity -= quantity;
+                // Also update the standard quantity field for backwards compat
+                invItem.quantity = invItem.baseQuantity;
+
+                // Add stock history entry
+                invItem.stockHistory.push({
+                    type: "out",
+                    quantity: -quantity,
+                    reason: `Sale #${savedSale.referenceNumber} (${soldQuantity} ${sellingUnit.name})`,
+                    referenceId: savedSale._id,
+                    referenceType: "Sale",
+                    costPriceAtTime: invItem.sellingUnits?.find(u => u.name === sellingUnit.name)?.costPrice || 0,
+                    sellingPriceAtTime: invItem.sellingUnits?.find(u => u.name === sellingUnit.name)?.sellingPrice || 0,
+                    balanceAfter: invItem.baseQuantity,
+                    valueAfter: invItem.baseQuantity * (invItem.sellingUnits?.[0]?.costPrice || 0) / (invItem.sellingUnits?.[0]?.conversionFactor || 1),
+                    createdBy: userId,
+                    createdAt: new Date(),
+                });
+            } else {
+                // Standard: deduct from quantity
+                invItem.quantity -= quantity;
+
+                // Add stock history entry for the sale
+                invItem.stockHistory.push({
+                    type: "out",
+                    quantity: -quantity,
+                    reason: `Sale #${savedSale.referenceNumber}`,
+                    referenceId: savedSale._id,
+                    referenceType: "Sale",
+                    costPriceAtTime: invItem.costPrice,
+                    sellingPriceAtTime: invItem.sellingPrice,
+                    balanceAfter: invItem.quantity,
+                    valueAfter: invItem.quantity * invItem.costPrice,
+                    createdBy: userId,
+                    createdAt: new Date(),
+                });
+            }
 
             await invItem.save();
         }

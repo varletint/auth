@@ -24,7 +24,8 @@ const saleSchema = new mongoose.Schema(
                 quantity: {
                     type: Number,
                     required: true,
-                    min: [1, "Quantity must be at least 1"],
+                    min: [0.001, "Quantity must be positive"],
+                    // Quantity in selling unit (e.g., 2 bags)
                 },
                 unitPrice: {
                     type: Number,
@@ -40,6 +41,28 @@ const saleSchema = new mongoose.Schema(
                     type: Number,
                     required: true,
                     min: 0,
+                },
+                // For multi-unit items: which unit was sold
+                sellingUnit: {
+                    name: {
+                        type: String,
+                        // e.g., "bag", "cup", "kg"
+                    },
+                    label: {
+                        type: String,
+                        // e.g., "Bag (5kg)"
+                    },
+                    conversionFactor: {
+                        type: Number,
+                        min: 0.001,
+                        // e.g., 5 (1 bag = 5 kg)
+                    },
+                },
+                // For multi-unit items: actual base units deducted from stock
+                baseQuantityDeducted: {
+                    type: Number,
+                    min: 0,
+                    // e.g., 10 (2 bags × 5 kg = 10 kg deducted)
                 },
             },
         ],
@@ -115,6 +138,14 @@ const saleSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+
+        // ==================== Idempotency ====================
+        idempotencyKey: {
+            type: String,
+            trim: true,
+            index: true,
+            // Unique per user - prevents duplicate sale submissions
+        },
     },
     {
         timestamps: true,
@@ -128,6 +159,8 @@ saleSchema.index({ userId: 1, saleDate: -1 });
 saleSchema.index({ userId: 1, customer: 1 });
 saleSchema.index({ userId: 1, isDeleted: 1 });
 saleSchema.index({ userId: 1, paymentStatus: 1 });
+// Unique idempotency key per user (sparse to allow nulls)
+saleSchema.index({ userId: 1, idempotencyKey: 1 }, { unique: true, sparse: true });
 
 // ==================== Virtual Fields ====================
 saleSchema.virtual("profit").get(function () {

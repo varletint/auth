@@ -85,14 +85,120 @@ export const getInventoryItem = async (req, res, next) => {
 export const createInventoryItem = async (req, res, next) => {
     try {
         const userId = req.user.id;
-        const { name, description, sku, category, costPrice, sellingPrice, quantity, lowStockThreshold, unit } = req.body;
+        const {
+            name,
+            description,
+            sku,
+            category,
+            costPrice,
+            sellingPrice,
+            quantity,
+            lowStockThreshold,
+            unit,
+            // Multi-unit fields
+            hasMultipleUnits,
+            baseUnit,
+            baseQuantity,
+            sellingUnits,
+            // Idempotency
+            idempotencyKey,
+        } = req.body;
 
-        if (!name || costPrice === undefined || sellingPrice === undefined) {
-            return next(errorHandler(400, "Name, cost price, and selling price are required"));
+        // ==================== Idempotency Check ====================
+        if (idempotencyKey) {
+            const existingItem = await InventoryItem.findOne({ userId, idempotencyKey });
+            if (existingItem) {
+                return res.status(200).json({
+                    success: true,
+                    message: "Item already created (duplicate request)",
+                    item: existingItem,
+                    duplicate: true,
+                });
+            }
+        }
+
+        if (!name) {
+            return next(errorHandler(400, "Item name is required"));
+        }
+
+        const stockHistory = [];
+
+        // Handle multi-unit items
+        if (hasMultipleUnits) {
+            if (!baseUnit) {
+                return next(errorHandler(400, "Base unit is required for multi-unit items"));
+            }
+            if (!sellingUnits || sellingUnits.length === 0) {
+                return next(errorHandler(400, "At least one selling unit is required"));
+            }
+
+            // Validate selling units have required fields
+            for (const unit of sellingUnits) {
+                if (!unit.name || !unit.conversionFactor || unit.sellingPrice === undefined) {
+                    return next(errorHandler(400, "Each selling unit must have name, conversion factor, and selling price"));
+                }
+            }
+
+            // Ensure at least one default unit
+            const hasDefault = sellingUnits.some(u => u.isDefault);
+            if (!hasDefault && sellingUnits.length > 0) {
+                sellingUnits[0].isDefault = true;
+            }
+
+            const initialBaseQuantity = baseQuantity || 0;
+
+            // Record initial stock
+            if (initialBaseQuantity > 0) {
+                const defaultUnit = sellingUnits.find(u => u.isDefault) || sellingUnits[0];
+                stockHistory.push({
+                    type: "in",
+                    quantity: initialBaseQuantity,
+                    reason: "Initial stock",
+                    referenceType: "Initial",
+                    costPriceAtTime: defaultUnit.costPrice || 0,
+                    sellingPriceAtTime: defaultUnit.sellingPrice,
+                    balanceAfter: initialBaseQuantity,
+                    valueAfter: initialBaseQuantity * (defaultUnit.costPrice || 0) / defaultUnit.conversionFactor,
+                    createdBy: userId,
+                    createdAt: new Date(),
+                });
+            }
+
+            const newItem = new InventoryItem({
+                userId,
+                name,
+                description,
+                sku,
+                category,
+                hasMultipleUnits: true,
+                baseUnit,
+                baseQuantity: initialBaseQuantity,
+                sellingUnits,
+                lowStockThreshold: lowStockThreshold || 5,
+                // For backwards compatibility, also set standard fields using default unit
+                unit: baseUnit,
+                quantity: initialBaseQuantity,
+                costPrice: sellingUnits[0]?.costPrice || 0,
+                sellingPrice: sellingUnits[0]?.sellingPrice || 0,
+                stockHistory,
+                idempotencyKey: idempotencyKey || undefined,
+            });
+
+            const savedItem = await newItem.save();
+
+            return res.status(201).json({
+                success: true,
+                message: "Multi-unit inventory item created successfully",
+                item: savedItem,
+            });
+        }
+
+        // Handle standard (single-unit) items
+        if (costPrice === undefined || sellingPrice === undefined) {
+            return next(errorHandler(400, "Cost price and selling price are required"));
         }
 
         const initialQuantity = quantity || 0;
-        const stockHistory = [];
 
         // Record initial stock as first history entry
         if (initialQuantity > 0) {
@@ -121,7 +227,9 @@ export const createInventoryItem = async (req, res, next) => {
             quantity: initialQuantity,
             lowStockThreshold: lowStockThreshold || 5,
             unit: unit || "pieces",
+            hasMultipleUnits: false,
             stockHistory,
+            idempotencyKey: idempotencyKey || undefined,
         });
 
         const savedItem = await newItem.save();
@@ -154,13 +262,25 @@ export const updateInventoryItem = async (req, res, next) => {
             return next(errorHandler(404, "Inventory item not found"));
         }
 
-        const allowedUpdates = ["name", "description", "sku", "category", "costPrice", "sellingPrice", "quantity", "lowStockThreshold", "unit", "isActive"];
+        // Allow updating all relevant fields including multi-unit fields
+        const allowedUpdates = [
+            "name", "description", "sku", "category",
+            "costPrice", "sellingPrice", "quantity",
+            "lowStockThreshold", "unit", "isActive",
+            // Multi-unit fields
+            "hasMultipleUnits", "baseUnit", "baseQuantity", "sellingUnits"
+        ];
 
         allowedUpdates.forEach((field) => {
             if (req.body[field] !== undefined) {
                 item[field] = req.body[field];
             }
         });
+
+        // If switching to multi-unit mode, sync quantity fields
+        if (item.hasMultipleUnits) {
+            item.quantity = item.baseQuantity;
+        }
 
         const updatedItem = await item.save();
 

@@ -69,8 +69,66 @@ const inventoryItemSchema = new mongoose.Schema(
             type: String,
             trim: true,
             default: "pieces",
-            enum: ["pieces", "kg", "g", "liters", "ml", "meters", "boxes", "packs", "dozen", "other"],
+            enum: ["pieces", "kg", "g", "liters", "ml", "meters", "boxes", "packs", "dozen", "carton", "bag", "bottle", "other"],
         },
+
+        // ==================== Multi-Unit Configuration ====================
+        // Toggle: Does this item have multiple selling units?
+        hasMultipleUnits: {
+            type: Boolean,
+            default: false,
+        },
+
+        // For multi-unit items: the unit used to track stock internally
+        baseUnit: {
+            type: String,
+            trim: true,
+            enum: ["pieces", "kg", "g", "liters", "ml", "meters", "units", ""],
+            default: "",
+        },
+
+        // For multi-unit items: stock quantity in base units
+        baseQuantity: {
+            type: Number,
+            min: [0, "Base quantity cannot be negative"],
+            default: 0,
+        },
+
+        // For multi-unit items: all available selling units with their conversion factors
+        sellingUnits: [{
+            name: {
+                type: String,
+                required: true,
+                trim: true,
+                // e.g., "kg", "bag", "cup", "carton"
+            },
+            label: {
+                type: String,
+                trim: true,
+                // e.g., "Bag (5kg)", "Cup (500g)" for display
+            },
+            conversionFactor: {
+                type: Number,
+                required: true,
+                min: [0.001, "Conversion factor must be positive"],
+                // How many baseUnits in 1 of this selling unit
+                // e.g., if baseUnit is "kg" and this is "bag (5kg)", factor = 5
+            },
+            costPrice: {
+                type: Number,
+                min: [0, "Cost price cannot be negative"],
+                default: 0,
+            },
+            sellingPrice: {
+                type: Number,
+                required: true,
+                min: [0, "Selling price cannot be negative"],
+            },
+            isDefault: {
+                type: Boolean,
+                default: false,
+            },
+        }],
 
         // ==================== Status ====================
         isActive: {
@@ -82,6 +140,14 @@ const inventoryItemSchema = new mongoose.Schema(
         isDeleted: {
             type: Boolean,
             default: false,
+        },
+
+        // ==================== Idempotency ====================
+        idempotencyKey: {
+            type: String,
+            trim: true,
+            index: true,
+            // Unique per user - prevents duplicate item creation
         },
 
         // ==================== Stock History ====================
@@ -152,19 +218,55 @@ inventoryItemSchema.index({ userId: 1, name: 1 });
 inventoryItemSchema.index({ userId: 1, category: 1 });
 inventoryItemSchema.index({ userId: 1, sku: 1 });
 inventoryItemSchema.index({ userId: 1, isDeleted: 1 });
+// Unique idempotency key per user (sparse to allow nulls)
+inventoryItemSchema.index({ userId: 1, idempotencyKey: 1 }, { unique: true, sparse: true });
 
 // ==================== Virtual Fields ====================
 inventoryItemSchema.virtual("isLowStock").get(function () {
+    if (this.hasMultipleUnits) {
+        return this.baseQuantity <= this.lowStockThreshold;
+    }
     return this.quantity <= this.lowStockThreshold;
 });
 
 inventoryItemSchema.virtual("profitMargin").get(function () {
+    if (this.hasMultipleUnits && this.sellingUnits?.length > 0) {
+        const defaultUnit = this.sellingUnits.find(u => u.isDefault) || this.sellingUnits[0];
+        if (defaultUnit.costPrice === 0) return 100;
+        return ((defaultUnit.sellingPrice - defaultUnit.costPrice) / defaultUnit.costPrice * 100).toFixed(2);
+    }
     if (this.costPrice === 0) return 100;
     return ((this.sellingPrice - this.costPrice) / this.costPrice * 100).toFixed(2);
 });
 
 inventoryItemSchema.virtual("stockValue").get(function () {
+    if (this.hasMultipleUnits && this.sellingUnits?.length > 0) {
+        const defaultUnit = this.sellingUnits.find(u => u.isDefault) || this.sellingUnits[0];
+        return this.baseQuantity * (defaultUnit.costPrice / defaultUnit.conversionFactor);
+    }
     return this.quantity * this.costPrice;
+});
+
+// Effective stock: returns the quantity in the appropriate unit
+inventoryItemSchema.virtual("effectiveStock").get(function () {
+    return this.hasMultipleUnits ? this.baseQuantity : this.quantity;
+});
+
+// Stock display: formatted string for UI
+inventoryItemSchema.virtual("stockDisplay").get(function () {
+    if (this.hasMultipleUnits) {
+        return `${this.baseQuantity} ${this.baseUnit}`;
+    }
+    return `${this.quantity} ${this.unit}`;
+});
+
+// Default selling price for display
+inventoryItemSchema.virtual("displayPrice").get(function () {
+    if (this.hasMultipleUnits && this.sellingUnits?.length > 0) {
+        const defaultUnit = this.sellingUnits.find(u => u.isDefault) || this.sellingUnits[0];
+        return defaultUnit.sellingPrice;
+    }
+    return this.sellingPrice;
 });
 
 inventoryItemSchema.virtual("totalStockIn").get(function () {

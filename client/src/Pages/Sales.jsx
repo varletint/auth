@@ -112,7 +112,7 @@ export default function Sales() {
     const addItem = () => {
         setFormData({
             ...formData,
-            items: [...formData.items, { name: "", quantity: 1, unitPrice: "", inventoryItem: "" }],
+            items: [...formData.items, { name: "", quantity: 1, unitPrice: "", inventoryItem: "", sellingUnit: null }],
         });
     };
 
@@ -131,8 +131,25 @@ export default function Sales() {
             const invItem = inventoryItems.find((i) => i._id === value);
             if (invItem) {
                 newItems[index].name = invItem.name;
-                newItems[index].unitPrice = invItem.sellingPrice.toString();
+
+                // Check if multi-unit item
+                if (invItem.hasMultipleUnits && invItem.sellingUnits?.length > 0) {
+                    // Set default selling unit
+                    const defaultUnit = invItem.sellingUnits.find(u => u.isDefault) || invItem.sellingUnits[0];
+                    newItems[index].sellingUnit = defaultUnit;
+                    newItems[index].unitPrice = defaultUnit.sellingPrice.toString();
+                } else {
+                    newItems[index].sellingUnit = null;
+                    newItems[index].unitPrice = invItem.sellingPrice.toString();
+                }
             }
+        }
+
+        // Handle selling unit change for multi-unit items
+        if (field === "sellingUnit" && value) {
+            const parsedUnit = JSON.parse(value);
+            newItems[index].sellingUnit = parsedUnit;
+            newItems[index].unitPrice = parsedUnit.sellingPrice.toString();
         }
 
         setFormData({ ...formData, items: newItems });
@@ -158,12 +175,25 @@ export default function Sales() {
         try {
             const totalAmount = calculateTotal();
             const saleData = {
-                items: validItems.map((item) => ({
-                    ...item,
-                    quantity: parseInt(item.quantity) || 1,
-                    unitPrice: parseFloat(item.unitPrice),
-                    inventoryItem: item.inventoryItem || undefined,
-                })),
+                items: validItems.map((item) => {
+                    const saleItem = {
+                        name: item.name,
+                        quantity: parseFloat(item.quantity) || 1,
+                        unitPrice: parseFloat(item.unitPrice),
+                        inventoryItem: item.inventoryItem || undefined,
+                    };
+
+                    // Include selling unit for multi-unit items
+                    if (item.sellingUnit) {
+                        saleItem.sellingUnit = {
+                            name: item.sellingUnit.name,
+                            label: item.sellingUnit.label || item.sellingUnit.name,
+                            conversionFactor: item.sellingUnit.conversionFactor,
+                        };
+                    }
+
+                    return saleItem;
+                }),
                 customerName: formData.customerName,
                 customer: formData.customer || undefined,
                 totalAmount,
@@ -171,6 +201,8 @@ export default function Sales() {
                 paymentStatus: formData.paymentStatus,
                 amountPaid: formData.paymentStatus === "partial" ? parseFloat(formData.amountPaid) || 0 : totalAmount,
                 notes: formData.notes,
+                // Generate idempotency key to prevent duplicate submissions
+                idempotencyKey: crypto.randomUUID(),
             };
 
             await salesApi.createSale(saleData);
@@ -353,46 +385,89 @@ export default function Sales() {
                                 {/* Items */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">Items</label>
-                                    {formData.items.map((item, index) => (
-                                        <div key={index} className="flex gap-2 mb-2">
-                                            <select
-                                                value={item.inventoryItem}
-                                                onChange={(e) => updateItem(index, "inventoryItem", e.target.value)}
-                                                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm"
-                                            >
-                                                <option value="">Select or type item</option>
-                                                {inventoryItems.map((inv) => (
-                                                    <option key={inv._id} value={inv._id}>
-                                                        {inv.name} (₦{inv.sellingPrice?.toLocaleString()})
-                                                    </option>
-                                                ))}
-                                            </select>
-                                            <input
-                                                type="number"
-                                                value={item.quantity}
-                                                onChange={(e) => updateItem(index, "quantity", e.target.value)}
-                                                className="w-16 px-2 py-2 border border-gray-200 rounded-lg text-sm"
-                                                min="1"
-                                                placeholder="Qty"
-                                            />
-                                            <input
-                                                type="number"
-                                                value={item.unitPrice}
-                                                onChange={(e) => updateItem(index, "unitPrice", e.target.value)}
-                                                className="w-24 px-2 py-2 border border-gray-200 rounded-lg text-sm"
-                                                placeholder="Price"
-                                            />
-                                            {formData.items.length > 1 && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => removeItem(index)}
-                                                    className="p-2 text-red-500 hover:bg-red-50 rounded"
-                                                >
-                                                    <Cancel01Icon size={16} />
-                                                </button>
-                                            )}
-                                        </div>
-                                    ))}
+                                    {formData.items.map((item, index) => {
+                                        const invItem = inventoryItems.find(i => i._id === item.inventoryItem);
+                                        const isMultiUnit = invItem?.hasMultipleUnits && invItem?.sellingUnits?.length > 0;
+
+                                        return (
+                                            <div key={index} className="mb-3 p-3 bg-gray-50 rounded-lg">
+                                                <div className="flex gap-2 mb-2">
+                                                    <select
+                                                        value={item.inventoryItem}
+                                                        onChange={(e) => updateItem(index, "inventoryItem", e.target.value)}
+                                                        className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white"
+                                                    >
+                                                        <option value="">Select item</option>
+                                                        {inventoryItems.map((inv) => (
+                                                            <option key={inv._id} value={inv._id}>
+                                                                {inv.name} {inv.hasMultipleUnits ? "📊" : ""}
+                                                                {!inv.hasMultipleUnits && `(₦${inv.sellingPrice?.toLocaleString()})`}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                    {formData.items.length > 1 && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removeItem(index)}
+                                                            className="p-2 text-red-500 hover:bg-red-50 rounded"
+                                                        >
+                                                            <Cancel01Icon size={16} />
+                                                        </button>
+                                                    )}
+                                                </div>
+
+                                                {/* Unit selector for multi-unit items */}
+                                                {isMultiUnit && (
+                                                    <div className="mb-2">
+                                                        <select
+                                                            value={item.sellingUnit ? JSON.stringify(item.sellingUnit) : ""}
+                                                            onChange={(e) => updateItem(index, "sellingUnit", e.target.value)}
+                                                            className="w-full px-3 py-2 border border-emerald-200 rounded-lg text-sm bg-emerald-50"
+                                                        >
+                                                            {invItem.sellingUnits.map((unit, uIdx) => (
+                                                                <option key={uIdx} value={JSON.stringify(unit)}>
+                                                                    {unit.label || unit.name} — ₦{unit.sellingPrice?.toLocaleString()}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                )}
+
+                                                <div className="flex gap-2">
+                                                    <div className="flex-1">
+                                                        <input
+                                                            type="number"
+                                                            value={item.quantity}
+                                                            onChange={(e) => updateItem(index, "quantity", e.target.value)}
+                                                            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                                                            min="0.001"
+                                                            step="any"
+                                                            placeholder="Qty"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <input
+                                                            type="number"
+                                                            value={item.unitPrice}
+                                                            onChange={(e) => updateItem(index, "unitPrice", e.target.value)}
+                                                            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                                                            placeholder="Price"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                {/* Stock deduction preview for multi-unit items */}
+                                                {isMultiUnit && item.sellingUnit && item.quantity > 0 && (
+                                                    <div className="mt-2 text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                                                        📦 Will deduct {(parseFloat(item.quantity) * item.sellingUnit.conversionFactor).toFixed(2)} {invItem.baseUnit} from stock
+                                                        <span className="text-gray-500 ml-1">
+                                                            ({invItem.baseQuantity} {invItem.baseUnit} available)
+                                                        </span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
                                     <button
                                         type="button"
                                         onClick={addItem}
