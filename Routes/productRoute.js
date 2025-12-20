@@ -7,7 +7,8 @@ import {
     getProducts,
     productGet,
     restockProduct,
-    getProductTransactionHistory
+    getProductTransactionHistory,
+    getProductBySlug,  // SEO-friendly product lookup
 } from "../controller/productController.js";
 import { apiLimiter, createProductLimiter } from "../middleware/rateLimiter.js";
 import { verifyToken, verifySeller } from "../middleware/verifyUser.js";
@@ -26,6 +27,11 @@ router.delete("/:id", verifyToken, verifySeller, deleteProduct);
 router.patch("/:id/restock", verifyToken, verifySeller, restockProduct);
 router.get("/:id/transactions", verifyToken, verifySeller, getProductTransactionHistory);
 
+// SEO-friendly route: Get product by seller username + product slug
+// Example: /api/products/slug/techstore/iphone-15-pro
+router.get("/slug/:sellerUsername/:productSlug", getProductBySlug);
+
+// ID-based route (supports smart redirect with ?redirect=true)
 router.get("/:id", getProduct);
 router.get("/", getProducts);
 

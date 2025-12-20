@@ -279,13 +279,62 @@ export const productGet = async (req, res, next) => {
 //     }
 // };
 
-// ============================================
-// NEW: Get Product by ID with Smart Redirect
-// GET /api/products/:id
-// GET /api/products/:id?redirect=true  (for 301 redirect)
-// ============================================
-// Option 1: Returns product + canonicalUrl (default)
-// Option 2: 301 Redirect to SEO-friendly URL (when ?redirect=true)
+/**
+ * ============================================
+ * Get Product by ID with Smart Redirect
+ * ============================================
+ * 
+ * ENDPOINTS:
+ *   GET /api/products/:id                  → Returns JSON + canonicalUrl
+ *   GET /api/products/:id?redirect=true    → 301 Redirect to SEO URL
+ * 
+ * ============================================
+ * HOW IT WORKS: FRONTEND ↔ BACKEND FLOW
+ * ============================================
+ * 
+ * SCENARIO 1: User clicks old/ID-based link (Soft Redirect)
+ * ──────────────────────────────────────────────────────────
+ * 1. User clicks: /product/507f1f77bcf86cd799439011
+ * 2. Frontend calls: api.get(`/api/products/${id}`)
+ * 3. Backend returns: { product, canonicalUrl: "/techstore/iphone-15-pro" }
+ * 4. Frontend executes: window.history.replaceState(null, '', canonicalUrl)
+ * 5. Browser URL updates WITHOUT page reload
+ * 
+ * Frontend code example:
+ * ```javascript
+ * const response = await api.get(`/api/products/${id}`);
+ * if (response.data.canonicalUrl) {
+ *   window.history.replaceState(null, '', response.data.canonicalUrl);
+ * }
+ * setProduct(response.data.product);
+ * ```
+ * 
+ * SCENARIO 2: SEO Crawler / External Link (Hard 301 Redirect)
+ * ────────────────────────────────────────────────────────────
+ * 1. Crawler requests: /api/products/507f1f...?redirect=true
+ * 2. Backend responds: HTTP 301 → /techstore/iphone-15-pro
+ * 3. Crawler follows redirect to canonical URL
+ * 4. SEO juice is preserved and consolidated
+ * 
+ * SCENARIO 3: Direct SEO-friendly URL (No redirect needed)
+ * ─────────────────────────────────────────────────────────
+ * 1. User visits: /techstore/iphone-15-pro
+ * 2. Frontend uses getProductBySlug() instead
+ * 3. Already at canonical URL - no redirect needed
+ * 
+ * ============================================
+ * RESPONSE FORMAT
+ * ============================================
+ * {
+ *   success: true,
+ *   product: { _id, name, slug, price, ... },
+ *   canonicalUrl: "/:sellerUsername/:productSlug" | null
+ * }
+ * 
+ * @param {Object} req - Express request (req.params.id, req.query.redirect)
+ * @param {Object} res - Express response
+ * @param {Function} next - Express next middleware
+ */
 export const getProduct = async (req, res, next) => {
     try {
         const { id } = req.params;
