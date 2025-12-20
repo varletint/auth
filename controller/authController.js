@@ -241,10 +241,38 @@ export const updateProfile = async (req, res, next) => {
       { new: true, upsert: true, runValidators: true }
     );
 
+    // ==================== Auto-assign Seller Role ====================
+    // Check if profile is complete: email, fullName, and businessName
+    const hasEmail = updatedUser.email && updatedUser.email.trim() !== '';
+    const hasFullName = updatedUserDetails?.fullName && updatedUserDetails.fullName.trim() !== '';
+    const hasBusinessName = updatedUserDetails?.businessInfo?.businessName &&
+      updatedUserDetails.businessInfo.businessName.trim() !== '';
+
+    const profileComplete = hasEmail && hasFullName && hasBusinessName;
+    const isAlreadySeller = updatedUser.role && updatedUser.role.includes('seller');
+
+    if (profileComplete && !isAlreadySeller) {
+      // Add 'seller' role to user
+      await User.findByIdAndUpdate(
+        req.user.id,
+        { $addToSet: { role: 'seller' } },
+        { new: true }
+      );
+      // Refresh user data for response
+      updatedUser.role = [...(updatedUser.role || []), 'seller'];
+    }
+
+    // Track if seller upgrade happened
+    const wasUpgradedToSeller = profileComplete && !isAlreadySeller;
+
     // 3. Combine and return response
     const responseData = {
       ...updatedUser._doc,
-      userDetails: updatedUserDetails
+      userDetails: updatedUserDetails,
+      ...(wasUpgradedToSeller && {
+        message: "🎉 Congratulations! Your profile is complete. You are now a seller and can start posting products!",
+        sellerUpgrade: true
+      })
     };
 
     res.status(200).json(responseData);

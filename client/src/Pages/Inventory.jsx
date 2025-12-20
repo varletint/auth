@@ -428,7 +428,7 @@ export default function Inventory() {
 
             {/* Add/Edit Modal */}
             {showModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-100 p-4">
                     <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
                         <div className="p-6 border-b flex items-center justify-between">
                             <h2 className="text-xl font-bold">{editingItem ? "Edit Item" : "Add New Item"}</h2>
@@ -462,9 +462,10 @@ export default function Inventory() {
                                     <button
                                         type="button"
                                         onClick={() => setFormMode("bulk")}
-                                        className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors ${formMode === "bulk"
-                                            ? "bg-white text-blue-600 shadow-sm"
-                                            : "text-gray-600 hover:text-gray-900"
+                                        className={`flex-1 py-2 px-4 text-sm font-medium rounded-md 
+                                           text-nowrap transition-colors ${formMode === "bulk"
+                                                ? "bg-white text-blue-600 shadow-sm"
+                                                : "text-gray-600 hover:text-gray-900"
                                             }`}
                                     >
                                         📊 Bulk / Multi-Unit
@@ -479,7 +480,7 @@ export default function Inventory() {
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                         className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
-                                        placeholder={formMode === "bulk" ? "e.g., Premium Rice" : "e.g., iPhone 15 Pro"}
+                                        placeholder={formMode === "bulk" ? "e.g., Coca-Cola" : "e.g., iPhone 15 Pro"}
                                     />
                                 </div>
 

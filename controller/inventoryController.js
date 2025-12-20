@@ -100,7 +100,6 @@ export const createInventoryItem = async (req, res, next) => {
             baseUnit,
             baseQuantity,
             sellingUnits,
-            // Idempotency
             idempotencyKey,
         } = req.body;
 

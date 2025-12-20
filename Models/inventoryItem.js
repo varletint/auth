@@ -21,7 +21,7 @@ const inventoryItemSchema = new mongoose.Schema(
         description: {
             type: String,
             trim: true,
-            maxlength: [500, "Description cannot exceed 500 characters"],
+            maxlength: [100, "Description cannot exceed 500 characters"],
         },
 
         sku: {
@@ -51,7 +51,7 @@ const inventoryItemSchema = new mongoose.Schema(
             min: [0, "Selling price cannot be negative"],
         },
 
-        // ==================== Stock ====================
+        //  Stock 
         quantity: {
             type: Number,
             required: [true, "Quantity is required"],
@@ -72,8 +72,8 @@ const inventoryItemSchema = new mongoose.Schema(
             enum: ["pieces", "kg", "g", "liters", "ml", "meters", "boxes", "packs", "dozen", "carton", "bag", "bottle", "other"],
         },
 
-        // ==================== Multi-Unit Configuration ====================
-        // Toggle: Does this item have multiple selling units?
+        //  Multi-Unit Configuration
+
         hasMultipleUnits: {
             type: Boolean,
             default: false,
@@ -83,7 +83,7 @@ const inventoryItemSchema = new mongoose.Schema(
         baseUnit: {
             type: String,
             trim: true,
-            enum: ["pieces", "kg", "g", "liters", "ml", "meters", "units", ""],
+            enum: ["pieces", "kg", "g", "liters", "ml", "meters", "units", "per bottle", ""],
             default: "",
         },
 

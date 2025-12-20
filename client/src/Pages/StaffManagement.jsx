@@ -263,8 +263,8 @@ export default function StaffManagement() {
                                                     <button
                                                         onClick={() => handleToggleActive(staffMember)}
                                                         className={`px-3 py-1 rounded-full text-xs font-medium ${staffMember.isActive
-                                                                ? "bg-emerald-100 text-emerald-800"
-                                                                : "bg-red-100 text-red-800"
+                                                            ? "bg-emerald-100 text-emerald-800"
+                                                            : "bg-red-100 text-red-800"
                                                             }`}
                                                     >
                                                         {staffMember.isActive ? "Active" : "Inactive"}
@@ -332,7 +332,7 @@ export default function StaffManagement() {
                                         onChange={(e) => setFormData({ ...formData, staff_name: e.target.value })}
                                         placeholder="Enter staff name"
                                         required
-                                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                                     />
                                 </div>
                             </div>
@@ -351,7 +351,7 @@ export default function StaffManagement() {
                                         placeholder={editingStaff ? "Enter new password" : "Enter password"}
                                         required={!editingStaff}
                                         minLength={6}
-                                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                                     />
                                 </div>
                             </div>
@@ -366,8 +366,8 @@ export default function StaffManagement() {
                                         <label
                                             key={role.value}
                                             className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${formData.role === role.value
-                                                    ? "border-emerald-500 bg-emerald-50"
-                                                    : "border-gray-200 hover:border-gray-300"
+                                                ? "border-emerald-500 bg-emerald-50"
+                                                : "border-gray-200 hover:border-gray-300"
                                                 }`}
                                         >
                                             <input
@@ -392,14 +392,14 @@ export default function StaffManagement() {
                                 <button
                                     type="button"
                                     onClick={() => setShowModal(false)}
-                                    className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={submitting}
-                                    className="flex-1 px-4 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                    className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                 >
                                     {submitting && <Loading03Icon size={18} className="animate-spin" />}
                                     {editingStaff ? "Update" : "Add Staff"}

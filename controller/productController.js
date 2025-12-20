@@ -247,33 +247,147 @@ export const productGet = async (req, res, next) => {
     }
 }
 
+// ============================================
+// OLD getProduct (ID-based) - Commented out for reference
+// ============================================
+// export const getProduct = async (req, res, next) => {
+//     try {
+//         const { id } = req.params;
+
+//         // Check cache
+//         // if (redisClient.isOpen) {
+//         //     const cachedProduct = await redisClient.get(`product:${id}`);
+//         //     if (cachedProduct) {
+//         //         return res.status(200).json(JSON.parse(cachedProduct));
+//         //     }
+//         // }
+
+//         const product = await Product.findById(id);
+//         if (!product) return next(errorHandler(404, "Product not found"));
+
+//         // Increment view count
+//         await product.incrementView();
+
+//         // Set cache
+//         // if (redisClient.isOpen) {
+//         //     await redisClient.setEx(`product:${id}`, CACHE_EXPIRATION, JSON.stringify(product));
+//         // }
+
+//         res.status(200).json(product);
+//     } catch (error) {
+//         next(error);
+//     }
+// };
+
+// ============================================
+// NEW: Get Product by ID with Smart Redirect
+// GET /api/products/:id
+// GET /api/products/:id?redirect=true  (for 301 redirect)
+// ============================================
+// Option 1: Returns product + canonicalUrl (default)
+// Option 2: 301 Redirect to SEO-friendly URL (when ?redirect=true)
 export const getProduct = async (req, res, next) => {
     try {
         const { id } = req.params;
+        const { redirect } = req.query; // Check if redirect is requested
 
-        // Check cache
-        // if (redisClient.isOpen) {
-        //     const cachedProduct = await redisClient.get(`product:${id}`);
-        //     if (cachedProduct) {
-        //         return res.status(200).json(JSON.parse(cachedProduct));
-        //     }
-        // }
+        const product = await Product.findById(id)
+            .populate("userId", "username");
 
-        const product = await Product.findById(id);
-        if (!product) return next(errorHandler(404, "Product not found"));
+        if (!product) {
+            return next(errorHandler(404, "Product not found"));
+        }
+
+        // Get seller username for canonical URL
+        const sellerUsername = product.userId?.username;
+        const canonicalUrl = sellerUsername && product.slug
+            ? `/${sellerUsername}/${product.slug}`
+            : null;
+
+        // ============================================
+        // SMART REDIRECT: 301 Permanent Redirect
+        // ============================================
+        // If ?redirect=true is passed and canonical URL exists,
+        // perform actual HTTP 301 redirect (good for SEO)
+        if (redirect === 'true' && canonicalUrl) {
+            return res.redirect(301, canonicalUrl);
+        }
+
+        // Increment view count (only if not redirecting)
+        await product.incrementView();
+
+        // Default: Return JSON with product + canonical URL
+        res.status(200).json({
+            success: true,
+            product,
+            // SEO-friendly URL for frontend to use or redirect to
+            canonicalUrl,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// ============================================
+// NEW: Get Product by Seller Username + Product Slug (SEO-friendly)
+// GET /:sellerUsername/:productSlug
+// ============================================
+// Example: /techstore/iphone-15-pro-max
+export const getProductBySlug = async (req, res, next) => {
+    try {
+        const { sellerUsername, productSlug } = req.params;
+
+        // Step 1: Find the seller by username
+        const seller = await U.findOne({
+            username: sellerUsername.toLowerCase(),
+            accountStatus: "active"
+        });
+
+        if (!seller) {
+            return next(errorHandler(404, "Seller not found"));
+        }
+
+        // Step 2: Find the product by slug AND seller ID (ensures uniqueness per seller)
+        const product = await Product.findOne({
+            slug: productSlug.toLowerCase(),
+            userId: seller._id,
+            isActive: true,
+        }).populate("userId", "username email");
+
+        if (!product) {
+            return next(errorHandler(404, "Product not found"));
+        }
 
         // Increment view count
         await product.incrementView();
 
-        // Set cache
-        // if (redisClient.isOpen) {
-        //     await redisClient.setEx(`product:${id}`, CACHE_EXPIRATION, JSON.stringify(product));
-        // }
-
-        res.status(200).json(product);
+        res.status(200).json({
+            success: true,
+            product,
+            seller: {
+                id: seller._id,
+                username: seller.username,
+            },
+            canonicalUrl: `/${seller.username}/${product.slug}`,
+        });
     } catch (error) {
         next(error);
     }
+};
+
+// ============================================
+// HELPER: Build SEO-friendly URL from product
+// ============================================
+export const buildProductUrl = (product, seller) => {
+    const username = seller?.username || product?.userId?.username;
+    const slug = product?.slug;
+
+    if (username && slug) {
+        return `/${username}/${slug}`;
+    }
+
+    // Fallback to ID-based URL
+    return `/product/${product._id}`;
 };
 
 export const getProducts = async (req, res, next) => {
