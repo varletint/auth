@@ -78,6 +78,9 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/* SEO-friendly product route: /:seller/:slug */}
+          <Route path='/:seller/:slug' element={<ProductPage />} />
+          {/* ID-based product route (fallback) */}
           <Route path='/product/:id' element={<ProductPage />} />
           <Route path='/seller/:id' element={<UserPage />} />
           <Route path='/forgot-password' element={<ForgotPassword />} />

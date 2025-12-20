@@ -24,7 +24,10 @@ import {
 import Footer from "../Components/Footer";
 
 export default function ProductPage() {
-    const { id } = useParams();
+    // Support both URL patterns:
+    // 1. SEO-friendly: /:seller/:slug (e.g., /techstore/iphone-15-pro)
+    // 2. ID-based: /product/:id (e.g., /product/507f1f77...)
+    const { id, seller, slug } = useParams();
     const navigate = useNavigate();
     const { currentUser } = useAuthStore();
 
@@ -32,7 +35,7 @@ export default function ProductPage() {
 
 
     const [product, setProduct] = useState(null);
-    const [seller, setSeller] = useState(null);
+    const [sellerInfo, setSellerInfo] = useState(null);
     const [relatedProducts, setRelatedProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -55,9 +58,10 @@ export default function ProductPage() {
 
     const BASE_URL = 'https://lookupsbackend.vercel.app'
 
+    // Fetch product when route params change
     useEffect(() => {
         fetchProductDetails();
-    }, [id]);
+    }, [id, seller, slug]);
 
     // Check if product is in wishlist
     useEffect(() => {
@@ -72,13 +76,54 @@ export default function ProductPage() {
             }
         };
         checkWishlist();
-    }, [currentUser, id]);
+    }, [currentUser, id, product?._id]);
 
+    /**
+     * Fetch product details - supports both URL patterns:
+     * 1. SEO-friendly: /:seller/:slug → calls getProductBySlug API
+     * 2. ID-based: /product/:id → calls getProduct API + soft redirect
+     */
     const fetchProductDetails = async () => {
         setLoading(true);
         setError(null);
         try {
-            const productData = await productApi.getProduct(id);
+            let productData;
+            let sellerData = null;
+            let canonicalUrl = null;
+
+            // Determine which API to call based on URL pattern
+            if (seller && slug) {
+                // SEO-friendly URL: /:seller/:slug
+                // Call the slug-based API
+                const response = await fetch(`${BASE_URL}/api/products/slug/${seller}/${slug}`);
+                if (!response.ok) {
+                    throw new Error("Product not found");
+                }
+                const data = await response.json();
+                productData = data.product;
+                sellerData = data.seller;
+                canonicalUrl = data.canonicalUrl;
+            } else if (id) {
+                // ID-based URL: /product/:id
+                // Call the ID-based API
+                const response = await fetch(`${BASE_URL}/api/products/${id}`);
+                if (!response.ok) {
+                    throw new Error("Product not found");
+                }
+                const data = await response.json();
+                productData = data.product || data; // Handle both response formats
+                canonicalUrl = data.canonicalUrl;
+
+                // =========================================
+                // SOFT REDIRECT: Update browser URL to SEO-friendly version
+                // =========================================
+                // This updates the URL without page reload, good for SEO
+                if (canonicalUrl) {
+                    window.history.replaceState(null, '', canonicalUrl);
+                }
+            } else {
+                throw new Error("Invalid URL parameters");
+            }
 
             if (!productData) {
                 throw new Error("Product not found");
@@ -86,18 +131,23 @@ export default function ProductPage() {
 
             setProduct(productData);
 
-            if (productData.userId) {
+            // Fetch seller info if not already provided
+            if (!sellerData && productData.userId) {
                 try {
-                    const sellerRes = await fetch(`${BASE_URL}/api/seller/${productData.userId}`);
+                    const sellerId = typeof productData.userId === 'object'
+                        ? productData.userId._id
+                        : productData.userId;
+                    const sellerRes = await fetch(`${BASE_URL}/api/seller/${sellerId}`);
                     if (sellerRes.ok) {
-                        const sellerData = await sellerRes.json();
-                        setSeller(sellerData);
+                        sellerData = await sellerRes.json();
                     }
                 } catch (err) {
                     // Silent fail for seller info
                 }
             }
+            setSellerInfo(sellerData);
 
+            // Fetch related products
             if (productData.category) {
                 try {
                     const relatedResponse = await productApi.getProducts({
@@ -168,8 +218,8 @@ export default function ProductPage() {
     };
 
     const handleContactSeller = () => {
-        if (seller?.email) {
-            window.location.href = `mailto:${seller.email}?subject=Inquiry about ${product.name}`;
+        if (sellerInfo?.email) {
+            window.location.href = `mailto:${sellerInfo.email}?subject=Inquiry about ${product.name}`;
         } else {
             showToast("Seller contact information not available", "error");
         }
@@ -468,39 +518,39 @@ export default function ProductPage() {
                     </div>
 
                     {/* Seller Information */}
-                    {seller && (
+                    {sellerInfo && (
                         <div className="bg-white rounded-2xl shadow-sm border 
                     border-gray-200 px-3 py-2.5 mb-3 w-fit">
                             {/* <h2 className="text- font-bold text-gray-900 mb-6">Seller Information</h2> */}
                             <div className="flex flex-co sm:flex-row items-start gap-6">
-                                <Link to={`/seller/${seller.username}`}
+                                <Link to={`/seller/${sellerInfo.username}`}
                                     className="w-16 h-16 rounded-full bg-blue-600/10 flex items-center justify-center 
                             text-2xl font-bold text-blue-500 flex-shrink-0 uppercase text-nowrap">
-                                    {seller.username?.[0] || seller.fullname?.[0] || "S"}
+                                    {sellerInfo.username?.[0] || sellerInfo.fullname?.[0] || "S"}
                                 </Link>
                                 <div className="flex-1 w-full sm:w-auto">
-                                    <h3 className="text-sm font-semibold text-gray-900 text-nowrap">{seller.fullName || seller.username || "Seller"}</h3>
-                                    {seller.businessInfo?.businessName && (
-                                        <p className="text-sm text-gray-600 mb-2 text-nowrap">{seller.businessInfo.businessName}</p>
+                                    <h3 className="text-sm font-semibold text-gray-900 text-nowrap">{sellerInfo.fullName || sellerInfo.username || "Seller"}</h3>
+                                    {sellerInfo.businessInfo?.businessName && (
+                                        <p className="text-sm text-gray-600 mb-2 text-nowrap">{sellerInfo.businessInfo.businessName}</p>
                                     )}
                                     <div className="flex flex-wrap gap-4 mt-3">
-                                        {seller.email && (
+                                        {sellerInfo.email && (
                                             <div className="flex items-center gap-2 text-sm text-gray-600">
                                                 <Mail01Icon size={16} className="text-gray-400" />
-                                                <span className="break-all">{seller.email}</span>
+                                                <span className="break-all">{sellerInfo.email}</span>
                                             </div>
                                         )}
-                                        {seller.phone_no && (
+                                        {sellerInfo.phone_no && (
                                             <div className="flex items-center gap-2 text-sm text-gray-600">
                                                 <UserIcon size={16} className="text-gray-400" />
-                                                {seller.phone_no}
+                                                {sellerInfo.phone_no}
                                             </div>
                                         )}
                                     </div>
                                 </div>
                                 {/* <Button
                                 text="View Profile"
-                                onClick={() => navigate(`/seller/${seller._id}`)}
+                                onClick={() => navigate(`/seller/${sellerInfo._id}`)}
                                 className="bg-blue-600 hover:bg-blue-600-dark !py-2 !px-4 !text-sm w-full sm:w-auto"
                             /> */}
                             </div>
