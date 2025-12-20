@@ -36,7 +36,9 @@ const allowedOrigins = [
   "https://lookupss.vercel.app",
   "http://localhost:5173",
   "http://192.168.137.1:5173",
-  "http://10.160.189.108:5173"
+  "http://10.160.189.108:5173",
+  "http://10.22.6.108:5173",
+  "http://192.168.137.1:5173"
 ];
 app.use(
   cors({
