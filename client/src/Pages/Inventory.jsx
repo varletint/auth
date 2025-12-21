@@ -84,6 +84,18 @@ export default function Inventory() {
         return () => clearTimeout(delaySearch);
     }, [search]);
 
+    // Prevent body scroll when modal is open
+    useEffect(() => {
+        if (showModal) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [showModal]);
+
     const openAddModal = () => {
         setEditingItem(null);
         setFormMode("standard");

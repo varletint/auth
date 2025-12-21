@@ -46,7 +46,7 @@ export const verifyToken = async (req, res, next) => {
                 username: user.username
             },
             process.env.JWT_SECRET,
-            { expiresIn: "15m" }
+            { expiresIn: "7d" }
         );
 
         // 4. Set new access token cookie
@@ -54,7 +54,7 @@ export const verifyToken = async (req, res, next) => {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            maxAge: 15 * 60 * 1000 // 15 minutes
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
 
         req.user = user;

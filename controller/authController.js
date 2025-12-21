@@ -41,7 +41,7 @@ export const signup = async (req, res, next) => {
     const accessToken = jwt.sign(
       { id: newUser._id, role: newUser.role, username: newUser.username },
       process.env.JWT_SECRET,
-      { expiresIn: "15m" }
+      { expiresIn: "7d" }
     );
 
     const refreshToken = jwt.sign(
@@ -57,7 +57,7 @@ export const signup = async (req, res, next) => {
         httpOnly: true,
         secure: true, // secure: true is required for sameSite: 'none' and works on localhost
         sameSite: 'none',
-        maxAge: 15 * 60 * 1000 // 15 minutes
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
       })
       .cookie("refresh_token", refreshToken, {
         httpOnly: true,
@@ -142,7 +142,7 @@ export const signin = async (req, res, next) => {
         httpOnly: true,
         secure: true, // secure: true is required for sameSite: 'none' and works on localhost
         sameSite: 'none',
-        maxAge: 15 * 60 * 1000 // 15 minutes
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
       })
       .cookie("refresh_token", refreshToken, {
         httpOnly: true,

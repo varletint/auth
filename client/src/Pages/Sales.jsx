@@ -56,6 +56,18 @@ export default function Sales() {
         fetchStats();
     }, [period]);
 
+    // Prevent body scroll when modal is open
+    useEffect(() => {
+        if (showModal || selectedSale) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [showModal, selectedSale]);
+
     const fetchSales = async () => {
         try {
             setLoading(true);
