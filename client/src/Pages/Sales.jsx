@@ -588,7 +588,8 @@ export default function Sales() {
                                     {submitting ? (
                                         <Loading03Icon size={18} className="animate-spin" />
                                     ) : (
-                                        <Tick02Icon size={18} />
+                                        // <Tick02Icon size={18} />" "
+                                        ""
                                     )}
                                     Record Sale
                                 </button>

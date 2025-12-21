@@ -47,6 +47,13 @@ export default function Inventory() {
     const [formError, setFormError] = useState("");
     const [submitting, setSubmitting] = useState(false);
 
+    // Restock modal state
+    const [showRestockModal, setShowRestockModal] = useState(false);
+    const [restockItem, setRestockItem] = useState(null);
+    const [restockQuantity, setRestockQuantity] = useState("");
+    const [restockError, setRestockError] = useState("");
+    const [restocking, setRestocking] = useState(false);
+
     const categories = ["General", "Electronics", "Clothing", "Food", "Beverages", "Stationery", "Health", "Beauty", "Other"];
     const units = ["pieces", "kg", "g", "liters", "ml", "meters", "boxes", "packs", "dozen", "carton", "bag", "bottle", "other"];
     const baseUnits = ["kg", "g", "liters", "ml", "pieces", "meters", "units"];
@@ -86,7 +93,7 @@ export default function Inventory() {
 
     // Prevent body scroll when modal is open
     useEffect(() => {
-        if (showModal) {
+        if (showModal || showRestockModal) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = '';
@@ -94,7 +101,7 @@ export default function Inventory() {
         return () => {
             document.body.style.overflow = '';
         };
-    }, [showModal]);
+    }, [showModal, showRestockModal]);
 
     const openAddModal = () => {
         setEditingItem(null);
@@ -128,7 +135,7 @@ export default function Inventory() {
             category: item.category || "General",
             costPrice: item.costPrice?.toString() || "",
             sellingPrice: item.sellingPrice?.toString() || "",
-            quantity: item.quantity?.toString() || "",
+            quantity: item.quantity?.toString() / item.unitConversion || "",
             lowStockThreshold: item.lowStockThreshold?.toString() || "5",
             unit: item.unit || "pieces",
             baseUnit: item.baseUnit || "kg",
@@ -282,16 +289,30 @@ export default function Inventory() {
         }
     };
 
-    const handleRestock = async (item) => {
-        const quantity = prompt(`Enter quantity to add to "${item.name}":`);
-        if (!quantity || isNaN(quantity) || parseInt(quantity) <= 0) return;
+    const openRestockModal = (item) => {
+        setRestockItem(item);
+        setRestockQuantity("");
+        setRestockError("");
+        setShowRestockModal(true);
+    };
 
+    const handleRestockSubmit = async (e) => {
+        e.preventDefault();
+        if (!restockQuantity || isNaN(restockQuantity) || parseFloat(restockQuantity) <= 0) {
+            setRestockError("Please enter a valid quantity");
+            return;
+        }
+
+        setRestocking(true);
         try {
-            await inventoryApi.restockItem(item._id, { quantity: parseInt(quantity) });
+            await inventoryApi.restockItem(restockItem._id, { quantity: parseFloat(restockQuantity) });
+            setShowRestockModal(false);
             fetchItems();
             fetchStats();
         } catch (error) {
-            alert(error.message || "Failed to restock item");
+            setRestockError(error.message || "Failed to restock item");
+        } finally {
+            setRestocking(false);
         }
     };
 
@@ -409,13 +430,13 @@ export default function Inventory() {
                                                                 : "bg-green-100 text-green-700"
                                                             }`}
                                                     >
-                                                        {item.quantity} {item.unit}
+                                                        {(item.quantity) / (item.unitConversion || 1)} {item.unit}
                                                     </span>
                                                 </td>
                                                 <td className="px-4 py-3">
                                                     <div className="flex items-center justify-end gap-2">
                                                         <button
-                                                            onClick={() => handleRestock(item)}
+                                                            onClick={() => openRestockModal(item)}
                                                             className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"
                                                             title="Restock"
                                                         >
@@ -801,6 +822,113 @@ export default function Inventory() {
                                         <Tick02Icon size={18} />
                                     )}
                                     {editingItem ? "Update" : "Add Item"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Restock Modal */}
+            {showRestockModal && restockItem && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-100 p-4">
+                    <div className="bg-white rounded-2xl max-w-md w-full">
+                        <div className="p-6 border-b flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <RefreshIcon size={24} className="text-blue-600" />
+                                <h2 className="text-xl font-bold">Restock Item</h2>
+                            </div>
+                            <button onClick={() => setShowRestockModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
+                                <Cancel01Icon size={20} />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleRestockSubmit} className="p-6">
+                            {restockError && (
+                                <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg flex items-center gap-2">
+                                    <AlertCircleIcon size={18} />
+                                    {restockError}
+                                </div>
+                            )}
+
+                            {/* Item Info */}
+                            <div className="bg-gray-50 rounded-xl p-4 mb-6">
+                                <h3 className="font-semibold text-gray-900 mb-2">{restockItem.name}</h3>
+                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <p className="text-gray-500">Current Stock</p>
+                                        <p className="font-medium text-lg">
+                                            {restockItem.hasMultipleUnits
+                                                ? `${restockItem.baseQuantity / (restockItem.unitConversion || 1)} ${restockItem.unit}s `
+                                                : `${restockItem.quantity} ${restockItem.unit}`
+                                            }
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-gray-500">Category</p>
+                                        <p className="font-medium">{restockItem.category}</p>
+                                    </div>
+                                </div>
+                                {
+                                    restockItem.hasMultipleUnits && (
+                                        <div>
+                                            {/* <p className="text-gray-500">Base Unit</p> */}
+                                            <p className="font-mediu">{restockItem.baseQuantity} {restockItem.baseUnit} in {restockItem.baseQuantity / (restockItem.unitConversion || 1)} {restockItem.unit}s</p>
+                                        </div>
+                                    )
+                                }
+                            </div>
+
+                            {/* Quantity Input */}
+                            <div className="mb-6">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Quantity to Add ({restockItem.hasMultipleUnits ? restockItem.unit : restockItem.unit})
+                                </label>
+                                <input
+                                    type="number"
+                                    value={restockQuantity}
+                                    onChange={(e) => setRestockQuantity(e.target.value)}
+                                    className="w-full px-4 py-2 text-lg border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                    placeholder="Enter quantity"
+                                    min="0.001"
+                                    step="any"
+                                    autoFocus
+                                />
+                            </div>
+
+                            {/* Preview */}
+                            {restockQuantity && parseFloat(restockQuantity) > 0 && (
+                                <div className="bg-blue-50 rounded px-4 py-2 mb-6">
+                                    <p className="text-sm text-blue-800">
+                                        📦 New stock after restock: <strong>
+                                            {restockItem.hasMultipleUnits
+                                                ? `${(restockItem.baseQuantity + (parseFloat(restockQuantity) * (restockItem.unitConversion || 1))).toLocaleString()} ${restockItem.baseUnit}`
+                                                : `${(restockItem.quantity + parseFloat(restockQuantity)).toLocaleString()} ${restockItem.unit}`
+                                            }
+                                        </strong>
+                                    </p>
+                                </div>
+                            )}
+
+                            <div className="flex gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowRestockModal(false)}
+                                    className="flex-1 px-4 py-2 border border-gray-200 rounded hover:bg-gray-50 font-medium"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={restocking || !restockQuantity}
+                                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2 font-medium"
+                                >
+                                    {restocking ? (
+                                        <Loading03Icon size={18} className="animate-spin" />
+                                    ) : (
+                                        <RefreshIcon size={18} />
+                                    )}
+                                    Restock
                                 </button>
                             </div>
                         </form>
