@@ -348,22 +348,46 @@ export const deleteSale = async (req, res, next) => {
             if (item.inventoryItem) {
                 const invItem = await InventoryItem.findById(item.inventoryItem);
                 if (invItem) {
-                    invItem.quantity += item.quantity;
+                    // Handle multi-unit items differently
+                    if (invItem.hasMultipleUnits && item.baseQuantityDeducted) {
+                        // Restore base quantity for multi-unit items
+                        invItem.baseQuantity += item.baseQuantityDeducted;
+                        // Sync quantity field for backwards compat
+                        invItem.quantity = invItem.baseQuantity;
 
-                    // Add stock history entry for the return
-                    invItem.stockHistory.push({
-                        type: "in",
-                        quantity: item.quantity,
-                        reason: `Sale cancelled #${sale.referenceNumber}`,
-                        referenceId: sale._id,
-                        referenceType: "Sale",
-                        costPriceAtTime: invItem.costPrice,
-                        sellingPriceAtTime: invItem.sellingPrice,
-                        balanceAfter: invItem.quantity,
-                        valueAfter: invItem.quantity * invItem.costPrice,
-                        createdBy: userId,
-                        createdAt: new Date(),
-                    });
+                        // Add stock history entry for the return
+                        invItem.stockHistory.push({
+                            type: "in",
+                            quantity: item.baseQuantityDeducted,
+                            reason: `Sale cancelled #${sale.referenceNumber} (${item.quantity} ${item.sellingUnit?.name || "units"})`,
+                            referenceId: sale._id,
+                            referenceType: "Sale",
+                            costPriceAtTime: invItem.sellingUnits?.find(u => u.name === item.sellingUnit?.name)?.costPrice || 0,
+                            sellingPriceAtTime: invItem.sellingUnits?.find(u => u.name === item.sellingUnit?.name)?.sellingPrice || 0,
+                            balanceAfter: invItem.baseQuantity,
+                            valueAfter: invItem.baseQuantity * (invItem.sellingUnits?.[0]?.costPrice || 0) / (invItem.sellingUnits?.[0]?.conversionFactor || 1),
+                            createdBy: userId,
+                            createdAt: new Date(),
+                        });
+                    } else {
+                        // Standard single-unit items
+                        invItem.quantity += item.quantity;
+
+                        // Add stock history entry for the return
+                        invItem.stockHistory.push({
+                            type: "in",
+                            quantity: item.quantity,
+                            reason: `Sale cancelled #${sale.referenceNumber}`,
+                            referenceId: sale._id,
+                            referenceType: "Sale",
+                            costPriceAtTime: invItem.costPrice,
+                            sellingPriceAtTime: invItem.sellingPrice,
+                            balanceAfter: invItem.quantity,
+                            valueAfter: invItem.quantity * invItem.costPrice,
+                            createdBy: userId,
+                            createdAt: new Date(),
+                        });
+                    }
 
                     await invItem.save();
                 }

@@ -401,7 +401,10 @@ export default function Sales() {
                                                         {inventoryItems.map((inv) => (
                                                             <option key={inv._id} value={inv._id}>
                                                                 {inv.name} {inv.hasMultipleUnits ? "📊" : ""}
-                                                                {!inv.hasMultipleUnits && `(₦${inv.sellingPrice?.toLocaleString()})`}
+                                                                {inv.hasMultipleUnits
+                                                                    ? ` (${inv.baseQuantity} ${inv.baseUnit})`
+                                                                    : ` (₦${inv.sellingPrice?.toLocaleString()} • ${inv.quantity} ${inv.unit})`
+                                                                }
                                                             </option>
                                                         ))}
                                                     </select>
@@ -643,7 +646,7 @@ export default function Sales() {
                                             <div className="flex-1">
                                                 <p className="font-medium text-gray-900">{item.name}</p>
                                                 <p className="text-sm text-gray-500">
-                                                    {item.quantity} × ₦{item.unitPrice?.toLocaleString()}
+                                                    {item.quantity} {item.sellingUnit?.name || ""} × ₦{item.unitPrice?.toLocaleString()}
                                                 </p>
                                             </div>
                                             <p className="font-medium text-gray-900">

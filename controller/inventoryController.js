@@ -99,6 +99,7 @@ export const createInventoryItem = async (req, res, next) => {
             hasMultipleUnits,
             baseUnit,
             baseQuantity,
+            unitConversion,
             sellingUnits,
             idempotencyKey,
         } = req.body;
@@ -172,6 +173,7 @@ export const createInventoryItem = async (req, res, next) => {
                 hasMultipleUnits: true,
                 baseUnit,
                 baseQuantity: initialBaseQuantity,
+                unitConversion: unitConversion || 1,
                 sellingUnits,
                 lowStockThreshold: lowStockThreshold || 5,
                 // For backwards compatibility, also set standard fields using default unit
@@ -267,7 +269,7 @@ export const updateInventoryItem = async (req, res, next) => {
             "costPrice", "sellingPrice", "quantity",
             "lowStockThreshold", "unit", "isActive",
             // Multi-unit fields
-            "hasMultipleUnits", "baseUnit", "baseQuantity", "sellingUnits"
+            "hasMultipleUnits", "baseUnit", "baseQuantity", "unitConversion", "sellingUnits"
         ];
 
         allowedUpdates.forEach((field) => {

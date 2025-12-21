@@ -94,6 +94,13 @@ const inventoryItemSchema = new mongoose.Schema(
             default: 0,
         },
 
+        // For multi-unit items: how many baseUnits in each purchase unit (e.g., 1 bag = 50 kg)
+        unitConversion: {
+            type: Number,
+            min: [0.001, "Unit conversion must be positive"],
+            default: 1,
+        },
+
         // For multi-unit items: all available selling units with their conversion factors
         sellingUnits: [{
             name: {

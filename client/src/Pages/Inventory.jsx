@@ -41,6 +41,7 @@ export default function Inventory() {
         // Multi-unit fields
         baseUnit: "kg",
         baseQuantity: "",
+        unitConversion: "", // How many baseUnits per unit (e.g., 1 bag = 50 kg)
         sellingUnits: [{ name: "", conversionFactor: "", costPrice: "", sellingPrice: "", isDefault: true }],
     });
     const [formError, setFormError] = useState("");
@@ -98,6 +99,7 @@ export default function Inventory() {
             unit: "pieces",
             baseUnit: "kg",
             baseQuantity: "",
+            unitConversion: "",
             sellingUnits: [{ name: "", conversionFactor: "", costPrice: "", sellingPrice: "", isDefault: true }],
         });
         setFormError("");
@@ -119,6 +121,7 @@ export default function Inventory() {
             unit: item.unit || "pieces",
             baseUnit: item.baseUnit || "kg",
             baseQuantity: item.baseQuantity?.toString() || "",
+            unitConversion: item.unitConversion?.toString() || "",
             sellingUnits: item.sellingUnits?.length > 0
                 ? item.sellingUnits.map(u => ({
                     name: u.name,
@@ -202,8 +205,14 @@ export default function Inventory() {
                     category: formData.category,
                     lowStockThreshold: parseInt(formData.lowStockThreshold) || 5,
                     hasMultipleUnits: true,
+                    unit: formData.unit,
+                    quantity: parseInt(formData.quantity) || 0,
+                    costPrice: parseFloat(formData.costPrice) || 0,
+                    sellingPrice: parseFloat(formData.sellingPrice) || 0,
                     baseUnit: formData.baseUnit,
-                    baseQuantity: parseFloat(formData.baseQuantity) || 0,
+                    unitConversion: parseFloat(formData.unitConversion) || 1,
+                    // Auto-calculate baseQuantity from quantity × unitConversion
+                    baseQuantity: (parseFloat(formData.quantity) || 0) * (parseFloat(formData.unitConversion) || 1),
                     sellingUnits: formData.sellingUnits
                         .filter(u => u.name && u.conversionFactor && u.sellingPrice)
                         .map(u => ({
@@ -579,45 +588,91 @@ export default function Inventory() {
                                 {/* ========== BULK / MULTI-UNIT MODE FIELDS ========== */}
                                 {formMode === "bulk" && (
                                     <>
-                                        {/* Stock Tracking Section */}
-                                        <div className="bg-blue-50 rounded-lg p-4">
-                                            <h4 className="text-sm font-semibold text-blue-800 mb-3">📊 Stock Tracking</h4>
-                                            <div className="grid grid-cols-3 gap-3">
-                                                <div>
-                                                    <label className="block text-xs font-medium text-gray-600 mb-1">Base Unit *</label>
-                                                    <select
-                                                        value={formData.baseUnit}
-                                                        onChange={(e) => setFormData({ ...formData, baseUnit: e.target.value })}
-                                                        className="w-full px-2 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-500"
-                                                    >
-                                                        {baseUnits.map((u) => (
-                                                            <option key={u} value={u}>{u}</option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-                                                <div>
-                                                    <label className="block text-xs font-medium text-gray-600 mb-1">Stock ({formData.baseUnit})</label>
-                                                    <input
-                                                        type="number"
-                                                        value={formData.baseQuantity}
-                                                        onChange={(e) => setFormData({ ...formData, baseQuantity: e.target.value })}
-                                                        className="w-full px-2 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-500"
-                                                        placeholder="0"
-                                                        step="0.01"
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <label className="block text-xs font-medium text-gray-600 mb-1">Low Stock</label>
-                                                    <input
-                                                        type="number"
-                                                        value={formData.lowStockThreshold}
-                                                        onChange={(e) => setFormData({ ...formData, lowStockThreshold: e.target.value })}
-                                                        className="w-full px-2 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-500"
-                                                        placeholder="5"
-                                                    />
-                                                </div>
+                                        {/* Quantity & Unit (what you're buying) */}
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                                                <input
+                                                    type="number"
+                                                    value={formData.quantity}
+                                                    onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                                                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
+                                                    placeholder="e.g., 100"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
+                                                <select
+                                                    value={formData.unit}
+                                                    onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
+                                                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
+                                                >
+                                                    {units.map((unit) => (
+                                                        <option key={unit} value={unit}>{unit}</option>
+                                                    ))}
+                                                </select>
                                             </div>
                                         </div>
+
+                                        {/* Unit Conversion Section */}
+                                        <div className="bg-blue-50 rounded-lg p-4">
+                                            <h4 className="text-sm font-semibold text-blue-800 mb-3">📊 Unit Conversion</h4>
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                                <span className="text-sm text-gray-700">Each</span>
+                                                <span className="font-medium text-blue-700">{formData.unit || "unit"}</span>
+                                                <span className="text-sm text-gray-700">contains</span>
+                                                <input
+                                                    type="number"
+                                                    value={formData.unitConversion}
+                                                    onChange={(e) => setFormData({ ...formData, unitConversion: e.target.value })}
+                                                    className="w-20 px-2 py-1 border border-blue-300 rounded text-sm text-center focus:outline-none focus:border-blue-500"
+                                                    placeholder="50"
+                                                    step="0.01"
+                                                />
+                                                <select
+                                                    value={formData.baseUnit}
+                                                    onChange={(e) => setFormData({ ...formData, baseUnit: e.target.value })}
+                                                    className="px-2 py-1 border border-blue-300 rounded text-sm focus:outline-none focus:border-blue-500"
+                                                >
+                                                    {baseUnits.map((u) => (
+                                                        <option key={u} value={u}>{u}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            {formData.quantity && formData.unitConversion && (
+                                                <div className="mt-3 p-2 bg-blue-100 rounded text-sm">
+                                                    <span className="text-blue-800">
+                                                        📦 Total Stock: <strong>{(parseFloat(formData.quantity) * parseFloat(formData.unitConversion)).toLocaleString()} {formData.baseUnit}</strong>
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Cost & Selling Price */}
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">Total Cost Price</label>
+                                                <input
+                                                    type="number"
+                                                    value={formData.costPrice}
+                                                    onChange={(e) => setFormData({ ...formData, costPrice: e.target.value })}
+                                                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
+                                                    placeholder="e.g., 1000000"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">Low Stock Alert ({formData.baseUnit})</label>
+                                                <input
+                                                    type="number"
+                                                    value={formData.lowStockThreshold}
+                                                    onChange={(e) => setFormData({ ...formData, lowStockThreshold: e.target.value })}
+                                                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
+                                                    placeholder="e.g., 100"
+                                                />
+                                            </div>
+                                        </div>
+
+
 
                                         {/* Selling Units Section */}
                                         <div className="bg-emerald-50 rounded-lg p-4">
