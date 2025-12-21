@@ -82,7 +82,8 @@ function generateHTML(meta) {
 </html>`;
 }
 
-// Fetch product data for dynamic product pages
+// Fetch product data for dynamic product pages by ID
+// Used for: /product/:id
 async function getProductMeta(productId) {
     try {
         const res = await fetch(`${BACKEND_URL}/api/products/${productId}`);
@@ -94,11 +95,45 @@ async function getProductMeta(productId) {
             ? product.description.substring(0, 200)
             : `Buy ${product.name} at the best price on Lookups. Quality products from verified sellers. Shop with confidence and enjoy secure transactions on our trusted marketplace platform today.`;
 
+        // Get seller username for canonical URL
+        const sellerUsername = product.userId?.username;
+        const canonicalUrl = sellerUsername && product.slug
+            ? `/${sellerUsername}/${product.slug}`
+            : null;
+
         return {
             title: `${product.name} | Lookups`,
             description: description,
             image: product.images?.[0] || DEFAULT_IMAGE,
             type: 'product',
+            canonicalUrl,
+        };
+    } catch (err) {
+        return null;
+    }
+}
+
+// Fetch product data by seller username + product slug (SEO-friendly)
+// Used for: /:sellerUsername/:productSlug
+async function getProductMetaBySlug(sellerUsername, productSlug) {
+    try {
+        const res = await fetch(`${BACKEND_URL}/api/products/slug/${sellerUsername}/${productSlug}`);
+        if (!res.ok) return null;
+        const data = await res.json();
+        const product = data.product;
+
+        if (!product) return null;
+
+        const description = product.description
+            ? product.description.substring(0, 200)
+            : `Buy ${product.name} at the best price on Lookups. Quality products from verified sellers. Shop with confidence and enjoy secure transactions on our trusted marketplace platform today.`;
+
+        return {
+            title: `${product.name} | Lookups`,
+            description: description,
+            image: product.images?.[0] || DEFAULT_IMAGE,
+            type: 'product',
+            canonicalUrl: data.canonicalUrl,
         };
     } catch (err) {
         return null;
@@ -147,33 +182,71 @@ export default async function handler(request) {
 
     let meta = null;
 
-    // Handle dynamic product pages: /product/:id
-    const productMatch = pathname.match(/^\/product\/([a-zA-Z0-9]+)$/);
-    if (productMatch) {
-        const productId = productMatch[1];
+    // ============================================
+    // ROUTE 1: ID-based product pages
+    // Pattern: /product/:id
+    // ============================================
+    const productIdMatch = pathname.match(/^\/product\/([a-zA-Z0-9]+)$/);
+    if (productIdMatch) {
+        const productId = productIdMatch[1];
         const productMeta = await getProductMeta(productId);
         if (productMeta) {
             meta = {
                 ...productMeta,
-                url: `${SITE_URL}${pathname}`,
+                // Use canonical URL if available (SEO-friendly), otherwise current URL
+                url: productMeta.canonicalUrl
+                    ? `${SITE_URL}${productMeta.canonicalUrl}`
+                    : `${SITE_URL}${pathname}`,
             };
         }
     }
 
-    // Handle dynamic seller pages: /seller/:id or /seller/:username
-    const sellerMatch = pathname.match(/^\/seller\/([a-zA-Z0-9_-]+)$/);
-    if (sellerMatch) {
-        const sellerId = sellerMatch[1];
-        const sellerMeta = await getSellerMeta(sellerId);
-        if (sellerMeta) {
-            meta = {
-                ...sellerMeta,
-                url: `${SITE_URL}${pathname}`,
-            };
+    // ============================================
+    // ROUTE 2: SEO-friendly product pages
+    // Pattern: /:sellerUsername/:productSlug
+    // Example: /techstore/iphone-15-pro
+    // ============================================
+    // Only check if not already matched and path has exactly 2 segments
+    if (!meta) {
+        const slugMatch = pathname.match(/^\/([a-zA-Z0-9_-]+)\/([a-zA-Z0-9_-]+)$/);
+        if (slugMatch) {
+            const [, sellerUsername, productSlug] = slugMatch;
+
+            // Skip known static routes that match this pattern
+            const staticRoutes = ['api', 'admin', 'seller', 'product', 'biz'];
+            if (!staticRoutes.includes(sellerUsername)) {
+                const productMeta = await getProductMetaBySlug(sellerUsername, productSlug);
+                if (productMeta) {
+                    meta = {
+                        ...productMeta,
+                        url: `${SITE_URL}${pathname}`,
+                    };
+                }
+            }
         }
     }
 
-    // Fallback to static page meta
+    // ============================================
+    // ROUTE 3: Seller pages
+    // Pattern: /seller/:id or /seller/:username
+    // ============================================
+    if (!meta) {
+        const sellerMatch = pathname.match(/^\/seller\/([a-zA-Z0-9_-]+)$/);
+        if (sellerMatch) {
+            const sellerId = sellerMatch[1];
+            const sellerMeta = await getSellerMeta(sellerId);
+            if (sellerMeta) {
+                meta = {
+                    ...sellerMeta,
+                    url: `${SITE_URL}${pathname}`,
+                };
+            }
+        }
+    }
+
+    // ============================================
+    // FALLBACK: Static page meta
+    // ============================================
     if (!meta) {
         const pageMeta = PAGE_META[pathname] || PAGE_META['/'];
         meta = {
