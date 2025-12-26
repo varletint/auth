@@ -17,7 +17,6 @@ import SellerProtectedRoute from "./Components/SellerProtectedRoute";
 import BizProtectedRoute from "./Components/BizProtectedRoute";
 import File from "./Pages/File";
 
-// New Pages
 import Cart from "./Pages/Cart";
 import Checkout from "./Pages/Checkout";
 import Orders from "./Pages/Orders";
@@ -42,7 +41,6 @@ import AdminUsers from "./Pages/AdminUsers";
 import ScrollToUp from "./Components/ScrollToUp";
 import BizDashboard from "./Pages/BizDashboard";
 
-// Business Management Pages
 import Inventory from "./Pages/Inventory";
 import ItemPage from "./Pages/ItemPage";
 import Sales from "./Pages/Sales";
@@ -52,7 +50,6 @@ import Customers from "./Pages/Customers";
 import StaffManagement from "./Pages/StaffManagement";
 import StaffLogin from "./Pages/StaffLogin";
 
-// SEO Pages
 import CategoryPage from "./Pages/CategoryPage";
 import SellerStorePage from "./Pages/SellerStorePage";
 
@@ -87,7 +84,7 @@ function App() {
           <Route path='/store/:username' element={<SellerStorePage />} />
           {/* SEO-friendly product route: /:seller/:slug */}
           <Route path='/:seller/:slug' element={<ProductPage />} />
-          {/* ID-based product route (fallback) */}
+
           <Route path='/product/:id' element={<ProductPage />} />
           <Route path='/seller/:id' element={<UserPage />} />
           <Route path='/forgot-password' element={<ForgotPassword />} />
@@ -279,7 +276,7 @@ function App() {
           />
           <Route path='/staff-login' element={<StaffLogin />} />
 
-          {/* 404 Fallback */}
+
           <Route path='*' element={<NotFound />} />
         </Routes>
       </BrowserRouter>
