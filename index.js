@@ -25,6 +25,7 @@ import customerRoute from "./Routes/customerRoute.js";
 import saleRoute from "./Routes/saleRoute.js";
 import expenseRoute from "./Routes/expenseRoute.js";
 import staffRoute from "./Routes/staffRoute.js";
+import seoRoute from "./Routes/seoRoute.js";
 
 const app = e();
 
@@ -96,6 +97,7 @@ app.use("/api/customers", customerRoute);
 app.use("/api/sales", saleRoute);
 app.use("/api/expenses", expenseRoute);
 app.use("/api/staff", staffRoute);
+app.use("/api/seo", seoRoute);
 
 
 

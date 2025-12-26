@@ -25,7 +25,13 @@ export default function Inventory() {
     const [showModal, setShowModal] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
     const [stats, setStats] = useState(null);
-    // Form mode: 'standard' or 'bulk'
+    const [formError, setFormError] = useState("");
+    const [submitting, setSubmitting] = useState(false);
+    const [showRestockModal, setShowRestockModal] = useState(false);
+    const [restockItem, setRestockItem] = useState(null);
+    const [restockQuantity, setRestockQuantity] = useState("");
+    const [restockError, setRestockError] = useState("");
+    const [restocking, setRestocking] = useState(false);
     const [formMode, setFormMode] = useState("standard");
 
     const [formData, setFormData] = useState({
@@ -41,18 +47,10 @@ export default function Inventory() {
         // Multi-unit fields
         baseUnit: "kg",
         baseQuantity: "",
-        unitConversion: "", // How many baseUnits per unit (e.g., 1 bag = 50 kg)
+        unitConversion: "",
         sellingUnits: [{ name: "", conversionFactor: "", costPrice: "", sellingPrice: "", isDefault: true }],
     });
-    const [formError, setFormError] = useState("");
-    const [submitting, setSubmitting] = useState(false);
 
-    // Restock modal state
-    const [showRestockModal, setShowRestockModal] = useState(false);
-    const [restockItem, setRestockItem] = useState(null);
-    const [restockQuantity, setRestockQuantity] = useState("");
-    const [restockError, setRestockError] = useState("");
-    const [restocking, setRestocking] = useState(false);
 
     const categories = ["General", "Electronics", "Clothing", "Food", "Beverages", "Stationery", "Health", "Beauty", "Other"];
     const units = ["pieces", "kg", "g", "liters", "ml", "meters", "boxes", "packs", "dozen", "carton", "bag", "bottle", "other"];
@@ -103,6 +101,10 @@ export default function Inventory() {
         };
     }, [showModal, showRestockModal]);
 
+    /**
+     * "openAddModal" when clicked it ovride all data from formData state back to normal
+     * before setting showModal state to true. this allowed input field to back to default
+     */
     const openAddModal = () => {
         setEditingItem(null);
         setFormMode("standard");
@@ -155,7 +157,7 @@ export default function Inventory() {
         setShowModal(true);
     };
 
-    // Manage selling units for multi-unit mode
+
     const addSellingUnit = () => {
         setFormData({
             ...formData,
@@ -166,7 +168,7 @@ export default function Inventory() {
     const removeSellingUnit = (index) => {
         if (formData.sellingUnits.length === 1) return;
         const newUnits = formData.sellingUnits.filter((_, i) => i !== index);
-        // Ensure at least one default
+
         if (!newUnits.some(u => u.isDefault) && newUnits.length > 0) {
             newUnits[0].isDefault = true;
         }
@@ -176,7 +178,7 @@ export default function Inventory() {
     const updateSellingUnit = (index, field, value) => {
         const newUnits = [...formData.sellingUnits];
         if (field === "isDefault" && value) {
-            // Only one can be default
+
             newUnits.forEach((u, i) => u.isDefault = i === index);
         } else {
             newUnits[index][field] = value;
@@ -683,7 +685,7 @@ export default function Inventory() {
 
                                         {/* Cost & Selling Price */}
                                         <div className="grid grid-cols-2 gap-4">
-                                            <div>
+                                            {/* <div>
                                                 <label className="block text-sm font-medium text-gray-700 mb-1">Total Cost Price</label>
                                                 <input
                                                     type="number"
@@ -692,7 +694,7 @@ export default function Inventory() {
                                                     className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
                                                     placeholder="e.g., 1000000"
                                                 />
-                                            </div>
+                                            </div> */}
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700 mb-1">Low Stock Alert ({formData.baseUnit})</label>
                                                 <input
@@ -778,7 +780,7 @@ export default function Inventory() {
                                                 <button
                                                     type="button"
                                                     onClick={addSellingUnit}
-                                                    className="text-sm text-emerald-600 font-medium hover:underline mt-2"
+                                                    className="text-sm text-emerald-600 font-medium hover:underline mt-2 text-sm"
                                                 >
                                                     + Add Selling Unit
                                                 </button>

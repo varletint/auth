@@ -1,7 +1,16 @@
 User-agent: *
 Allow: /
 
-# Disallow auth pages from being indexed
+# Block auth and admin pages from being indexed
 Disallow: /forgot-password
+Disallow: /admin
+Disallow: /biz-dashboard
+Disallow: /inventory
+Disallow: /sales
+Disallow: /expenses
+Disallow: /edit-profile
+Disallow: /settings
+Disallow: /checkout
 
-Sitemap: https://lookupss.vercel.app/sitemap.xml
+# Sitemap Index (points to individual sitemaps for products, categories, sellers)
+Sitemap: https://lookupsbackend.vercel.app/api/seo/sitemap.xml

@@ -2,9 +2,6 @@ import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
   {
-    // ============================================
-    // BASIC INFORMATION
-    // ============================================
     name: {
       type: String,
       required: [true, "Product name is required"],
@@ -36,9 +33,6 @@ const productSchema = new mongoose.Schema(
       uppercase: true,
     },
 
-    // ============================================
-    // SKU & IDENTIFICATION
-    // ============================================
     sku: {
       type: String,
       // required: true,
@@ -65,9 +59,6 @@ const productSchema = new mongoose.Schema(
       trim: true,
     },
 
-    // ============================================
-    // PRICING (direct amount in NGN)
-    // ============================================
     price: {
       type: Number,
       required: [true, "Price is required"],
@@ -96,9 +87,6 @@ const productSchema = new mongoose.Schema(
       min: [0, "Compare at price cannot be negative"],
     },
 
-    // ============================================
-    // INVENTORY MANAGEMENT
-    // ============================================
     stock: {
       type: Number,
       default: 0,
@@ -131,9 +119,6 @@ const productSchema = new mongoose.Schema(
       default: "in_stock",
     },
 
-    // ============================================
-    // TRANSACTION HISTORY
-    // ============================================
     transactionHistory: [
       {
         type: {
@@ -168,9 +153,6 @@ const productSchema = new mongoose.Schema(
       },
     ],
 
-    // ============================================
-    // PRODUCT VARIANTS
-    // ============================================
     hasVariants: {
       type: Boolean,
       default: false,
@@ -203,9 +185,6 @@ const productSchema = new mongoose.Schema(
       },
     ],
 
-    // ============================================
-    // MEDIA
-    // ============================================
     images: {
       type: [String],
       default: [],
@@ -222,9 +201,6 @@ const productSchema = new mongoose.Schema(
     //   trim: true,
     // },
 
-    // ============================================
-    // SEO & SEARCH
-    // ============================================
     metaDescription: {
       type: String,
       maxlength: [160, "Meta description cannot exceed 160 characters"],
@@ -240,9 +216,6 @@ const productSchema = new mongoose.Schema(
       default: [],
     },
 
-    // ============================================
-    // BRAND & SPECIFICATIONS
-    // ============================================
     brand: {
       type: String,
       trim: true,
@@ -263,9 +236,6 @@ const productSchema = new mongoose.Schema(
     //   },
     // ],
 
-    // ============================================
-    // RATINGS & REVIEWS
-    // ============================================
     averageRating: {
       type: Number,
       default: 0,
@@ -287,9 +257,6 @@ const productSchema = new mongoose.Schema(
       5: { type: Number, default: 0 },
     },
 
-    // ============================================
-    // SHIPPING & DIMENSIONS
-    // ============================================
     weight: {
       type: Number,
       min: [0, "Weight cannot be negative"],
@@ -326,9 +293,6 @@ const productSchema = new mongoose.Schema(
       default: true,
     },
 
-    // ============================================
-    // PRODUCT STATUS & VISIBILITY
-    // ============================================
     status: {
       type: String,
       enum: ["draft", "published", "archived"],
@@ -355,18 +319,12 @@ const productSchema = new mongoose.Schema(
       default: true,
     },
 
-    // ============================================
-    // ANALYTICS
-    // ============================================
     viewCount: {
       type: Number,
       default: 0,
       min: 0,
     },
 
-    // ============================================
-    // IDEMPOTENCY
-    // ============================================
     idempotencyKey: {
       type: String,
       unique: true,
@@ -381,24 +339,17 @@ const productSchema = new mongoose.Schema(
   }
 );
 
-// ============================================
-// INDEXES FOR QUERY OPTIMIZATION
-// ============================================
-// Note: slug and sku already have unique indexes from schema definition (unique: true)
-// Only compound indexes and text search indexes are defined here
-
-// Single field indexes (only fields that don't have unique: true)
-productSchema.index({ userId: 1 }); // For user's products queries
-productSchema.index({ category: 1 }); // For category filtering
-productSchema.index({ subcategory: 1 }); // For subcategory filtering (Electronics)
-productSchema.index({ isActive: 1 }); // For active products queries
+productSchema.index({ userId: 1 });
+productSchema.index({ category: 1 });
+productSchema.index({ subcategory: 1 });
+productSchema.index({ isActive: 1 });
 
 // Compound indexes for common queries
 productSchema.index({ category: 1, createdAt: -1 }); // Browse by category
 productSchema.index({ userId: 1, status: 1 }); // Seller dashboard
 productSchema.index({ status: 1, visibility: 1, publishedAt: -1 }); // Public listings
 productSchema.index({ featuredProduct: 1, averageRating: -1 }); // Featured products
-// productSchema.index({ brand: 1, category: 1 }); // Brand filtering (commented with brand field)
+
 
 // Text search index for product search
 productSchema.index({
@@ -408,28 +359,14 @@ productSchema.index({
   searchKeywords: "text",
 });
 
-// Sharding key options (choose one based on your scaling needs)
-// Option 1: Shard by category (good for evenly distributed categories)
-// productSchema.index({ category: "hashed" });
-
-// Option 2: Shard by userId (good for multi-tenant with many sellers)
-// productSchema.index({ userId: 1, _id: 1 });
-
-// ============================================
-// VIRTUAL FIELDS
-// ============================================
-
-// Display price formatted
 productSchema.virtual("displayPrice").get(function () {
   return this.price;
 });
 
-// Display sale price formatted
 productSchema.virtual("displaySalePrice").get(function () {
   return this.salePrice || null;
 });
 
-// Calculate discount percentage
 productSchema.virtual("discountPercentage").get(function () {
   if (this.salePrice && this.price > this.salePrice) {
     return Math.round(((this.price - this.salePrice) / this.price) * 100);
@@ -437,29 +374,21 @@ productSchema.virtual("discountPercentage").get(function () {
   return 0;
 });
 
-// Check if product is in stock
 productSchema.virtual("isInStock").get(function () {
   if (!this.trackInventory) return true;
   if (this.allowBackorder) return true;
   return this.stock > 0;
 });
 
-// ============================================
-// MIDDLEWARE - PRE SAVE HOOKS
-// ============================================
-
-// Counter for SKU increment (in production, use Redis or a separate collection)
 let skuCounter = 1000;
 
 productSchema.pre("save", async function (next) {
-  // Generate slug from name if not provided
   if (!this.slug || this.isModified("name")) {
     this.slug = this.name
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "");
 
-    // Ensure slug uniqueness
     const existingProduct = await mongoose.models.product.findOne({
       slug: this.slug,
       _id: { $ne: this._id },
@@ -470,53 +399,41 @@ productSchema.pre("save", async function (next) {
     }
   }
 
-  // Auto-generate SKU if not provided
-  // Pattern: {CATEGORY_PREFIX}-{BRAND_PREFIX}-{COLOR_PREFIX}-{INCREMENT_NUMBER}
   if (!this.sku) {
     const categoryPrefix = this.category.substring(0, 3).toUpperCase();
 
-    // If brand is enabled in the future, uncomment this:
-    // const brandPrefix = this.brand 
-    //   ? this.brand.substring(0, 3).toUpperCase() 
-    //   : "GEN";
-    const brandPrefix = "GEN"; // Generic brand for now
+    const brandPrefix = "GEN";
 
     const colorPrefix = this.color
       ? this.color.substring(0, 3).toUpperCase()
       : "STD";
 
-    // Increment counter (in production, use atomic counter from DB)
-    skuCounter++;
+    skuCounter++; // use atomic counter
     const incrementNumber = String(skuCounter).padStart(4, "0");
 
     this.sku = `${categoryPrefix}-${brandPrefix}-${colorPrefix}-${incrementNumber}`;
 
-    // Ensure SKU uniqueness
     const existingSku = await mongoose.models.product.findOne({
       sku: this.sku,
       _id: { $ne: this._id },
     });
 
     if (existingSku) {
-      // Add random suffix if collision occurs
       const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
       this.sku = `${this.sku}-${randomSuffix}`;
     }
   }
 
-  // Update search keywords from name and tags
   if (this.isModified("name") || this.isModified("tags")) {
     const nameWords = this.name.toLowerCase().split(/\s+/);
     const combinedKeywords = [...nameWords, ...this.tags.map(t => t.toLowerCase())];
     this.searchKeywords = [...new Set(combinedKeywords)]; // Remove duplicates
   }
 
-  // Validate sale price is less than regular price
   if (this.salePrice && this.salePrice >= this.price) {
     return next(new Error("Sale price must be less than regular price"));
   }
 
-  // Update stock status based on inventory
   if (this.trackInventory) {
     if (this.stock === 0) {
       this.stockStatus = "out_of_stock";
@@ -527,7 +444,6 @@ productSchema.pre("save", async function (next) {
     }
   }
 
-  // Set publishedAt timestamp when status changes to published
   if (this.isModified("status") && this.status === "published" && !this.publishedAt) {
     this.publishedAt = new Date();
   }
@@ -535,24 +451,18 @@ productSchema.pre("save", async function (next) {
   next();
 });
 
-// ============================================
-// INSTANCE METHODS
-// ============================================
 
-// Update product rating
 productSchema.methods.updateRating = function (newRating, oldRating = null) {
   if (oldRating) {
-    // Update existing review
+
     this.ratingDistribution[oldRating] = Math.max(0, this.ratingDistribution[oldRating] - 1);
   } else {
-    // New review
+
     this.reviewCount += 1;
   }
 
-  // Add new rating
   this.ratingDistribution[newRating] += 1;
 
-  // Calculate new average
   const totalRating = Object.entries(this.ratingDistribution).reduce(
     (sum, [rating, count]) => sum + parseInt(rating) * count,
     0
@@ -562,13 +472,11 @@ productSchema.methods.updateRating = function (newRating, oldRating = null) {
   return this.save();
 };
 
-// Increment view count
 productSchema.methods.incrementView = function () {
   this.viewCount += 1;
   return this.save();
 };
 
-// Decrement stock with transaction history
 productSchema.methods.decrementStock = function (quantity, orderId = null, reason = "Sale") {
   if (!this.trackInventory) {
     return Promise.resolve(this);
@@ -582,7 +490,6 @@ productSchema.methods.decrementStock = function (quantity, orderId = null, reaso
   this.stock = Math.max(0, this.stock - quantity);
   const stockAfter = this.stock;
 
-  // Record transaction
   this.transactionHistory.push({
     type: "sale",
     quantity: -quantity, // Negative for stock reduction
@@ -596,13 +503,10 @@ productSchema.methods.decrementStock = function (quantity, orderId = null, reaso
   return this.save();
 };
 
-// Increment stock (for returns/restocks)
 productSchema.methods.incrementStock = function (quantity, orderId = null, reason = "Restock") {
   const stockBefore = this.stock;
   this.stock += quantity;
   const stockAfter = this.stock;
-
-  // Record transaction
   this.transactionHistory.push({
     type: reason.toLowerCase() === "return" ? "return" : "restock",
     quantity: quantity, // Positive for stock increase
@@ -616,14 +520,12 @@ productSchema.methods.incrementStock = function (quantity, orderId = null, reaso
   return this.save();
 };
 
-// Adjust stock (for corrections/audits)
 productSchema.methods.adjustStock = function (newStock, reason = "Manual adjustment") {
   const stockBefore = this.stock;
   this.stock = newStock;
   const stockAfter = this.stock;
   const quantityChange = stockAfter - stockBefore;
 
-  // Record transaction
   this.transactionHistory.push({
     type: "adjustment",
     quantity: quantityChange,
@@ -636,14 +538,12 @@ productSchema.methods.adjustStock = function (newStock, reason = "Manual adjustm
   return this.save();
 };
 
-// Check availability
 productSchema.methods.checkAvailability = function (quantity = 1) {
   if (!this.trackInventory) return true;
   if (this.allowBackorder) return true;
   return this.stock >= quantity;
 };
 
-// Get recent transaction history
 productSchema.methods.getRecentTransactions = function (limit = 10) {
   return this.transactionHistory
     .sort((a, b) => b.timestamp - a.timestamp)

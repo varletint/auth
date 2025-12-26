@@ -22,6 +22,7 @@ import {
     ShoppingCartAdd01Icon,
 } from "hugeicons-react";
 import Footer from "../Components/Footer";
+import { generateProductSchema } from "../Components/ProductSchema";
 
 export default function ProductPage() {
     // Support both URL patterns:
@@ -316,7 +317,11 @@ export default function ProductPage() {
                     <meta name="twitter:title" content={`${product.name} | Lookups`} />
                     <meta name="twitter:description" content={product.description?.substring(0, 160) || `Buy ${product.name} on Lookups`} />
                     <meta name="twitter:image" content={product.images?.[0] || ''} />
-                    <link rel="canonical" href={`https://lookupss.vercel.app/product/${product._id}`} />
+                    <link rel="canonical" href={sellerInfo?.username ? `https://lookupss.vercel.app/${sellerInfo.username}/${product.slug}` : `https://lookupss.vercel.app/product/${product._id}`} />
+                    {/* JSON-LD Structured Data for Rich Snippets */}
+                    <script type="application/ld+json">
+                        {JSON.stringify(generateProductSchema(product, sellerInfo))}
+                    </script>
                 </Helmet>
 
                 {/* Header */}

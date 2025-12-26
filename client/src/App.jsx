@@ -52,6 +52,10 @@ import Customers from "./Pages/Customers";
 import StaffManagement from "./Pages/StaffManagement";
 import StaffLogin from "./Pages/StaffLogin";
 
+// SEO Pages
+import CategoryPage from "./Pages/CategoryPage";
+import SellerStorePage from "./Pages/SellerStorePage";
+
 function App() {
   return (
     <>
@@ -78,6 +82,9 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/* SEO Category and Store Pages */}
+          <Route path='/category/:categorySlug' element={<CategoryPage />} />
+          <Route path='/store/:username' element={<SellerStorePage />} />
           {/* SEO-friendly product route: /:seller/:slug */}
           <Route path='/:seller/:slug' element={<ProductPage />} />
           {/* ID-based product route (fallback) */}
