@@ -37,21 +37,20 @@ export default function NotFound() {
                     <div className="flex flex-wrap gap-4 justify-center">
                         <Link
                             to="/"
-                            className="flex items-center gap-2 bg-emerald-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-emerald-700 transition-colors"
+                            className="flex items-center gap-2 bg-emerald-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-emerald-700 transition-colors"
                         >
                             <Home01Icon size={20} />
                             Go Home
                         </Link>
                         <Link
                             to="/search"
-                            className="flex items-center gap-2 bg-white text-gray-700 px-6 py-3 rounded-xl font-semibold border border-gray-200 hover:bg-gray-50 transition-colors"
+                            className="flex items-center gap-2 bg-white text-gray-700 px-6 py-2 rounded-xl font-semibold border border-gray-200 hover:bg-gray-50 transition-colors"
                         >
                             <Search01Icon size={20} />
                             Search Products
                         </Link>
                     </div>
 
-                    {/* Quick Links */}
                     <div className="mt-12 pt-8 border-t border-gray-200">
                         <p className="text-gray-500 mb-4">Or check out these popular pages:</p>
                         <div className="flex flex-wrap gap-3 justify-center text-sm">
