@@ -41,9 +41,10 @@ export default function SellerStorePage() {
             }
 
             const data = await response.json();
-            setSeller(data.seller);
-            setProducts(data.products);
-            setPagination(data.pagination);
+            console.log('SEO Seller API Response:', data); // Debug log
+            setSeller(data.seller || null);
+            setProducts(data.products || []);
+            setPagination(data.pagination || { page: 1, pages: 1, total: 0 });
         } catch (err) {
             setError(err.message);
         } finally {

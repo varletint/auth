@@ -4,7 +4,7 @@ import User from "../Models/user.js";
 export const getCategories = async (req, res, next) => {
     try {
         const categories = await Product.aggregate([
-            { $match: { isActive: true, status: "published" } },
+            { $match: { isActive: true } },
             {
                 $group: {
                     _id: "$category",
@@ -41,8 +41,7 @@ export const getCategoryProducts = async (req, res, next) => {
 
         const products = await Product.find({
             category: categoryPattern,
-            isActive: true,
-            status: "published"
+            isActive: true
         })
             .populate("userId", "username")
             .sort({ createdAt: -1 })
@@ -51,8 +50,7 @@ export const getCategoryProducts = async (req, res, next) => {
 
         const total = await Product.countDocuments({
             category: categoryPattern,
-            isActive: true,
-            status: "published"
+            isActive: true
         });
 
         const categoryName = products[0]?.category || slug.toUpperCase();
@@ -80,7 +78,7 @@ export const getCategoryProducts = async (req, res, next) => {
 export const getSellers = async (req, res, next) => {
     try {
         const sellersWithProducts = await Product.aggregate([
-            { $match: { isActive: true, status: "published" } },
+            { $match: { isActive: true } },
             {
                 $group: {
                     _id: "$userId",
@@ -138,8 +136,7 @@ export const getSellerProfile = async (req, res, next) => {
 
         const products = await Product.find({
             userId: seller._id,
-            isActive: true,
-            status: "published"
+            isActive: true
         })
             .sort({ createdAt: -1 })
             .skip(skip)
@@ -147,8 +144,7 @@ export const getSellerProfile = async (req, res, next) => {
 
         const total = await Product.countDocuments({
             userId: seller._id,
-            isActive: true,
-            status: "published"
+            isActive: true
         });
 
         res.status(200).json({
@@ -207,8 +203,7 @@ export const getProductsSitemap = async (req, res, next) => {
         const baseUrl = "https://lookupss.vercel.app";
 
         const products = await Product.find({
-            isActive: true,
-            status: "published"
+            isActive: true
         })
             .populate("userId", "username")
             .select("slug updatedAt userId")
@@ -245,7 +240,7 @@ export const getCategoriesSitemap = async (req, res, next) => {
         const baseUrl = "https://lookupss.vercel.app";
 
         const categories = await Product.aggregate([
-            { $match: { isActive: true, status: "published" } },
+            { $match: { isActive: true } },
             { $group: { _id: "$category" } }
         ]);
 
@@ -277,7 +272,7 @@ export const getSellersSitemap = async (req, res, next) => {
         const baseUrl = "https://lookupss.vercel.app";
 
         const sellersWithProducts = await Product.aggregate([
-            { $match: { isActive: true, status: "published" } },
+            { $match: { isActive: true } },
             { $group: { _id: "$userId" } }
         ]);
 

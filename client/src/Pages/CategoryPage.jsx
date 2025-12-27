@@ -35,9 +35,10 @@ export default function CategoryPage() {
             }
 
             const data = await response.json();
-            setCategory(data.category);
-            setProducts(data.products);
-            setPagination(data.pagination);
+            console.log('SEO Category API Response:', data); // Debug log
+            setCategory(data.category || null);
+            setProducts(data.products || []);
+            setPagination(data.pagination || { page: 1, pages: 1, total: 0 });
         } catch (err) {
             setError(err.message);
         } finally {
@@ -54,7 +55,6 @@ export default function CategoryPage() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // SEO structured data
     const structuredData = category
         ? generateCategorySchema(category.name, category.productCount)
         : null;
@@ -131,7 +131,7 @@ export default function CategoryPage() {
                     </div>
                 </div>
 
-                {/* Products Grid */}
+
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                     {products.length === 0 ? (
                         <div className="text-center py-12">
